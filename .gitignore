@@ -2,5 +2,37 @@
 ./fiis-front/node_modules
 ./fiis-front/.env
 
+./fiis-front/.pnp
+./fiis-front/.pnp.js
+
+# testing
+./fiis-front/coverage
+
+# next.js
+/fiis-front/.next/
+/fiis-front/out/
+
+# production
+./fiis-front/build
+
+# misc
+./fiis-front/.DS_Store
+*.pem
+
+# debug
+./fiis-front/npm-debug.log*
+./fiis-front/yarn-debug.log*
+./fiis-front/yarn-error.log*
+
+# local env files
+.env*.local
+
+# vercel
+./fiis-front/.vercel
+
+# typescript
+*.tsbuildinfo
+./fiis-front/next-env.d.ts
+
 ./fiis-script/node_modules
 ./fiis-script/.env
