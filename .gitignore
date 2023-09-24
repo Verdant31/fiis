@@ -9,9 +9,9 @@
 ./fiis-front/coverage
 
 # next.js
-/fiis-front/.next/
-/fiis-front/out/
-/fiis-front/.env
+./fiis-front/.next/
+./fiis-front/out/
+./fiis-front/.env
 
 # production
 ./fiis-front/build
