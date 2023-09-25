@@ -6,21 +6,21 @@ import { Input } from "@/components/ui/input";
 import { executeLocalScript } from "@/queries/executeLocalScript";
 import { insertFii } from "@/queries/insertFii";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRef, useState } from "react";
+import { format } from "date-fns";
+import { useState } from "react";
 import { ClipLoader } from "react-spinners";
 
 type Field = {
   name: string;
   qty: string;
+  purchaseDate: string;
 };
 
 export function InsertFiiModal() {
   const [mode, setMode] = useState<"single" | "multiple">("single");
   const [reloadAfterInsert, setReloadAfterInsert] = useState(false);
-  const [fields, setFields] = useState<Field[]>([{ name: "", qty: "" }]);
 
-  const fiiNameRef = useRef<HTMLInputElement>(null);
-  const fiiQtyRef = useRef<HTMLInputElement>(null);
+  const [fields, setFields] = useState<Field[]>([{ name: "", qty: "", purchaseDate: format(new Date(), "dd/MM/yyyy") }]);
 
   const queryClient = useQueryClient();
 
@@ -73,12 +73,10 @@ export function InsertFiiModal() {
   };
 
   const handleAddFields = () => {
-    setFields((prev) => [...prev, { name: "", qty: "" }]);
+    setFields((prev) => [...prev, { name: "", qty: "", purchaseDate: "" }]);
   };
 
-  const handleChangeField = (index: number, key: "name" | "qty", value: string) => {
-    const found = fields.find((field) => field.name === fiiNameRef.current?.value);
-    if (found) return;
+  const handleChangeField = (index: number, key: "name" | "qty" | "purchaseDate", value: string) => {
     setFields((prev) => {
       const newFields = [...prev];
       newFields[index][key] = value;
@@ -96,9 +94,15 @@ export function InsertFiiModal() {
       <DialogTrigger asChild>
         <p className="cursor-pointer text-lg w-[90px] text-center tracking-wider text-zinc-400">Insert(FII)</p>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[450px]">
+      <DialogContent className="sm:max-w-[560px]">
         <div className="mx-auto flex gap-4 mb-2">
-          <h1 onClick={() => setMode("single")} className={`tracking-widest cursor-pointer ${mode === "single" && "font-bold border-b-2"}`}>
+          <h1
+            onClick={() => {
+              setMode("single");
+              setFields((prev) => [prev[0]]);
+            }}
+            className={`tracking-widest cursor-pointer ${mode === "single" && "font-bold border-b-2"}`}
+          >
             SINGLE
           </h1>
           <h1 onClick={() => setMode("multiple")} className={`tracking-widest cursor-pointer ${mode === "multiple" && "font-bold border-b-2"}`}>
@@ -120,6 +124,7 @@ export function InsertFiiModal() {
             return (
               <div key={index} className="flex items-center gap-4 pt-2 pb-2">
                 <Input placeholder="Examle: MXRF11" onChange={(e) => handleChangeField(index, "name", e.target.value)} value={field.name} className="w-44" />
+                <Input placeholder="Ex: 29/04/2023" onChange={(e) => handleChangeField(index, "purchaseDate", e.target.value)} value={field.purchaseDate} className="w-[140px] flex pl-5" />
                 <Input placeholder="Qty" onChange={(e) => handleChangeField(index, "qty", e.target.value)} value={field.qty} className="w-16 flex pl-5" />
                 <ClipLoader color="#fff" loading={isLoading} />
                 {mode === "single" ? (

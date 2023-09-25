@@ -6,7 +6,6 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
     const userName = searchParams.get("userName") as string;
-    console.log(userName);
     const fiis = await prisma.fii.findMany({
       where: {
         userName,
