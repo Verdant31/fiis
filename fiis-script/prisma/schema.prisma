@@ -25,6 +25,7 @@ model Fii {
   quotationValue  Float
   initialValue    Float
   qty             Int
+  purchaseDate    String
   payments        PaymentHistory[]
   user            User         @relation(fields: [userName], references: [name])
   userName        String 

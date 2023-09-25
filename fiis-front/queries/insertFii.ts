@@ -5,6 +5,7 @@ interface InsertFiiProps {
   fiis: {
     name: string;
     qty: string;
+    purchaseDate: string;
   }[];
 }
 

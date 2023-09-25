@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { fiis } = body?.fiis as { fiis: { name: string; qty: string }[] };
+    const { fiis } = body?.fiis as { fiis: { name: string; qty: string; purchaseDate: string }[] };
     const dbFiis = await prisma.fii.findMany({ where: { userName: body.userName } });
 
     const response = await Promise.all(
@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
             initialValue: 0,
             qty: parseInt(fii.qty),
             userName: body.userName,
+            purchaseDate: fii.purchaseDate,
           },
         });
         return created;

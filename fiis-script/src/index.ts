@@ -1,4 +1,5 @@
 import { Fii } from "@prisma/client";
+import { isAfter, parse } from "date-fns";
 import { By } from "selenium-webdriver";
 import { driver } from "./driver";
 import { prisma } from "./prisma";
@@ -33,7 +34,12 @@ const updateFiisPaymentDate = async (updatedFiis: Fii[], closures: { [key: strin
           AND: { date: { equals: fii.lastIncomeDate } },
         },
       });
-      if (alreadyPaid) return;
+
+      const lastIncomeDate = parse(fii.lastIncomeDate, "dd/MM/yyyy", new Date());
+      const fiiPurchaseDateParsed = parse(fii.purchaseDate, "dd/MM/yyyy", new Date());
+
+      if (alreadyPaid || isAfter(fiiPurchaseDateParsed, lastIncomeDate)) return;
+
       return await prisma.paymentHistory.create({
         data: {
           fii: {
@@ -101,6 +107,7 @@ const main = async () => {
       lastIncomeValue: parseFloat(lastIncomeValue?.replace(",", ".") ?? "0"),
       quotationValue: parseFloat(quotationValue?.replace(",", ".") ?? "0"),
       initialValue: fiis[index]?.initialValue !== 0 ? fiis[index]?.initialValue : parseFloat(quotationValue?.replace(",", ".") ?? "0"),
+      purchaseDate: fiis[index]?.purchaseDate,
       qty: fiis[index]?.qty ?? 0,
       userName,
     });

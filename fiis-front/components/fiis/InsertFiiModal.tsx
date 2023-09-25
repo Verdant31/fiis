@@ -73,7 +73,7 @@ export function InsertFiiModal() {
   };
 
   const handleAddFields = () => {
-    setFields((prev) => [...prev, { name: "", qty: "", purchaseDate: "" }]);
+    setFields((prev) => [...prev, { name: "", qty: "", purchaseDate: format(new Date(), "dd/MM/yyyy") }]);
   };
 
   const handleChangeField = (index: number, key: "name" | "qty" | "purchaseDate", value: string) => {
