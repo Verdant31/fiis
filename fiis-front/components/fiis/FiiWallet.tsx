@@ -2,6 +2,7 @@
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { getFiis } from "@/queries/getFiis";
 import { updateFiiQuantities } from "@/queries/updateFiiQuantities";
+import { BRL } from "@/utils/intlBr";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { BarLoader } from "react-spinners";
@@ -165,9 +166,12 @@ export function FiiWallet() {
               {percents.map((percent) => {
                 const previousQty = data?.find((fii) => fii.name === percent.name)?.qty ?? 0;
                 return (
-                  <p className="text-[#adfa1d]" key={percent.name}>
-                    {percent.name}: <span className="text-white">+{percent.qty - previousQty}</span>
-                  </p>
+                  <div className="">
+                    <p className="text-[#adfa1d]" key={percent.name}>
+                      {percent.name}:<span className="text-white">+{percent.qty - previousQty}</span>
+                    </p>
+                    <span className="text-sm">{BRL.format((percent.qty - previousQty) * percent.quote)}</span>
+                  </div>
                 );
               })}
             </div>
