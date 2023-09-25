@@ -25,6 +25,7 @@ const expectedPercents: { [key: string]: number } = {
 };
 
 export type Percent = {
+  id: number;
   name: string;
   actualPercent: number;
   expected: number;
@@ -63,6 +64,7 @@ export function FiiWallet() {
     }, 0) ?? 0;
 
   const actualPercents = data?.map((fii) => ({
+    id: fii.id,
     name: fii.name,
     actualPercent: parseFloat(((100 * fii.qty) / totalQuotes).toFixed(1)),
     expected: expectedPercents[fii.name],

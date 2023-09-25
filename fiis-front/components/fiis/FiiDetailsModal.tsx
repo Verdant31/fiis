@@ -17,7 +17,7 @@ export function FiiDetailsModal({ setIsOpen, fii }: FiiDetailsModalProps) {
   const isOpen = !!fii;
 
   const { data, isLoading } = useQuery(["get-fii-history-key"], {
-    queryFn: async () => getFiiHistory(fii.name),
+    queryFn: async () => getFiiHistory(fii.id),
     cacheTime: 0,
     refetchOnWindowFocus: false,
   });

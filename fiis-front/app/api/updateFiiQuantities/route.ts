@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
               qty: fii.qty,
             },
             where: {
-              name: fii.name,
+              id: fii.id,
             },
           })
       )

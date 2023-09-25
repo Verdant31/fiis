@@ -3,13 +3,13 @@ import { By } from "selenium-webdriver";
 import { driver } from "./driver";
 import { prisma } from "./prisma";
 
-const saveFiisToDb = async (fiis: Fii[]) =>
-  await Promise.all(
+const saveFiisToDb = async (fiis: Fii[]) => {
+  return await Promise.all(
     fiis.map(
       async (fii) =>
         await prisma.fii.upsert({
           where: {
-            name: fii.name,
+            id: fii.id,
           },
           create: fii,
           update: {
@@ -22,20 +22,25 @@ const saveFiisToDb = async (fiis: Fii[]) =>
         })
     )
   );
+};
 
 const updateFiisPaymentDate = async (updatedFiis: Fii[], closures: { [key: string]: number }) => {
   await Promise.all(
     updatedFiis.map(async (fii) => {
       const alreadyPaid = await prisma.paymentHistory.findFirst({
         where: {
-          fiiName: fii.name,
+          fiiId: fii.id,
           AND: { date: { equals: fii.lastIncomeDate } },
         },
       });
       if (alreadyPaid) return;
       return await prisma.paymentHistory.create({
         data: {
-          fiiName: fii.name,
+          fii: {
+            connect: {
+              id: fii.id,
+            },
+          },
           date: fii.lastIncomeDate,
           value: fii.lastIncomeValue,
           qty: fii.qty,
@@ -52,8 +57,10 @@ const updateFiisPaymentDate = async (updatedFiis: Fii[], closures: { [key: strin
 };
 
 const main = async () => {
-  const fiis = await prisma.fii.findMany();
+  const userName = process.argv[2];
+  const fiis = await prisma.fii.findMany({ where: { userName } });
   const urls = fiis.map((fii) => "https://fiis.com.br/" + fii.name + "/");
+
   console.log("Urls que serão acessadas", urls);
 
   const data = [];
@@ -87,6 +94,7 @@ const main = async () => {
     closures[fiis[index]?.name] = parseFloat(closureValue?.replace(",", ".") ?? "0");
 
     data.push({
+      id: fiis[index]?.id,
       name: fiis[index]?.name,
       yield: parseFloat(yieldValue?.replace(",", ".") ?? "0"),
       lastIncomeDate: lastIncomeDate ?? "",
@@ -94,6 +102,7 @@ const main = async () => {
       quotationValue: parseFloat(quotationValue?.replace(",", ".") ?? "0"),
       initialValue: fiis[index]?.initialValue !== 0 ? fiis[index]?.initialValue : parseFloat(quotationValue?.replace(",", ".") ?? "0"),
       qty: fiis[index]?.qty ?? 0,
+      userName,
     });
     index += 1;
   }

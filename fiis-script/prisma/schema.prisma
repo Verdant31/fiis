@@ -6,30 +6,40 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
+}
 
+model User {
+  name   String   @id
+  fiis Fii[]
 }
 
 model Fii {
-  name String @id
-  yield Float
-  lastIncomeDate String
+  id  Int  @id @default(autoincrement())
+  name            String           
+  yield           Float
+  lastIncomeDate  String
   lastIncomeValue Float
-  quotationValue Float
-  initialValue Float
-  qty Int
-  payments PaymentHistory[]
+  quotationValue  Float
+  initialValue    Float
+  qty             Int
+  payments        PaymentHistory[]
+  user            User         @relation(fields: [userName], references: [name])
+  userName        String 
+  @@index([userName])
 }
 
 model PaymentHistory {
-  id Int @id @default(autoincrement())
-  fiiName String
-  date String
-  value Float
+  id      Int    @id @default(autoincrement())
+  date    String
+  value   Float
   closure Float
-  qty Int
-  fii Fii @relation(fields: [fiiName], references: [name])
-  @@index([fiiName])
+  qty     Int
+  fiiId          Int
+  fii     Fii    @relation(fields: [fiiId], references: [id])
+
+
+  @@index([fiiId])
 }

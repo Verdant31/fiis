@@ -6,10 +6,11 @@ export const revalidate = 0;
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const fiiName = searchParams.get("fiiName");
+    const fiiId = searchParams.get("fiiId");
+
     const fiis = await prisma.paymentHistory.findMany({
       where: {
-        fiiName: fiiName as string,
+        fiiId: parseInt(fiiId as string),
       },
     });
     return NextResponse.json({ status: 200, fiis });

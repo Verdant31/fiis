@@ -5,10 +5,25 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { fiis } = body?.fiis as { fiis: { name: string; qty: string }[] };
+    const dbFiis = await prisma.fii.findMany({ where: { userName: body.userName } });
+
     const response = await Promise.all(
       fiis.map(async (fii) => {
-        const created = await prisma.fii.upsert({
-          create: {
+        const alreadyExists = dbFiis.find((dbFii) => dbFii.name === fii.name);
+        if (alreadyExists) {
+          return await prisma.fii.update({
+            data: {
+              qty: {
+                increment: parseInt(fii.qty),
+              },
+            },
+            where: {
+              id: alreadyExists.id,
+            },
+          });
+        }
+        const created = await prisma.fii.create({
+          data: {
             name: fii.name,
             lastIncomeDate: "",
             lastIncomeValue: 0,
@@ -16,14 +31,7 @@ export async function POST(req: NextRequest) {
             yield: 0,
             initialValue: 0,
             qty: parseInt(fii.qty),
-          },
-          update: {
-            qty: {
-              increment: parseInt(fii.qty),
-            },
-          },
-          where: {
-            name: fii.name,
+            userName: body.userName,
           },
         });
         return created;
