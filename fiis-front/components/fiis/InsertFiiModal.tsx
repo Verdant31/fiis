@@ -94,7 +94,7 @@ export function InsertFiiModal() {
       <DialogTrigger asChild>
         <p className="cursor-pointer text-lg w-[90px] text-center tracking-wider text-zinc-400">Insert(FII)</p>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[560px]">
+      <DialogContent className="sm:max-w-[600px]">
         <div className="mx-auto flex gap-4 mb-2">
           <h1
             onClick={() => {
@@ -146,8 +146,8 @@ export function InsertFiiModal() {
               </Button>
             </div>
           )}
-          {hasError && <span className="error-text ml-1">Error at FII insertion</span>}
-          {hasSuccess && <span className="success-text ml-1">{isExecuting ? "FII inserted with success" : "Script executed"}</span>}
+          {hasError && <span className="error-text ml-1">{isExecuting || !reloadAfterInsert ? "Error at FII insertion" : "Error at script execution"}</span>}
+          {hasSuccess && <span className="success-text ml-1">{isExecuting || !reloadAfterInsert ? "FII inserted with success" : "Script executed"}</span>}
         </div>
       </DialogContent>
     </Dialog>

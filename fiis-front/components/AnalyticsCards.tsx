@@ -57,7 +57,7 @@ export function AnalyticsCards({ fiis, purchases, flatHistory, isLoading, totalQ
           <p>{BRL.format(parseFloat(total?.toFixed(2)))}</p>
         </CardContent>
         <CardContent className="text-white text-[12px] font-thin tracking-wide">
-          <p>+{percentSinceBegin.toFixed(2)}% desde o começo</p>
+          <p>+{percentSinceBegin.toFixed(2)}% from initial value</p>
         </CardContent>
       </Card>
       <Card className="w-[220px] bg-background border-zinc-800">
