@@ -48,7 +48,7 @@ export function FiiDetailsModal({ setIsOpen, fii }: FiiDetailsModalProps) {
       return acc + payment.qty * payment.value;
     }, 0) ?? 0;
 
-  const nextMonth = totalIncome + ((formattedData?.[0].qty ?? 0) + fii.lastIncomeValue);
+  const nextMonth = totalIncome + ((formattedData?.[0]?.qty ?? 0) + fii?.lastIncomeValue);
 
   const totalQuotes =
     data?.reduce((acc, payment) => {
@@ -57,7 +57,7 @@ export function FiiDetailsModal({ setIsOpen, fii }: FiiDetailsModalProps) {
 
   const totalPurchased =
     data?.reduce((acc, payment) => {
-      return acc + payment.qty * fii.quotationValue;
+      return acc + payment.qty * fii?.quotationValue;
     }, 0) ?? 0;
 
   return (
