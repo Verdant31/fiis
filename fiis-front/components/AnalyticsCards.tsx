@@ -62,35 +62,35 @@ export function AnalyticsCards({ fiis, purchases, flatHistory, isLoading, totalQ
       </Card>
       <Card className="w-[220px] bg-background border-zinc-800">
         <CardHeader>
-          <CardTitle className="text-md font-normal text-white">Dividendos pagos</CardTitle>
+          <CardTitle className="text-md font-normal text-white">Dividends paid</CardTitle>
         </CardHeader>
         <CardContent className="text-white pt-2 text-lg font-semibold tracking-wide">
           <p>{BRL.format(parseFloat(dividends?.toFixed(2)))}</p>
         </CardContent>
         <CardContent className="text-white text-[12px] font-thin tracking-wide">
-          <p>Desde junho/2022</p>
+          <p>Since jun/2022</p>
         </CardContent>
       </Card>
       <Card className="w-[220px] bg-background border-zinc-800">
         <CardHeader>
-          <CardTitle className="text-md font-normal text-white">Até a meta</CardTitle>
+          <CardTitle className="text-md font-normal text-white">Until goal</CardTitle>
         </CardHeader>
         <CardContent className="text-white pt-2 text-lg font-semibold tracking-wide">
           <p>{BRL.format(300000 - initial)}</p>
         </CardContent>
         <CardContent className="text-white text-[12px] font-thin tracking-wide">
-          <p>+{((100 * initial) / 300000).toFixed(1)}% percorrido</p>
+          <p>+{((100 * initial) / 300000).toFixed(1)}% achieved</p>
         </CardContent>
       </Card>
       <Card className="w-[220px] bg-background border-zinc-800">
         <CardHeader>
-          <CardTitle className="text-md font-normal text-white">Total de cotas</CardTitle>
+          <CardTitle className="text-md font-normal text-white">Total quotes</CardTitle>
         </CardHeader>
         <CardContent className="text-white pt-2 text-lg font-semibold tracking-wide">
           <p>{totalQuotes}</p>
         </CardContent>
         <CardContent className="text-white text-[12px] font-thin tracking-wide">
-          <p>+5 desde o mês passado</p>
+          <p>+5 since last month</p>
         </CardContent>
       </Card>
     </aside>

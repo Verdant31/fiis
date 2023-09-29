@@ -63,7 +63,7 @@ export default function Home() {
         </div>
         <AnalyticsCards flatHistory={purchasesResponse?.flatHistory} totalQuotes={totalQuotes} purchases={purchasesResponse?.purchases} fiis={fiis} isLoading={isLoading || isLoadingPurchases} />
       </div>
-      <div className="flex items-center justify-between gap-[60px] ">
+      <div className="flex items-center justify-between gap-[60px] pt-4 ">
         <FiisChart fiis={fiis} isLoading={isLoading} />
         <MinimalFiisList fiis={fiis} isLoading={isLoading} />
       </div>
