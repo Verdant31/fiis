@@ -34,12 +34,31 @@ export function FiiDetailsModal({ setIsOpen, fii }: FiiDetailsModalProps) {
     );
   }
 
+  const formattedData = data
+    ?.map((purchase) => {
+      return purchase.paymentHistory.map((payment) => ({
+        ...payment,
+        qty: purchase.qty,
+      }));
+    })
+    .flatMap((item) => item);
+
   const totalIncome =
-    data?.reduce((acc, payment) => {
+    formattedData?.reduce((acc, payment) => {
       return acc + payment.qty * payment.value;
     }, 0) ?? 0;
 
-  const nextMonth = totalIncome + (fii.qty + fii.lastIncomeValue);
+  const nextMonth = totalIncome + ((formattedData?.[0].qty ?? 0) + fii.lastIncomeValue);
+
+  const totalQuotes =
+    data?.reduce((acc, payment) => {
+      return acc + payment.qty;
+    }, 0) ?? 0;
+
+  const totalPurchased =
+    data?.reduce((acc, payment) => {
+      return acc + payment.qty * fii.quotationValue;
+    }, 0) ?? 0;
 
   return (
     <Dialog open={isOpen} onOpenChange={() => setIsOpen(undefined)}>
@@ -58,11 +77,11 @@ export function FiiDetailsModal({ setIsOpen, fii }: FiiDetailsModalProps) {
               </div>
               <div>
                 <h1 className="inline-block tracking-wider  font-medium text-[#adfa1d] bg-opacity-70 ">Total value</h1>
-                <h1 className="mt-2 text-xl font-regular tracking-wide">{BRL.format(fii.quotationValue * fii.qty)}</h1>
+                <h1 className="mt-2 text-xl font-regular tracking-wide">{BRL.format(totalPurchased)}</h1>
               </div>
               <div>
                 <h1 className="inline-block tracking-wider  font-medium text-[#adfa1d] bg-opacity-70 ">Quotes qty</h1>
-                <h1 className="mt-2 text-xl font-regular tracking-wide">{fii.qty}</h1>
+                <h1 className="mt-2 text-xl font-regular tracking-wide">{totalQuotes}</h1>
               </div>
               <div>
                 <h1 className="inline-block tracking-wider  font-medium text-[#adfa1d] bg-opacity-70 ">Total income</h1>
@@ -84,7 +103,7 @@ export function FiiDetailsModal({ setIsOpen, fii }: FiiDetailsModalProps) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data?.map((payment) => {
+                  {formattedData?.map((payment) => {
                     return (
                       <TableRow key={payment.id}>
                         <TableCell>{BRL.format(payment.value)}</TableCell>

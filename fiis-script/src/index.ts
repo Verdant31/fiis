@@ -4,53 +4,61 @@ import { By } from "selenium-webdriver";
 import { driver } from "./driver";
 import { prisma } from "./prisma";
 
+const userName = process.argv[2];
+
 const saveFiisToDb = async (fiis: Fii[]) => {
   return await Promise.all(
-    fiis.map(
-      async (fii) =>
-        await prisma.fii.upsert({
-          where: {
-            id: fii.id,
-          },
-          create: fii,
-          update: {
-            lastIncomeDate: fii.lastIncomeDate,
-            lastIncomeValue: fii.lastIncomeValue,
-            quotationValue: fii.quotationValue,
-            yield: fii.yield,
-            initialValue: fii.initialValue,
-          },
-        })
-    )
+    fiis.map(async (fii) => {
+      const { id, ...fiiRest } = fii;
+      return await prisma.fii.upsert({
+        where: {
+          id: fii.id,
+        },
+        create: fiiRest,
+        update: {
+          lastIncomeDate: fii.lastIncomeDate,
+          lastIncomeValue: fii.lastIncomeValue,
+          quotationValue: fii.quotationValue,
+          yield: fii.yield,
+          initialValue: fii.initialValue,
+        },
+      });
+    })
   );
 };
 
 const updateFiisPaymentDate = async (updatedFiis: Fii[], closures: { [key: string]: number }) => {
+  const userFiisPurchases = await prisma.fiisPurchases.findMany({
+    where: {
+      userName,
+    },
+  });
+
   await Promise.all(
-    updatedFiis.map(async (fii) => {
+    userFiisPurchases.map(async (userFiiPurchase) => {
+      const foundFii = updatedFiis.find((fii) => fii.name === userFiiPurchase.fiiName);
+
+      if (!foundFii) return;
+
       const alreadyPaid = await prisma.paymentHistory.findFirst({
         where: {
-          fiiId: fii.id,
-          AND: { date: { equals: fii.lastIncomeDate } },
+          fiisPurchasesId: userFiiPurchase.id,
+          AND: { date: { equals: foundFii?.lastIncomeDate } },
         },
       });
 
-      const lastIncomeDate = parse(fii.lastIncomeDate, "dd/MM/yyyy", new Date());
-      const fiiPurchaseDateParsed = parse(fii.purchaseDate, "dd/MM/yyyy", new Date());
+      const lastIncomeDate = parse(foundFii?.lastIncomeDate ?? "", "dd/MM/yyyy", new Date());
+      const fiiPurchaseDateParsed = parse(userFiiPurchase.purchaseDate, "dd/MM/yyyy", new Date());
 
       if (alreadyPaid || isAfter(fiiPurchaseDateParsed, lastIncomeDate)) return;
 
       return await prisma.paymentHistory.create({
         data: {
-          fii: {
-            connect: {
-              id: fii.id,
-            },
-          },
-          date: fii.lastIncomeDate,
-          value: fii.lastIncomeValue,
-          qty: fii.qty,
-          closure: closures[fii.name],
+          fiisPurchasesId: userFiiPurchase.id,
+          closure: closures[foundFii.name],
+          date: foundFii.lastIncomeDate,
+          value: foundFii.lastIncomeValue,
+          qty: userFiiPurchase.qty,
         },
       });
     })
@@ -63,8 +71,7 @@ const updateFiisPaymentDate = async (updatedFiis: Fii[], closures: { [key: strin
 };
 
 const main = async () => {
-  const userName = process.argv[2];
-  const fiis = await prisma.fii.findMany({ where: { userName } });
+  const fiis = await prisma.fii.findMany();
   const urls = fiis.map((fii) => "https://fiis.com.br/" + fii.name + "/");
 
   console.log("Urls que serão acessadas", urls);
@@ -107,9 +114,6 @@ const main = async () => {
       lastIncomeValue: parseFloat(lastIncomeValue?.replace(",", ".") ?? "0"),
       quotationValue: parseFloat(quotationValue?.replace(",", ".") ?? "0"),
       initialValue: fiis[index]?.initialValue !== 0 ? fiis[index]?.initialValue : parseFloat(quotationValue?.replace(",", ".") ?? "0"),
-      purchaseDate: fiis[index]?.purchaseDate,
-      qty: fiis[index]?.qty ?? 0,
-      userName,
     });
     index += 1;
   }

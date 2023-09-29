@@ -12,24 +12,35 @@ datasource db {
 }
 
 model User {
-  name   String   @id
-  fiis Fii[]
+  name String          @id
+  fiis FiisPurchases[]
+}
+
+model FiisPurchases {
+  id             Int              @id @default(autoincrement())
+  userName       String
+  fiiName        String
+  purchaseDate   String
+  qty            Int
+  paymentHistory PaymentHistory[]
+
+  user User @relation(fields: [userName], references: [name])
+  fii  Fii  @relation(fields: [fiiName], references: [name])
+
+  @@index([userName])
+  @@index([fiiName])
 }
 
 model Fii {
-  id  Int  @id @default(autoincrement())
-  name            String           
-  yield           Float
-  lastIncomeDate  String
-  lastIncomeValue Float
-  quotationValue  Float
-  initialValue    Float
-  qty             Int
-  purchaseDate    String
-  payments        PaymentHistory[]
-  user            User         @relation(fields: [userName], references: [name])
-  userName        String 
-  @@index([userName])
+  id              Int    @id @default(autoincrement())
+  name            String @unique
+  yield           Float @default(0)
+  lastIncomeDate  String @default("")
+  lastIncomeValue Float @default(0)
+  quotationValue  Float @default(0)
+  initialValue    Float @default(0)
+
+  FiisPurchases FiisPurchases[]
 }
 
 model PaymentHistory {
@@ -38,9 +49,9 @@ model PaymentHistory {
   value   Float
   closure Float
   qty     Int
-  fiiId          Int
-  fii     Fii    @relation(fields: [fiiId], references: [id])
 
+  FiisPurchases   FiisPurchases? @relation(fields: [fiisPurchasesId], references: [id])
+  fiisPurchasesId Int?
 
-  @@index([fiiId])
+  @@index([fiisPurchasesId])
 }

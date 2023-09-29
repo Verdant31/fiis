@@ -1,9 +1,9 @@
 "use client";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { getFiis } from "@/queries/getFiis";
+import { useFiisForWallet } from "@/hooks/useFiisForWallet";
 import { updateFiiQuantities } from "@/queries/updateFiiQuantities";
 import { BRL } from "@/utils/intlBr";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { BarLoader } from "react-spinners";
 import { Button } from "../ui/button";
@@ -53,16 +53,7 @@ export function FiiWallet() {
     },
   });
 
-  const { data } = useQuery(["get-fiis-key"], {
-    queryFn: async () => getFiis(),
-    cacheTime: 0,
-    refetchOnWindowFocus: false,
-  });
-
-  const totalQuotes =
-    data?.reduce((acc, fii) => {
-      return acc + fii.qty;
-    }, 0) ?? 0;
+  const { data, totalQuotes } = useFiisForWallet();
 
   const actualPercents = data?.map((fii) => ({
     id: fii.id,
@@ -94,6 +85,7 @@ export function FiiWallet() {
     const budgetLeft = budget - (fiiWithBiggestDiff.qty + buyForFii * fiiWithBiggestDiff.quote);
 
     if (budgetLeft < 0) {
+      console.log(fiisDiffsOrderedToLowest);
       setPercents(fiisDiffsOrderedToLowest);
       setIsLoading(false);
       return;
@@ -110,7 +102,21 @@ export function FiiWallet() {
   };
 
   const handleApplySugestions = () => {
-    updateFiiMutation({ updatedFiis: percents });
+    updateFiiMutation({
+      updatedFiis: percents
+        .filter((percent) => {
+          const previousQty = data?.find((fii) => fii.name === percent.name)?.qty ?? 0;
+          const diff = percent.qty - previousQty;
+          return diff >= 1;
+        })
+        .map((updated) => {
+          const previousQty = data?.find((fii) => fii.name === updated.name)?.qty ?? 0;
+          return {
+            ...updated,
+            oldQty: previousQty,
+          };
+        }),
+    });
   };
 
   return (
@@ -165,10 +171,12 @@ export function FiiWallet() {
             <div className="grid grid-cols-4 justify-center items-center mx-8">
               {percents.map((percent) => {
                 const previousQty = data?.find((fii) => fii.name === percent.name)?.qty ?? 0;
+                const diff = percent.qty - previousQty;
+                if (diff < 1) return;
                 return (
                   <div className="">
                     <p className="text-[#adfa1d]" key={percent.name}>
-                      {percent.name}:<span className="text-white">+{percent.qty - previousQty}</span>
+                      {percent.name}:<span className="text-white">+{diff}</span>
                     </p>
                     <span className="text-sm">{BRL.format((percent.qty - previousQty) * percent.quote)}</span>
                   </div>

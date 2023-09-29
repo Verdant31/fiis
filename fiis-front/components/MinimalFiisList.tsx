@@ -39,7 +39,6 @@ export default function MinimalFiisList({ fiis, isLoading }: MiniimalFiisListPro
                 <TableHead>Last Payment</TableHead>
                 <TableHead>Quote</TableHead>
                 <TableHead>Initial</TableHead>
-                <TableHead>Qty</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -58,7 +57,6 @@ export default function MinimalFiisList({ fiis, isLoading }: MiniimalFiisListPro
                       </span>
                     </TableCell>
                     <TableCell>R${fii.initialValue}</TableCell>
-                    <TableCell>{fii.qty}</TableCell>
                   </TableRow>
                 );
               })}

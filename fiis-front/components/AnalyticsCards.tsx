@@ -5,37 +5,56 @@ import { Fii, PaymentHistory } from "@prisma/client";
 
 interface AnalyticsCardsProps {
   fiis: Fii[] | undefined;
+  purchases:
+    | {
+        userName: string;
+        id: number;
+        fiiName: string;
+        purchaseDate: string;
+        qty: number;
+        paymentHistory: PaymentHistory;
+      }[]
+    | undefined;
+  flatHistory: PaymentHistory[] | undefined;
   isLoading: boolean;
-  history: PaymentHistory[] | undefined;
   totalQuotes: number;
 }
 
-export function AnalyticsCards({ fiis, isLoading, history, totalQuotes }: AnalyticsCardsProps) {
-  const updatedTotal =
-    fiis?.reduce((acc, item) => {
-      return acc + Number(item.qty * item.quotationValue);
+export function AnalyticsCards({ fiis, purchases, flatHistory, isLoading, totalQuotes }: AnalyticsCardsProps) {
+  const total =
+    fiis?.reduce((acc, fii) => {
+      const totalPurchaseOfFii = purchases?.reduce((purchaseAcc, purchase) => {
+        if (purchase.fiiName !== fii.name) return purchaseAcc;
+        return purchaseAcc + purchase.qty * fii.quotationValue;
+      }, 0);
+      return acc + (totalPurchaseOfFii ?? 0);
     }, 0) ?? 0;
 
-  const initialTotal =
-    fiis?.reduce((acc, item) => {
-      return acc + Number(item.qty * item.initialValue);
+  const initial =
+    fiis?.reduce((acc, fii) => {
+      const totalPurchaseOfFii = purchases?.reduce((purchaseAcc, purchase) => {
+        if (purchase.fiiName !== fii.name) return purchaseAcc;
+        return purchaseAcc + purchase.qty * fii.initialValue;
+      }, 0);
+      return acc + (totalPurchaseOfFii ?? 0);
     }, 0) ?? 0;
 
-  const percentSinceBegin = (100 * updatedTotal) / initialTotal - 100 ?? 0;
+  const percentSinceBegin = (100 * total) / initial - 100 ?? 0;
 
   const dividends =
-    history?.reduce((acc, payment) => {
-      return acc + payment.value * payment.qty;
+    flatHistory?.reduce((acc, payment) => {
+      const totalPaid = payment.qty * payment.value;
+      return acc + totalPaid;
     }, 0) ?? 0;
 
   return (
     <aside className="flex gap-6  items-center justify-between">
       <Card className="w-[220px] bg-background border-zinc-800">
         <CardHeader>
-          <CardTitle className="text-md font-normal text-white">Total investido</CardTitle>
+          <CardTitle className="text-md font-normal text-white">Total in FII's</CardTitle>
         </CardHeader>
         <CardContent className="text-white pt-2 text-lg font-semibold tracking-wide">
-          <p>{BRL.format(parseFloat(updatedTotal?.toFixed(2)))}</p>
+          <p>{BRL.format(parseFloat(total?.toFixed(2)))}</p>
         </CardContent>
         <CardContent className="text-white text-[12px] font-thin tracking-wide">
           <p>+{percentSinceBegin.toFixed(2)}% desde o começo</p>
@@ -57,10 +76,10 @@ export function AnalyticsCards({ fiis, isLoading, history, totalQuotes }: Analyt
           <CardTitle className="text-md font-normal text-white">Até a meta</CardTitle>
         </CardHeader>
         <CardContent className="text-white pt-2 text-lg font-semibold tracking-wide">
-          <p>{BRL.format(300000 - initialTotal)}</p>
+          <p>{BRL.format(300000 - initial)}</p>
         </CardContent>
         <CardContent className="text-white text-[12px] font-thin tracking-wide">
-          <p>+{((100 * initialTotal) / 300000).toFixed(1)}% percorrido</p>
+          <p>+{((100 * initial) / 300000).toFixed(1)}% percorrido</p>
         </CardContent>
       </Card>
       <Card className="w-[220px] bg-background border-zinc-800">

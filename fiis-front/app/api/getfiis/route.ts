@@ -8,9 +8,14 @@ export async function GET(req: Request) {
     const userName = searchParams.get("userName") as string;
     const fiis = await prisma.fii.findMany({
       where: {
-        userName,
+        FiisPurchases: {
+          every: {
+            userName,
+          },
+        },
       },
     });
+
     return NextResponse.json({ status: 200, fiis });
   } catch (err) {
     console.log("err", err);
