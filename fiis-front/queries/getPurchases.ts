@@ -1,4 +1,3 @@
-import { getUserName } from "@/utils/getUserName";
 import { PaymentHistory } from "@prisma/client";
 import axios from "axios";
 
@@ -16,7 +15,6 @@ type GetPurchasesResponse = {
 };
 
 export const getPurchases = async () => {
-  const userName = getUserName();
   const response = await axios.get(process.env.NEXT_PUBLIC_API_URL + "/getPurchases", {
     params: {
       userName,

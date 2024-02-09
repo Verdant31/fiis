@@ -1,123 +1,73 @@
-import { Fii } from "@prisma/client";
-import { isAfter, parse } from "date-fns";
 import { By } from "selenium-webdriver";
 import { driver } from "./driver";
 import { prisma } from "./prisma";
+import _ from 'lodash';
 
-const userName = process.argv[2];
-
-const saveFiisToDb = async (fiis: Fii[]) => {
-  return await Promise.all(
-    fiis.map(async (fii) => {
-      const { id, ...fiiRest } = fii;
-      return await prisma.fii.upsert({
-        where: {
-          id: fii.id,
-        },
-        create: fiiRest,
-        update: {
-          lastIncomeDate: fii.lastIncomeDate,
-          lastIncomeValue: fii.lastIncomeValue,
-          quotationValue: fii.quotationValue,
-          yield: fii.yield,
-          initialValue: fii.initialValue,
-        },
-      });
-    })
-  );
-};
-
-const updateFiisPaymentDate = async (updatedFiis: Fii[], closures: { [key: string]: number }) => {
-  const userFiisPurchases = await prisma.fiisPurchases.findMany({
-    where: {
-      userName,
-    },
-  });
-
-  await Promise.all(
-    userFiisPurchases.map(async (userFiiPurchase) => {
-      const foundFii = updatedFiis.find((fii) => fii.name === userFiiPurchase.fiiName);
-
-      if (!foundFii) return;
-
-      const alreadyPaid = await prisma.paymentHistory.findFirst({
-        where: {
-          fiisPurchasesId: userFiiPurchase.id,
-          AND: { date: { equals: foundFii?.lastIncomeDate } },
-        },
-      });
-
-      const lastIncomeDate = parse(foundFii?.lastIncomeDate ?? "", "dd/MM/yyyy", new Date());
-      const fiiPurchaseDateParsed = parse(userFiiPurchase.purchaseDate, "dd/MM/yyyy", new Date());
-
-      if (alreadyPaid || isAfter(fiiPurchaseDateParsed, lastIncomeDate)) return;
-
-      return await prisma.paymentHistory.create({
-        data: {
-          fiisPurchasesId: userFiiPurchase.id,
-          closure: closures[foundFii.name],
-          date: foundFii.lastIncomeDate,
-          value: foundFii.lastIncomeValue,
-          qty: userFiiPurchase.qty,
-        },
-      });
-    })
-  ).then((res) =>
-    console.log(
-      "Payment history updated",
-      res.filter((r) => r)
-    )
-  );
-};
 
 const main = async () => {
-  const fiis = await prisma.fii.findMany();
-  const urls = fiis.map((fii) => "https://fiis.com.br/" + fii.name + "/");
+  const purchases = await prisma.fiisPurchases.findMany();
+  const fiis = Object.keys(_.groupBy(purchases, 'fiiName'));
+  const urls = fiis.filter(f => !f.includes("13")).map((name) => "https://fiis.com.br/" + name + "/");
+  const history = await prisma.payment.findMany();
 
-  console.log("Urls que serão acessadas", urls);
-
-  const data = [];
-  let index = 0;
-  let closures: { [key: string]: number } = {};
+  const payments = []
 
   for (const url of urls) {
-    driver.get(url);
+    await driver.get(url);
 
-    const indicatorsContainer = await driver.findElement(By.className("indicators"));
-    const [yieldElement, lastIncomeElement] = await indicatorsContainer.findElements(By.className("indicators__box "));
-    const yieldValue = await yieldElement.findElement(By.css("b")).then((el) => el.getText());
-    const lastIncomeValue = await lastIncomeElement.findElement(By.css("b")).then((el) => el.getText());
-
-    const incomesContainer = await driver.findElement(By.css("[data-category='rendimento']"));
-    const lastIncomeDate = await incomesContainer
-      .findElement(By.css("p"))
-      .then((el) => el.getText())
-      .then((str) => str.match(/\d{2}\/\d{2}\/\d{4}/)?.[0]);
+    const body = await driver.findElement(By.xpath('//*[@id="carbon_fields_fiis_dividends-2"]/div[2]/div[2]/div/div/div/div/div[2]/div[1]'));
+    const rowAsString = await body.getAttribute("innerHTML")
+    const strings = rowAsString?.split("\n").filter((s) => s?.length > 0 && s !== '<div class="table__linha">')
+    const formattedStrings = strings?.map((str) => str.replace(" </div>", ""))
+    const lastPaymentDate = formattedStrings?.[1]
+    const quotationAtPayment = formattedStrings?.[2]
+    const monthlyYield = formattedStrings?.[3]
+    const paid = formattedStrings?.[4]
 
     const quotationContainer = await driver.findElement(By.className("item quotation"));
     const quotationValue = await quotationContainer.findElement(By.className("value")).then((el) => el.getText());
 
-    const closureValue = await incomesContainer
-      .findElements(By.css("li"))
-      .then((el) => el[1].getText())
-      .then((value) => {
-        return value.match(/[\d,]+/)?.[0];
-      });
+    const fiiName = url.split("/")[3];
+    const fiisPurchases = purchases.filter((purchase) => purchase.fiiName === fiiName);
 
-    closures[fiis[index]?.name] = parseFloat(closureValue?.replace(",", ".") ?? "0");
+    const quotesQuantityAtThePayment = fiisPurchases?.reduce((acc, purchase) => acc + purchase.qty, 0);
 
-    data.push({
-      id: fiis[index]?.id,
-      name: fiis[index]?.name,
-      yield: parseFloat(yieldValue?.replace(",", ".") ?? "0"),
-      lastIncomeDate: lastIncomeDate ?? "",
-      lastIncomeValue: parseFloat(lastIncomeValue?.replace(",", ".") ?? "0"),
-      quotationValue: parseFloat(quotationValue?.replace(",", ".") ?? "0"),
-      initialValue: fiis[index]?.initialValue !== 0 ? fiis[index]?.initialValue : parseFloat(quotationValue?.replace(",", ".") ?? "0"),
+
+    payments.push({
+      fiiName: url.split("/")[3],
+      url,
+      lastPaymentDate,
+      quotationAtPayment,
+      monthlyYield,
+      paid,
+      atualQuotation: quotationValue,
+      quotesQuantityAtThePayment
     });
-    index += 1;
   }
-  await saveFiisToDb(data).then(async (res) => await updateFiisPaymentDate(res, closures));
+  
+  for(const payment of payments) {
+    const alreadyInsertedPayment = history.find((history) => 
+      history.date === payment.lastPaymentDate && history.fiiName === payment.fiiName
+    )
+    if(alreadyInsertedPayment) {
+      console.log("Pagamento já cadastrado, foi atualizado a cotação");
+      await prisma.fiisPurchases.updateMany({where:{ fiiName: payment.fiiName}, data: {
+        quotationValue: parseFloat(payment.atualQuotation.replace(",", "."))
+      }})
+      continue;
+    }
+    const res = await prisma.payment.create({
+      data: {
+        date: payment.lastPaymentDate,
+        fiiName: payment.fiiName,
+        monthlyYield: parseFloat(payment.monthlyYield.replace("%", "").replace(",", ".")),
+        paidPerQuote: parseFloat(payment.paid.replace(",", ".").replace("R$ ", "")),
+        quotationAtPayment: parseFloat(payment.quotationAtPayment.replace(", ", ".").replace("R$ ", "")),
+        quotesQuantityAtThePayment: payment?.quotesQuantityAtThePayment
+      }
+    })
+    console.log("Pagamento cadastrado", res);
+  }
 };
 
 main();

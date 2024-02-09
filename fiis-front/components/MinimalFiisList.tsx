@@ -1,11 +1,11 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getPercentFromFii } from "@/utils/getPercentFromFii";
-import { Fii } from "@prisma/client";
 import { useState } from "react";
 import { BarLoader } from "react-spinners";
 import { FiiDetailsModal } from "./fiis/FiiDetailsModal";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
+import { Fii } from "@/lib/types";
 
 interface MiniimalFiisListProps {
   fiis: Fii[] | undefined;
@@ -35,10 +35,9 @@ export default function MinimalFiisList({ fiis, isLoading }: MiniimalFiisListPro
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[100px]">Name</TableHead>
-                <TableHead className="w-[100px]">Yield</TableHead>
-                <TableHead>Last Payment</TableHead>
-                <TableHead>Quote</TableHead>
-                <TableHead>Initial</TableHead>
+                <TableHead>Quantity</TableHead>
+                <TableHead className="w-[100px]">Quote value</TableHead>
+                <TableHead>Last payment date</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -47,16 +46,18 @@ export default function MinimalFiisList({ fiis, isLoading }: MiniimalFiisListPro
                 return (
                   <TableRow className="cursor-pointer" onClick={() => handleOpenModal(fii)} key={fii.name}>
                     <TableCell className="font-medium">{fii.name}</TableCell>
-                    <TableCell className="font-medium">{fii.yield}%</TableCell>
-                    <TableCell>{fii.lastIncomeDate}</TableCell>
+                    <TableCell>{fii.quantity}</TableCell>
                     <TableCell>
                       R${fii.quotationValue}
-                      <span className={`${fiiPercent > 0 ? "text-green-500" : "text-red-600"} ml-2`}>
-                        {fiiPercent > 0 && "+"}
-                        {fiiPercent}%
-                      </span>
+                      {fiiPercent > 0 && (
+                        <span className={`${fiiPercent > 0 ? "text-green-500" : "text-red-600"} ml-2`}>
+                          {fiiPercent > 0 && "+"}
+                          {fiiPercent}%
+                        </span>
+                      )}
+                      
                     </TableCell>
-                    <TableCell>R${fii.initialValue}</TableCell>
+                    <TableCell>{fii?.payments?.[0].date}</TableCell>
                   </TableRow>
                 );
               })}

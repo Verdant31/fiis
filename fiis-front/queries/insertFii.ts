@@ -1,19 +1,10 @@
-import { getUserName } from "@/utils/getUserName";
+import { Field } from "@/components/fiis/InsertFiiModal";
 import axios from "axios";
 
-interface InsertFiiProps {
-  fiis: {
-    name: string;
-    qty: string;
-    purchaseDate: string;
-  }[];
-}
 
-export const insertFii = async (fiis: InsertFiiProps) => {
-  const userName = getUserName();
-  const response = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/insertFii", {
-    fiis,
-    userName,
+export const insertFii = async (fields: Field[]) => {
+  const response = await axios.post("api/insertFii", {
+    fiis: fields,
   });
   return response.data;
 };

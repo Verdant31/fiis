@@ -6,52 +6,26 @@ generator client {
 }
 
 datasource db {
-  provider     = "mysql"
+  provider     = "mongodb"
   url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
-model User {
-  name String          @id
-  fiis FiisPurchases[]
-}
-
 model FiisPurchases {
-  id             Int              @id @default(autoincrement())
-  userName       String
-  fiiName        String
+  id             String @id @default(auto()) @map("_id") @db.ObjectId
+  fiiName        String @unique
   purchaseDate   String
   qty            Int
-  paymentHistory PaymentHistory[]
-
-  user User @relation(fields: [userName], references: [name])
-  fii  Fii  @relation(fields: [fiiName], references: [name])
-
-  @@index([userName])
-  @@index([fiiName])
+  quotationValue Float  @default(0)
+  initialValue   Float  @default(0)
 }
 
-model Fii {
-  id              Int    @id @default(autoincrement())
-  name            String @unique
-  yield           Float @default(0)
-  lastIncomeDate  String @default("")
-  lastIncomeValue Float @default(0)
-  quotationValue  Float @default(0)
-  initialValue    Float @default(0)
-
-  FiisPurchases FiisPurchases[]
-}
-
-model PaymentHistory {
-  id      Int    @id @default(autoincrement())
-  date    String
-  value   Float
-  closure Float
-  qty     Int
-
-  FiisPurchases   FiisPurchases? @relation(fields: [fiisPurchasesId], references: [id])
-  fiisPurchasesId Int?
-
-  @@index([fiisPurchasesId])
+model Payment {
+  id                         String @id @default(auto()) @map("_id") @db.ObjectId
+  date                       String
+  fiiName                    String
+  quotationAtPayment         Float
+  monthlyYield               Float
+  paidPerQuote               Float
+  quotesQuantityAtThePayment Int
 }

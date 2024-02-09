@@ -1,51 +1,33 @@
 "use client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Fii } from "@/lib/types";
 import { BRL } from "@/utils/intlBr";
-import { Fii, PaymentHistory } from "@prisma/client";
 
 interface AnalyticsCardsProps {
   fiis: Fii[] | undefined;
-  purchases:
-    | {
-        userName: string;
-        id: number;
-        fiiName: string;
-        purchaseDate: string;
-        qty: number;
-        paymentHistory: PaymentHistory;
-      }[]
-    | undefined;
-  flatHistory: PaymentHistory[] | undefined;
   isLoading: boolean;
   totalQuotes: number;
 }
 
-export function AnalyticsCards({ fiis, purchases, flatHistory, isLoading, totalQuotes }: AnalyticsCardsProps) {
-  const total =
-    fiis?.reduce((acc, fii) => {
-      const totalPurchaseOfFii = purchases?.reduce((purchaseAcc, purchase) => {
-        if (purchase.fiiName !== fii.name) return purchaseAcc;
-        return purchaseAcc + purchase.qty * fii.quotationValue;
-      }, 0);
-      return acc + (totalPurchaseOfFii ?? 0);
-    }, 0) ?? 0;
+export function AnalyticsCards({ fiis, isLoading, totalQuotes }: AnalyticsCardsProps) {
+  const total = fiis?.reduce((acc, fii) => {
+    const totalPurchaseOfFii = fii.quotationValue * fii.quantity
+    return acc + (totalPurchaseOfFii ?? 0);
+  }, 0) ?? 0;
 
-  const initial =
-    fiis?.reduce((acc, fii) => {
-      const totalPurchaseOfFii = purchases?.reduce((purchaseAcc, purchase) => {
-        if (purchase.fiiName !== fii.name) return purchaseAcc;
-        return purchaseAcc + purchase.qty * fii.initialValue;
-      }, 0);
-      return acc + (totalPurchaseOfFii ?? 0);
-    }, 0) ?? 0;
+  const initial =  fiis?.reduce((acc, fii) => {
+    const totalPurchaseOfFii = fii.initialValue * fii.quantity
+    return acc + (totalPurchaseOfFii ?? 0);
+  }, 0) ?? 0;
 
   const percentSinceBegin = (100 * total) / initial - 100 ?? 0;
 
-  const dividends =
-    flatHistory?.reduce((acc, payment) => {
-      const totalPaid = payment.qty * payment.value;
-      return acc + totalPaid;
-    }, 0) ?? 0;
+  const dividends = fiis?.reduce((acc, fii) => {
+    const totalPurchaseOfFii = fii.payments?.reduce((paymentAcc, payment) => {
+      return paymentAcc + (payment.quotesQuantityAtThePayment * payment.paidPerQuote);
+    }, 0);
+    return acc + (totalPurchaseOfFii ?? 0);
+  }, 0) ?? 0;
 
   return (
     <aside className="flex gap-6  items-center justify-between">

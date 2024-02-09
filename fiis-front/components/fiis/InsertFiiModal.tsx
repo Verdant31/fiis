@@ -10,91 +10,56 @@ import { format } from "date-fns";
 import { useState } from "react";
 import { ClipLoader } from "react-spinners";
 
-type Field = {
+export type Field = {
   name: string;
   qty: string;
   purchaseDate: string;
+  quotationValue: string
 };
+
+const FIELD_IV = { name: "", qty: "", purchaseDate: format(new Date(), "dd/MM/yyyy"), quotationValue: ""}
 
 export function InsertFiiModal() {
   const [mode, setMode] = useState<"single" | "multiple">("single");
   const [reloadAfterInsert, setReloadAfterInsert] = useState(false);
-
-  const [fields, setFields] = useState<Field[]>([{ name: "", qty: "", purchaseDate: format(new Date(), "dd/MM/yyyy") }]);
+  const [fields, setFields] = useState<Field[]>([FIELD_IV]);
 
   const queryClient = useQueryClient();
 
-  const {
-    data: insertionResponse,
-    mutateAsync: insertFiiMutation,
-    isLoading: isInserting,
-    reset: resetInsertion,
-  } = useMutation({
-    mutationFn: insertFii,
-    onSuccess: () =>
-      setTimeout(() => {
-        resetInsertion();
-      }, 2000),
-    onError: () =>
-      setTimeout(() => {
-        resetInsertion();
-      }, 2000),
-  });
-
-  const {
-    data: scriptExecutionResponse,
-    mutateAsync: executeLocalScriptMutation,
-    isLoading: isExecuting,
-    reset: resetExecution,
-  } = useMutation({
-    mutationFn: async () => executeLocalScript(),
-    onSuccess: () =>
-      setTimeout(() => {
-        resetExecution();
-      }, 2000),
-    onError: () =>
-      setTimeout(() => {
-        resetExecution();
-      }, 2000),
+  const { mutateAsync: insertFiiMutation, isLoading} = useMutation({ 
+    mutationFn: async () => insertFii(fields)
   });
 
   const handleSubmit = async () => {
     const isAllFieldsEmpty = fields.every((field) => field.name === "" && field.qty === "");
     if (isAllFieldsEmpty) return;
 
-    await insertFiiMutation({
-      fiis: fields,
-    }).then(async (res) => {
-      if (!reloadAfterInsert || res?.status !== 200) return;
-      await executeLocalScriptMutation().then(() => {
-        queryClient.invalidateQueries(["get-fiis-key"]);
-      });
-    });
+    await insertFiiMutation().then(() => queryClient.invalidateQueries(["get-fiis-key"]));
   };
 
   const handleAddFields = () => {
-    setFields((prev) => [...prev, { name: "", qty: "", purchaseDate: format(new Date(), "dd/MM/yyyy") }]);
+    setFields((prev) => [...prev, FIELD_IV]);
   };
 
-  const handleChangeField = (index: number, key: "name" | "qty" | "purchaseDate", value: string) => {
+  const handleChangeField = (index: number, key: "name" | "qty" | "purchaseDate" | "quotationValue", value: string) => {
     setFields((prev) => {
       const newFields = [...prev];
-      newFields[index][key] = value;
-      return newFields;
+      return newFields.map((field, idx) => {
+        if(index === idx) {
+          return {...field, [key]: value};
+        }
+        return field;
+      })
     });
   };
 
-  const hasError = (insertionResponse && insertionResponse?.status === 500) || (scriptExecutionResponse && scriptExecutionResponse?.status === 500);
-  const hasSuccess = (insertionResponse && insertionResponse?.status === 200) || (scriptExecutionResponse && scriptExecutionResponse?.status === 200);
-
-  const isLoading = isExecuting || isInserting;
 
   return (
     <Dialog>
       <DialogTrigger asChild>
         <p className="cursor-pointer text-lg w-[90px] text-center tracking-wider text-zinc-400">Insert(FII)</p>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[660px]">
         <div className="mx-auto flex gap-4 mb-2">
           <h1
             onClick={() => {
@@ -112,20 +77,15 @@ export function InsertFiiModal() {
         <DialogHeader>
           <DialogTitle>Insert new FII</DialogTitle>
           <DialogDescription>Save to the database a new purchased FII.</DialogDescription>
-          <div className="flex items-center space-x-2 pt-2">
-            <Checkbox checked={reloadAfterInsert} onCheckedChange={() => setReloadAfterInsert(!reloadAfterInsert)} className="outline-none" id="terms" />
-            <label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-              Reload FIIS after insert
-            </label>
-          </div>
         </DialogHeader>
         <div>
           {fields.map((field, index) => {
             return (
               <div key={index} className="flex items-center gap-4 pt-2 pb-2">
                 <Input placeholder="Examle: MXRF11" onChange={(e) => handleChangeField(index, "name", e.target.value)} value={field.name} className="w-44" />
-                <Input placeholder="Ex: 29/04/2023" onChange={(e) => handleChangeField(index, "purchaseDate", e.target.value)} value={field.purchaseDate} className="w-[140px] flex pl-5" />
-                <Input placeholder="Qty" onChange={(e) => handleChangeField(index, "qty", e.target.value)} value={field.qty} className="w-16 flex pl-5" />
+                <Input placeholder="Qty" onChange={(e) => handleChangeField(index, "qty", e.target.value)} value={field.qty} className="w-16 flex pl-3" />
+                <Input placeholder="Ex: 29/04/2023" onChange={(e) => handleChangeField(index, "purchaseDate", e.target.value)} value={field.purchaseDate} className="w-[140px] flex pl-3" />
+                <Input placeholder="R$87,55" onChange={(e) => handleChangeField(index, "quotationValue", e.target.value)} value={field.quotationValue} className="w-[90px] flex pl-3" />
                 <ClipLoader color="#fff" loading={isLoading} />
                 {mode === "single" ? (
                   <Button disabled={isLoading} onClick={handleSubmit} type="button">
@@ -146,8 +106,6 @@ export function InsertFiiModal() {
               </Button>
             </div>
           )}
-          {hasError && <span className="error-text ml-1">{isExecuting || !reloadAfterInsert ? "Error at FII insertion" : "Error at script execution"}</span>}
-          {hasSuccess && <span className="success-text ml-1">{isExecuting || !reloadAfterInsert ? "FII inserted with success" : "Script executed"}</span>}
         </div>
       </DialogContent>
     </Dialog>
