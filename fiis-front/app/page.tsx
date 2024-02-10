@@ -13,10 +13,6 @@ export default function Home() {
     refetchOnWindowFocus: true,
   });
 
-  const totalQuotes = fiis?.reduce((acc, fii) => {
-    return acc + fii.qty;
-  }, 0) ?? 0;
-
   return (
     <main className="w-full mt-12">
       <div className="flex items-center justify-between mb-8">
@@ -24,7 +20,7 @@ export default function Home() {
           <h1 className="text-white text-4xl font-bold tracking-wide">ROAD TO THE 300K</h1>
           <h1 className="text-white text-sm font-thin tracking-wide w-[400px]">Analytical web dashboard to help me reach my goal of R$30000,00 by 2025</h1>
         </div>
-        <AnalyticsCards totalQuotes={totalQuotes} fiis={fiis} isLoading={isLoading} />
+        <AnalyticsCards fiis={fiis} isLoading={isLoading} />
       </div>
       <div className="flex items-center justify-between gap-[60px] pt-4 ">
         <FiisChart fiis={fiis} isLoading={isLoading} />

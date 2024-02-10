@@ -37,7 +37,7 @@ export default function MinimalFiisList({ fiis, isLoading }: MiniimalFiisListPro
                 <TableHead className="w-[100px]">Name</TableHead>
                 <TableHead>Quantity</TableHead>
                 <TableHead className="w-[100px]">Quote value</TableHead>
-                <TableHead>Last payment date</TableHead>
+                <TableHead>Payment date</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

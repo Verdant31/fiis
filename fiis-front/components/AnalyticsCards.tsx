@@ -6,10 +6,16 @@ import { BRL } from "@/utils/intlBr";
 interface AnalyticsCardsProps {
   fiis: Fii[] | undefined;
   isLoading: boolean;
-  totalQuotes: number;
 }
 
-export function AnalyticsCards({ fiis, isLoading, totalQuotes }: AnalyticsCardsProps) {
+export function AnalyticsCards({ fiis }: AnalyticsCardsProps) {
+  const totalQuotes = fiis?.reduce((acc, fii) => {
+    const totalPurchaseOfFii = fii.purchases?.reduce((purchaseAcc, purchase) => {
+      return purchaseAcc + purchase.qty
+    }, 0);
+    return acc + (totalPurchaseOfFii ?? 0);
+  }, 0) ?? 0;
+
   const total = fiis?.reduce((acc, fii) => {
     const totalPurchaseOfFii = fii.quotationValue * fii.quantity
     return acc + (totalPurchaseOfFii ?? 0);
@@ -50,7 +56,7 @@ export function AnalyticsCards({ fiis, isLoading, totalQuotes }: AnalyticsCardsP
           <p>{BRL.format(parseFloat(dividends?.toFixed(2)))}</p>
         </CardContent>
         <CardContent className="text-white text-[12px] font-thin tracking-wide">
-          <p>Since jun/2022</p>
+          <p>Since feb/2024</p>
         </CardContent>
       </Card>
       <Card className="w-[220px] bg-background border-zinc-800">

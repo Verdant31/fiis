@@ -10,7 +10,7 @@ interface FiisChartProps {
 
 export function FiisChart({ fiis }: FiisChartProps) {
   const increaseList = fiis?.map((fii) => ({
-    name: fii?.name?.slice(0, -2),
+    name: fii?.name,
     increased: getPercentFromFii(fii),
   }));
   

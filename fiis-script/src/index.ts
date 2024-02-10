@@ -11,7 +11,6 @@ const main = async () => {
   const history = await prisma.payment.findMany();
 
   const payments = []
-
   for (const url of urls) {
     await driver.get(url);
 
@@ -49,6 +48,7 @@ const main = async () => {
     const alreadyInsertedPayment = history.find((history) => 
       history.date === payment.lastPaymentDate && history.fiiName === payment.fiiName
     )
+
     if(alreadyInsertedPayment) {
       console.log("Pagamento já cadastrado, foi atualizado a cotação");
       await prisma.fiisPurchases.updateMany({where:{ fiiName: payment.fiiName}, data: {
@@ -62,7 +62,7 @@ const main = async () => {
         fiiName: payment.fiiName,
         monthlyYield: parseFloat(payment.monthlyYield.replace("%", "").replace(",", ".")),
         paidPerQuote: parseFloat(payment.paid.replace(",", ".").replace("R$ ", "")),
-        quotationAtPayment: parseFloat(payment.quotationAtPayment.replace(", ", ".").replace("R$ ", "")),
+        quotationAtPayment: parseFloat(payment.quotationAtPayment.replace(",", ".").replace("R$ ", "")),
         quotesQuantityAtThePayment: payment?.quotesQuantityAtThePayment
       }
     })
