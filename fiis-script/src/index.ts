@@ -2,6 +2,7 @@ import { By } from "selenium-webdriver";
 import { driver } from "./driver";
 import { prisma } from "./prisma";
 import _ from 'lodash';
+import { format } from "date-fns";
 
 
 const main = async () => {
@@ -35,7 +36,7 @@ const main = async () => {
     payments.push({
       fiiName: url.split("/")[3],
       url,
-      lastPaymentDate,
+      lastPaymentDate: lastPaymentDate.replaceAll(".", "/"),
       quotationAtPayment,
       monthlyYield,
       paid,
