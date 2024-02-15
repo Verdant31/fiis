@@ -49,7 +49,7 @@ export default function MinimalFiisList({ fiis, isLoading }: MiniimalFiisListPro
                     <TableCell>{fii.quantity}</TableCell>
                     <TableCell>
                       R${fii.quotationValue}
-                      {fiiPercent > 0 && (
+                      {fiiPercent !== 0 && (
                         <span className={`${fiiPercent > 0 ? "text-green-500" : "text-red-600"} ml-2`}>
                           {fiiPercent > 0 && "+"}
                           {fiiPercent}%
