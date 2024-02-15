@@ -5,9 +5,7 @@ const execAsync = util.promisify(exec);
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const path: string = body.path;
-    const { stdout } = await execAsync(`ts-node ${path}`);
+    const { stdout } = await execAsync(`ts-node C:/Users/Verdant/Desktop/fiis/fiis-script/src/index.ts`);
     return NextResponse.json({ message: "Script executed", status: 200, stdout });
   } catch (err) {
     return NextResponse.json({ message: (err as Error)?.message, status: 500 });

@@ -3,7 +3,6 @@ import { AnalyticsCards } from "@/components/AnalyticsCards";
 import { FiisChart } from "@/components/FiisChart";
 import MinimalFiisList from "@/components/MinimalFiisList";
 import { getFiis } from "@/queries/getFiis";
-import { getPurchases } from "@/queries/getPurchases";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Home() {

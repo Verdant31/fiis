@@ -1,14 +1,13 @@
 "use client";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { useFiisForWallet } from "@/hooks/useFiisForWallet";
 import { updateFiiQuantities } from "@/queries/updateFiiQuantities";
-import { BRL } from "@/utils/intlBr";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { BarLoader } from "react-spinners";
-import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
+import { getFiis } from "@/queries/getFiis";
+import { getTotalQuotes } from "@/utils/getTotalQuotes";
 
 const expectedPercents: { [key: string]: number } = {
   RCRB11: 6.5,
@@ -38,6 +37,12 @@ export function FiiWallet() {
   const [budget, setBudget] = useState("");
   const [percents, setPercents] = useState<Percent[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  
+  const { data: fiis } = useQuery(["get-fiis-key"], {
+    queryFn: async () => getFiis(),
+    cacheTime: 0,
+    refetchOnWindowFocus: true,
+  });
 
   const {
     data: updateResponse,
@@ -52,15 +57,14 @@ export function FiiWallet() {
       setTimeout(() => reset(), 2000);
     },
   });
+  const totalQuotes = getTotalQuotes(fiis);
 
-  const { data, totalQuotes } = useFiisForWallet();
-
-  const actualPercents = data?.map((fii) => ({
+  const actualPercents = fiis?.map((fii) => ({
     id: fii.id,
     name: fii.name,
-    actualPercent: parseFloat(((100 * fii.qty) / totalQuotes).toFixed(1)),
+    actualPercent: parseFloat(((100 * fii.quantity) / totalQuotes).toFixed(1)),
     expected: expectedPercents[fii.name],
-    qty: fii.qty,
+    qty: fii.quantity,
     quote: fii.quotationValue,
   }));
 
@@ -101,23 +105,6 @@ export function FiiWallet() {
     handleCalculateNextPurchases(fiisDiffsOrderedToLowest, budgetLeft, updatedTotalQuotes);
   };
 
-  const handleApplySugestions = () => {
-    updateFiiMutation({
-      updatedFiis: percents
-        .filter((percent) => {
-          const previousQty = data?.find((fii) => fii.name === percent.name)?.qty ?? 0;
-          const diff = percent.qty - previousQty;
-          return diff >= 1;
-        })
-        .map((updated) => {
-          const previousQty = data?.find((fii) => fii.name === updated.name)?.qty ?? 0;
-          return {
-            ...updated,
-            oldQty: previousQty,
-          };
-        }),
-    });
-  };
 
   return (
     <Dialog>
@@ -154,7 +141,7 @@ export function FiiWallet() {
             onChange={(e) => setBudget(e.target.value)}
             onKeyDown={(e) => {
               if (!(e.key === "Enter")) return;
-              handleCalculateNextPurchases(actualPercents ?? [], parseFloat(budget), totalQuotes);
+              // handleCalculateNextPurchases(actualPercents ?? [], parseFloat(budget), totalQuotes);
             }}
             value={budget}
             className="w-[60px] p-0 text-center rounded-none h-6 boder-none border-b-2 border-t-0 border-r-0 border-l-0"
@@ -166,7 +153,7 @@ export function FiiWallet() {
             <BarLoader color="#adfa1d" width={300} />
           </div>
         )}
-        {!isLoading && percents.length > 0 && (
+        {/* {!isLoading && percents.length > 0 && (
           <div>
             <div className="grid grid-cols-4 justify-center items-center mx-8">
               {percents.map((percent) => {
@@ -189,7 +176,7 @@ export function FiiWallet() {
             {updateResponse?.status === 200 && <p className="text-center success-text mt-4">Success updated your FII'S</p>}
             {updateResponse?.status && updateResponse.status !== 200 && <p className="text-center error-text mt-4">Fail when trying update FII's</p>}
           </div>
-        )}
+        )} */}
       </DialogContent>
     </Dialog>
   );
