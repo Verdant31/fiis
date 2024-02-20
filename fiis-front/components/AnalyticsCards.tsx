@@ -17,7 +17,9 @@ export function AnalyticsCards({ fiis }: AnalyticsCardsProps) {
   }, 0) ?? 0;
 
   const total = fiis?.reduce((acc, fii) => {
-    const totalPurchaseOfFii = fii.quotationValue * fii.quantity
+    const totalPurchaseOfFii = fii.purchases?.reduce((purchaseAcc, purchase) => {
+      return purchaseAcc + (purchase.qty * purchase.quotationValue)
+    }, 0);
     return acc + (totalPurchaseOfFii ?? 0);
   }, 0) ?? 0;
 

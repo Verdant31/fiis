@@ -8,6 +8,7 @@ import { Input } from "../ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { getFiis } from "@/queries/getFiis";
 import { getTotalQuotes } from "@/utils/getTotalQuotes";
+import { BRL } from "@/utils/intlBr";
 
 const expectedPercents: { [key: string]: number } = {
   RCRB11: 6.5,
@@ -25,12 +26,13 @@ const expectedPercents: { [key: string]: number } = {
 };
 
 export type Percent = {
-  id: number;
+  id: string;
   name: string;
   actualPercent: number;
   expected: number;
   qty: number;
   quote: number;
+  totalSpent: number
 };
 
 export function FiiWallet() {
@@ -38,37 +40,36 @@ export function FiiWallet() {
   const [percents, setPercents] = useState<Percent[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   
-  const { data: fiis } = useQuery(["get-fiis-key"], {
-    queryFn: async () => getFiis(),
+  const { data: fiis } = useQuery(["get-fiis-key-wallet"], {
+    queryFn: async () => (await getFiis()).filter(f => f.name.includes("11")),
     cacheTime: 0,
     refetchOnWindowFocus: true,
   });
 
-  const {
-    data: updateResponse,
-    mutateAsync: updateFiiMutation,
-    reset,
-  } = useMutation({
-    mutationFn: updateFiiQuantities,
-    onError: () => {
-      setTimeout(() => reset(), 2000);
-    },
-    onSuccess: () => {
-      setTimeout(() => reset(), 2000);
-    },
+  const totalSpent =  fiis?.reduce((acc, fii) => {
+    const totalPurchaseOfFii = fii.purchases?.reduce((purchaseAcc, purchase) => {
+      return purchaseAcc + (purchase.qty * purchase.quotationValue)
+    }, 0);
+    return acc + (totalPurchaseOfFii ?? 0);
+  }, 0) ?? 0;
+
+  const actualPercents = fiis?.map((fii) => {
+    const purchases = fii.purchases?.reduce((purchaseAcc, purchase) => {
+      return purchaseAcc + (purchase.qty * purchase.quotationValue)
+    }, 0);
+
+    return {
+      id: fii.id,
+      name: fii.name,
+      actualPercent: parseFloat(((100 * purchases) / totalSpent).toFixed(1)),
+      totalSpent: purchases,
+      expected: expectedPercents[fii.name],
+      qty: fii.quantity,
+      quote: fii.quotationValue,
+    }
   });
-  const totalQuotes = getTotalQuotes(fiis);
-
-  const actualPercents = fiis?.map((fii) => ({
-    id: fii.id,
-    name: fii.name,
-    actualPercent: parseFloat(((100 * fii.quantity) / totalQuotes).toFixed(1)),
-    expected: expectedPercents[fii.name],
-    qty: fii.quantity,
-    quote: fii.quotationValue,
-  }));
-
-  const handleCalculateNextPurchases = (percents: Percent[], budget: number, totalQuotes: number) => {
+  
+  const handleCalculateNextPurchases = (percents: Percent[], budget: number, totalSpent: number) => {
     if (!budget) return;
     setIsLoading(true);
 
@@ -83,13 +84,12 @@ export function FiiWallet() {
 
     const fiiWithBiggestDiff = fiisDiffsOrderedToLowest[0];
 
-    const buyForFii = Math.floor((totalQuotes * fiiWithBiggestDiff.diff) / 100);
-    const updatedTotalQuotes = totalQuotes + buyForFii;
+    const buyForFii = Math.floor((totalSpent * fiiWithBiggestDiff.diff) / 100);
+    const updatedTotalQuotes = totalSpent + buyForFii;
 
     const budgetLeft = budget - (fiiWithBiggestDiff.qty + buyForFii * fiiWithBiggestDiff.quote);
 
     if (budgetLeft < 0) {
-      console.log(fiisDiffsOrderedToLowest);
       setPercents(fiisDiffsOrderedToLowest);
       setIsLoading(false);
       return;
@@ -104,7 +104,6 @@ export function FiiWallet() {
     });
     handleCalculateNextPurchases(fiisDiffsOrderedToLowest, budgetLeft, updatedTotalQuotes);
   };
-
 
   return (
     <Dialog>
@@ -128,7 +127,12 @@ export function FiiWallet() {
                   <TableRow className="cursor-pointer" key={fii.name}>
                     <TableCell className="font-medium">{fii.name}</TableCell>
                     <TableCell className="font-medium">{fii.expected}%</TableCell>
-                    <TableCell className="font-medium">{fii.actualPercent}%</TableCell>
+                    <TableCell className="font-medium flex">
+                      <div className="w-[50px]">
+                      {fii.actualPercent}%
+                      </div>
+                    ({BRL.format(fii.totalSpent)})
+                    </TableCell>
                   </TableRow>
                 );
               })}
@@ -141,7 +145,7 @@ export function FiiWallet() {
             onChange={(e) => setBudget(e.target.value)}
             onKeyDown={(e) => {
               if (!(e.key === "Enter")) return;
-              // handleCalculateNextPurchases(actualPercents ?? [], parseFloat(budget), totalQuotes);
+              handleCalculateNextPurchases(actualPercents ?? [], parseFloat(budget), totalSpent);
             }}
             value={budget}
             className="w-[60px] p-0 text-center rounded-none h-6 boder-none border-b-2 border-t-0 border-r-0 border-l-0"
@@ -153,11 +157,11 @@ export function FiiWallet() {
             <BarLoader color="#adfa1d" width={300} />
           </div>
         )}
-        {/* {!isLoading && percents.length > 0 && (
+        {!isLoading && percents.length > 0 && (
           <div>
             <div className="grid grid-cols-4 justify-center items-center mx-8">
               {percents.map((percent) => {
-                const previousQty = data?.find((fii) => fii.name === percent.name)?.qty ?? 0;
+                const previousQty = fiis?.find((fii) => fii.name === percent.name)?.quantity ?? 0;
                 const diff = percent.qty - previousQty;
                 if (diff < 1) return;
                 return (
@@ -170,13 +174,8 @@ export function FiiWallet() {
                 );
               })}
             </div>
-            <Button onClick={handleApplySugestions} className="flex mx-auto  mt-6 w-full">
-              Apply suggestions
-            </Button>
-            {updateResponse?.status === 200 && <p className="text-center success-text mt-4">Success updated your FII'S</p>}
-            {updateResponse?.status && updateResponse.status !== 200 && <p className="text-center error-text mt-4">Fail when trying update FII's</p>}
           </div>
-        )} */}
+        )}
       </DialogContent>
     </Dialog>
   );

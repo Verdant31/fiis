@@ -11,7 +11,6 @@ interface FiiDetailsModalProps {
 }
 
 export function FiiDetailsModal({ setIsOpen, fii }: FiiDetailsModalProps) {
-  console.log(fii);
   const isOpen = !!fii;
   const payments = fii.payments;
   const purchases = fii.purchases;
