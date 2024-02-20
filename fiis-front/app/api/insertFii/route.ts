@@ -22,8 +22,8 @@ export async function POST(req: NextRequest) {
     const response = await prisma.fiisPurchases.createMany({
       data: formatedToCreation
     })
-    const { stdout } = await execAsync(`ts-node C:/Users/Verdant/Desktop/fiis/fiis-script/src/index.ts`);
-    return NextResponse.json({ message: "FII created", status: 200, response, stdout});
+    const { stdout } = await execAsync(`npx ts-node /home/verdant/Desktop/fiis/fiis-script/src/index.ts`);
+    return NextResponse.json({ message: "FII created", status: 200, response, stdout });
   } catch (err) {
     return NextResponse.json({ message: (err as Error)?.message, status: 500 });
   }
