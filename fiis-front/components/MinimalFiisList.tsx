@@ -37,6 +37,7 @@ export default function MinimalFiisList({ fiis, isLoading }: MiniimalFiisListPro
                 <TableHead className="w-[100px]">Name</TableHead>
                 <TableHead>Quantity</TableHead>
                 <TableHead className="w-[160px]">Quote value</TableHead>
+                <TableHead className="w-[160px]">P/VP</TableHead>
                 <TableHead>Payment date</TableHead>
               </TableRow>
             </TableHeader>
@@ -57,6 +58,7 @@ export default function MinimalFiisList({ fiis, isLoading }: MiniimalFiisListPro
                       )}
                       
                     </TableCell>
+                    <TableCell>{fii?.pvp}</TableCell>
                     <TableCell>{fii?.payments?.[0].date}</TableCell>
                   </TableRow>
                 );

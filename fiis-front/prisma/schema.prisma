@@ -17,6 +17,7 @@ model FiisPurchases {
   purchaseDate   String
   qty            Int
   quotationValue Float  @default(0)
+  pvp            Float?  @default(0)
   initialValue   Float  @default(0)
 }
 
@@ -28,4 +29,5 @@ model Payment {
   monthlyYield               Float
   paidPerQuote               Float
   quotesQuantityAtThePayment Int
+  pvpAtPayment Float?
 }

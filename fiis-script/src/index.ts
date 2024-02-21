@@ -15,11 +15,17 @@ const main = async () => {
 
   for (const url of urls) {
     await driver.get(url);
+    const infosContainer = await driver.findElement(By.className("indicators"));
+    const infosAsString = await infosContainer.getAttribute("innerHTML")
+    const pvp = infosAsString.split('<div class="indicators__box">')[4].match(/<b>([\d,]+)<\/b>/)?.[1]?.replace(",", ".")
+
 
     const body = await driver.findElement(By.xpath('//*[@id="carbon_fields_fiis_dividends-2"]/div[2]/div[2]/div/div/div/div/div[2]/div[1]'));
     const rowAsString = await body.getAttribute("innerHTML")
     const strings = rowAsString?.split("\n").filter((s) => s?.length > 0 && s !== '<div class="table__linha">')
     const formattedStrings = strings?.map((str) => str.replace(" </div>", ""))
+
+
     const lastPaymentDate = formattedStrings?.[1]
     const quotationAtPayment = formattedStrings?.[2]
     const monthlyYield = formattedStrings?.[3]
@@ -39,7 +45,6 @@ const main = async () => {
       return isBefore(new Date(dbDateFormated), new Date(paymentFormated)) || isEqual(new Date(dbDateFormated), new Date(paymentFormated))
     })
 
-    if (onlyPurchasesBeforeCurrentPayment.length === 0) return;
     const quotesQuantityAtThePayment = fiisPurchases?.reduce((acc, purchase) => acc + purchase.qty, 0);
 
     payments.push({
@@ -50,7 +55,9 @@ const main = async () => {
       monthlyYield,
       paid,
       atualQuotation: quotationValue,
-      quotesQuantityAtThePayment
+      quotesQuantityAtThePayment,
+      pvp: parseFloat(pvp ?? ""),
+      hasNewPayments: onlyPurchasesBeforeCurrentPayment.length > 0
     });
   }
 
@@ -59,17 +66,16 @@ const main = async () => {
       history.date === payment.lastPaymentDate && history.fiiName === payment.fiiName
     )
 
-    if (alreadyInsertedPayment) {
-      console.log("Pagamento já cadastrado, foi atualizado a cotação");
+    if (alreadyInsertedPayment || !payment.hasNewPayments) {
+      console.log("Pagamento já cadastrado ou fundo não tem novos pagamentos, foi atualizado a cotação");
       await prisma.fiisPurchases.updateMany({
         where: { fiiName: payment.fiiName }, data: {
-          quotationValue: parseFloat(payment.atualQuotation.replace(",", "."))
+          quotationValue: parseFloat(payment.atualQuotation.replace(",", ".")),
+          pvp: payment.pvp
         }
       })
       continue;
     }
-
-
 
     const res = await prisma.payment.create({
       data: {
@@ -78,7 +84,8 @@ const main = async () => {
         monthlyYield: parseFloat(payment.monthlyYield.replace("%", "").replace(",", ".")),
         paidPerQuote: parseFloat(payment.paid.replace(",", ".").replace("R$ ", "")),
         quotationAtPayment: parseFloat(payment.quotationAtPayment.replace(",", ".").replace("R$ ", "")),
-        quotesQuantityAtThePayment: payment?.quotesQuantityAtThePayment
+        quotesQuantityAtThePayment: payment?.quotesQuantityAtThePayment,
+        pvpAtPayment: payment.pvp
       }
     })
     console.log("Pagamento cadastrado", res);
