@@ -40,7 +40,6 @@ export default function Payments() {
 
   return (
     <main className="w-full mt-12">
-      <h1 className="text-2xl font-extrabold">Select the month you want to see FII payments</h1>
       <div className="flex items-center gap-6 my-8"> 
         {months.map((month) => (
           <Button 

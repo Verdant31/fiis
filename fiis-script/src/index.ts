@@ -1,8 +1,8 @@
 import { By } from "selenium-webdriver";
 import { driver } from "./driver";
 import { prisma } from "./prisma";
-import _ from 'lodash';
-import { format } from "date-fns";
+import _, { isEqual } from 'lodash';
+import { format, isAfter, isBefore } from "date-fns";
 
 
 const main = async () => {
@@ -12,6 +12,7 @@ const main = async () => {
   const history = await prisma.payment.findMany();
 
   const payments = []
+
   for (const url of urls) {
     await driver.get(url);
 
@@ -30,8 +31,16 @@ const main = async () => {
     const fiiName = url.split("/")[3];
     const fiisPurchases = purchases.filter((purchase) => purchase.fiiName === fiiName);
 
-    const quotesQuantityAtThePayment = fiisPurchases?.reduce((acc, purchase) => acc + purchase.qty, 0);
+    const onlyPurchasesBeforeCurrentPayment = fiisPurchases.filter(purchase => {
+      const dbDateSplited = purchase.purchaseDate.split(/\//)
+      const dbDateFormated = [dbDateSplited[1], dbDateSplited[0], dbDateSplited[2]].join('/')
+      const paymentSplit = lastPaymentDate.replaceAll(".", "/").split(/\//)
+      const paymentFormated = [paymentSplit[1], paymentSplit[0], paymentSplit[2]].join('/')
+      return isBefore(new Date(dbDateFormated), new Date(paymentFormated)) || isEqual(new Date(dbDateFormated), new Date(paymentFormated))
+    })
 
+    if (onlyPurchasesBeforeCurrentPayment.length === 0) return;
+    const quotesQuantityAtThePayment = fiisPurchases?.reduce((acc, purchase) => acc + purchase.qty, 0);
 
     payments.push({
       fiiName: url.split("/")[3],
@@ -44,19 +53,24 @@ const main = async () => {
       quotesQuantityAtThePayment
     });
   }
-  
-  for(const payment of payments) {
-    const alreadyInsertedPayment = history.find((history) => 
+
+  for (const payment of payments) {
+    const alreadyInsertedPayment = history.find((history) =>
       history.date === payment.lastPaymentDate && history.fiiName === payment.fiiName
     )
 
-    if(alreadyInsertedPayment) {
+    if (alreadyInsertedPayment) {
       console.log("Pagamento já cadastrado, foi atualizado a cotação");
-      await prisma.fiisPurchases.updateMany({where:{ fiiName: payment.fiiName}, data: {
-        quotationValue: parseFloat(payment.atualQuotation.replace(",", "."))
-      }})
+      await prisma.fiisPurchases.updateMany({
+        where: { fiiName: payment.fiiName }, data: {
+          quotationValue: parseFloat(payment.atualQuotation.replace(",", "."))
+        }
+      })
       continue;
     }
+
+
+
     const res = await prisma.payment.create({
       data: {
         date: payment.lastPaymentDate,
@@ -70,5 +84,6 @@ const main = async () => {
     console.log("Pagamento cadastrado", res);
   }
 };
+
 
 main();

@@ -39,7 +39,7 @@ export function FiiDetailsModal({ setIsOpen, fii }: FiiDetailsModalProps) {
             </div>
             <div>
               <h1 className="inline-block tracking-wider  font-medium text-[#adfa1d] bg-opacity-70 ">Last date</h1>
-              <h1 className="mt-2 text-xl font-regular tracking-wide">{payments[0].date}</h1>
+              <h1 className="mt-2 text-xl font-regular tracking-wide">{payments?.[0].date}</h1>
             </div>
             <div>
               <h1 className="inline-block tracking-wider  font-medium text-[#adfa1d] bg-opacity-70 ">Total value</h1>
