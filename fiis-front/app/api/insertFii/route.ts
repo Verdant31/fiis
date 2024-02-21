@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { exec } from "child_process";
 import util from "util";
+import { getScriptUrl } from "@/utils/getScriptUrl";
 const execAsync = util.promisify(exec);
 
 export async function POST(req: NextRequest) {
@@ -22,7 +23,7 @@ export async function POST(req: NextRequest) {
     const response = await prisma.fiisPurchases.createMany({
       data: formatedToCreation
     })
-    const { stdout } = await execAsync(`npx ts-node /home/verdant/Desktop/fiis/fiis-script/src/index.ts`);
+    const { stdout } = await execAsync(getScriptUrl());
     return NextResponse.json({ message: "FII created", status: 200, response, stdout });
   } catch (err) {
     return NextResponse.json({ message: (err as Error)?.message, status: 500 });
