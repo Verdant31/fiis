@@ -81,13 +81,28 @@ export function FiiWallet() {
         }))
         .filter((percent) => percent.diff > 0)
         .sort((a, b) => b.diff - a.diff) ?? [];
-
+    
     const fiiWithBiggestDiff = fiisDiffsOrderedToLowest[0];
+    const expectedSpentValue = Math.floor((fiiWithBiggestDiff.totalSpent * fiiWithBiggestDiff.expected)/fiiWithBiggestDiff.actualPercent)
+    const remainingValue = expectedSpentValue - fiiWithBiggestDiff.totalSpent;
 
-    const buyForFii = Math.floor((totalSpent * fiiWithBiggestDiff.diff) / 100);
-    const updatedTotalQuotes = totalSpent + buyForFii;
+    const quotesToBuy = Math.floor(remainingValue/fiiWithBiggestDiff.quote)
+    if(quotesToBuy === 0) {
+      setPercents(fiisDiffsOrderedToLowest);
+      setIsLoading(false);
+      return;    
+    }
+    
+    console.log(fiisDiffsOrderedToLowest)
+    console.log("Current spent value: ", Math.floor(fiiWithBiggestDiff.totalSpent))
+    console.log("Expected spent value: ", expectedSpentValue)
+    console.log("Expected percent: ", fiiWithBiggestDiff.expected, "%")
+    console.log("Value to spent to achieve percent: ", remainingValue)
+    console.log("FIi quote: ", fiiWithBiggestDiff.quote)
+    console.log("Quotes to by to achieve percent: ", Math.floor(remainingValue/fiiWithBiggestDiff.quote))
 
-    const budgetLeft = budget - (fiiWithBiggestDiff.qty + buyForFii * fiiWithBiggestDiff.quote);
+    const updatedTotalSpent = totalSpent + remainingValue;
+    const budgetLeft = budget - remainingValue;
 
     if (budgetLeft < 0) {
       setPercents(fiisDiffsOrderedToLowest);
@@ -97,12 +112,15 @@ export function FiiWallet() {
 
     fiisDiffsOrderedToLowest?.forEach((fii) => {
       if (fii.name === fiiWithBiggestDiff.name) {
-        const newQty = fii.qty + buyForFii;
+        const newQty = fii.qty + quotesToBuy;
+        const updatedPercent = (expectedSpentValue * 100)/updatedTotalSpent;
+        console.log("New percent after purchases: ", updatedPercent)
         fii.qty = newQty;
-        fii.actualPercent = parseFloat(((100 * newQty) / updatedTotalQuotes).toFixed(1));
+        fii.actualPercent = parseFloat(((expectedSpentValue * 100)/updatedTotalSpent).toFixed(1));
       }
     });
-    handleCalculateNextPurchases(fiisDiffsOrderedToLowest, budgetLeft, updatedTotalQuotes);
+    console.log("\n")
+    handleCalculateNextPurchases(fiisDiffsOrderedToLowest, budgetLeft, updatedTotalSpent);
   };
 
   return (
