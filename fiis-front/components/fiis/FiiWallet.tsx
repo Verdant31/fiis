@@ -41,7 +41,7 @@ export function FiiWallet() {
   const [isLoading, setIsLoading] = useState(false);
   
   const { data: fiis } = useQuery(["get-fiis-key-wallet"], {
-    queryFn: async () => (await getFiis()).filter(f => f.name.includes("11")),
+    queryFn: async () => (await getFiis()).filter(f => f.name.includes("11") && f.name !== "MXRF11"),
     cacheTime: 0,
     refetchOnWindowFocus: true,
   });
