@@ -2,8 +2,8 @@
 
 const nextConfig = {
   experimental: {
-    serverActions: true,
+    serverComponentsExternalPackages: ['@node-rs/argon2'],
   },
-};
+}
 
-module.exports = nextConfig;
+module.exports = nextConfig

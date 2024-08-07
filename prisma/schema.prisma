@@ -11,13 +11,29 @@ datasource db {
   relationMode = "prisma"
 }
 
+model User {
+  id String @id @map("_id")
+
+  email         String    @unique
+  password_hash String
+  sessions      Session[]
+}
+
+model Session {
+  id        String   @id @map("_id")
+  userId    String
+  expiresAt DateTime
+
+  user User @relation(references: [id], fields: [userId], onDelete: Cascade)
+}
+
 model FiisPurchases {
   id             String @id @default(auto()) @map("_id") @db.ObjectId
   fiiName        String @unique
   purchaseDate   String
   qty            Int
   quotationValue Float  @default(0)
-  pvp            Float?  @default(0)
+  pvp            Float? @default(0)
   initialValue   Float  @default(0)
 }
 
@@ -29,5 +45,5 @@ model Payment {
   monthlyYield               Float
   paidPerQuote               Float
   quotesQuantityAtThePayment Int
-  pvpAtPayment Float?
+  pvpAtPayment               Float?
 }

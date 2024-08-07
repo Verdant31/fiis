@@ -1,8 +1,8 @@
-"use client";
-import { Cardholder } from "phosphor-react";
-import { FiiWallet } from "./fiis/FiiWallet";
-import { InsertFiiModal } from "./fiis/InsertFiiModal";
-import { ReloadFiisModal } from "./fiis/ReloadFiisModal";
+'use client'
+import { Cardholder } from 'phosphor-react'
+import { FiiWallet } from './fiis/FiiWallet'
+import { InsertFiiModal } from './fiis/InsertFiiModal'
+import { ReloadFiisModal } from './fiis/ReloadFiisModal'
 
 export default function Header() {
   return (
@@ -12,12 +12,22 @@ export default function Header() {
           <Cardholder size={24} />
           <h1 className="font-bold text-xl">MYFIIS</h1>
         </div>
-        <a href="/" className="cursor-pointer text-lg w-[90px] text-center tracking-wider text-zinc-400">Home</a>
+        <a
+          href="/"
+          className="cursor-pointer text-lg w-[90px] text-center tracking-wider text-zinc-400"
+        >
+          Home
+        </a>
         <InsertFiiModal />
         <ReloadFiisModal />
         <FiiWallet />
-        <a href="/payments" className="cursor-pointer text-lg w-[90px] text-center tracking-wider text-zinc-400">Payments</a>
+        <a
+          href="/payments"
+          className="cursor-pointer text-lg w-[90px] text-center tracking-wider text-zinc-400"
+        >
+          Payments
+        </a>
       </div>
     </div>
-  );
+  )
 }
