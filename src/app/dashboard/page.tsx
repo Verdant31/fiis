@@ -1,20 +1,41 @@
 'use client'
-import { AnalyticsCards } from '@/components/AnalyticsCards'
-import { FiisChart } from '@/components/FiisChart'
-import MinimalFiisList from '@/components/MinimalFiisList'
-import { getFiis } from '@/queries/getFiis'
+import FiisCarousel from '@/components/fiis-carousel'
+import { FiisDividendsChart } from '@/components/fiis-dividends-chart'
+import { FiisPriceChart } from '@/components/fiis-price-chart'
+import { getFiisDividends } from '@/queries/get-fiis-dividends'
+import { getFiisHistory } from '@/queries/get-fiis-history'
 import { useQuery } from '@tanstack/react-query'
 
 export default function Home() {
-  const { data: fiis, isLoading } = useQuery(['get-fiis-key'], {
-    queryFn: async () => getFiis(),
-    cacheTime: 0,
-    refetchOnWindowFocus: true,
+  const { data: fiisHistory, isLoading } = useQuery(
+    ['get-fiis-price-history'],
+    {
+      queryFn: async () => await getFiisHistory(),
+      // enabled: false,
+    },
+  )
+
+  const { data } = useQuery(['get-fiis-dividends'], {
+    queryFn: async () => await getFiisDividends(),
   })
 
+  if (!isLoading && fiisHistory?.length === 0) return <div>no fiisHistory</div>
+
   return (
-    <main className="w-full mt-12">
-      <div className="flex items-center justify-between mb-8">
+    <main className="w-[90%] mx-auto mt-6 overflow-hidden lg:w-full lg:ml-12">
+      <FiisCarousel />
+      {fiisHistory && (
+        <div>
+          <FiisPriceChart
+            fiisHistory={fiisHistory.filter((fii) =>
+              fii.history.every((payment) => payment.close > 20),
+            )}
+          />
+        </div>
+      )}
+      {data && <FiisDividendsChart fiisDividends={data} />}
+
+      {/* <div className="flex items-center justify-between mb-8">
         <div className="w-[450px ml-5">
           <h1 className="text-white text-4xl font-bold tracking-wide">
             ROAD TO THE 300K
@@ -27,9 +48,8 @@ export default function Home() {
         <AnalyticsCards fiis={fiis} isLoading={isLoading} />
       </div>
       <div className="flex items-center justify-between gap-[60px] pt-4 ">
-        <FiisChart fiis={fiis} isLoading={isLoading} />
         <MinimalFiisList fiis={fiis} isLoading={isLoading} />
-      </div>
+      </div> */}
     </main>
   )
 }

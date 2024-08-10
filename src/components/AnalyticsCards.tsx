@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 'use client'
 
 import { Fii } from '../lib/types'
@@ -55,7 +56,7 @@ export function AnalyticsCards({ fiis }: AnalyticsCardsProps) {
       <Card className="w-[220px] bg-background border-zinc-800">
         <CardHeader>
           <CardTitle className="text-md font-normal text-white">
-            Total in FII's
+            Total em FII's
           </CardTitle>
         </CardHeader>
         <CardContent className="text-white pt-2 text-lg font-semibold tracking-wide">

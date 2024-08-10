@@ -9,6 +9,7 @@
 
 # testing
 /coverage
+/src/OPERATIONS.json
 
 # next.js
 /.next/

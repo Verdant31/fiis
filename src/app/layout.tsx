@@ -24,9 +24,7 @@ export default function RootLayout({
       <Toaster richColors />
       <body className={GeistSans.className}>
         <Providers>
-          <Pathname>
-            <div className="max-w-[1400px] m-auto ">{children}</div>
-          </Pathname>
+          <Pathname>{children}</Pathname>
         </Providers>
       </body>
     </html>

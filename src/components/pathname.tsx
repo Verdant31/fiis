@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import Header from './Header'
+import { Header } from './header'
 
 export function Pathname({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()

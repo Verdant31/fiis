@@ -27,14 +27,19 @@ model Session {
   user User @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
 
-model FiisPurchases {
-  id             String @id @default(auto()) @map("_id") @db.ObjectId
-  fiiName        String @unique
-  purchaseDate   String
+model FiisOperations {
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  fiiName        String    @unique
+  date           String
+  type           Operation @default(sale)
   qty            Int
-  quotationValue Float  @default(0)
-  pvp            Float? @default(0)
-  initialValue   Float  @default(0)
+  quotationValue Float     @default(0)
+  pvp            Float?    @default(0)
+}
+
+enum Operation {
+  purchase
+  sale
 }
 
 model Payment {

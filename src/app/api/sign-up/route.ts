@@ -1,7 +1,7 @@
 'use server'
-import { SignInFormData } from '@/app/page'
 import { lucia } from '@/lib/lucia'
 import { prisma } from '@/lib/prisma'
+import { SignInFormData } from '@/types/auth'
 import { hash } from '@node-rs/argon2'
 import { generateIdFromEntropySize } from 'lucia'
 import { cookies } from 'next/headers'
