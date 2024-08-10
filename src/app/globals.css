@@ -95,12 +95,14 @@
   }
 }
 
-
 @layer base {
   * {
     @apply border-border;
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none;
+  }
+  tspan {
+    @apply font-sans font-normal text-card-foreground
   }
   body {
     @apply bg-background text-foreground;

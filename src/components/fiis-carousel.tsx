@@ -40,7 +40,7 @@ export default function FiisCarousel() {
     >
       <CarouselContent className="-ml-4">
         {Array.from({ length: 4 }).map((_, index) => (
-          <CarouselItem key={index} className="pl-4 basis-[260px]">
+          <CarouselItem key={index} className="pl-4 basis-[270px]">
             <Card className="bg-background border-zinc-800">
               <CardHeader>
                 <CardTitle className="text-md font-normal text-white">

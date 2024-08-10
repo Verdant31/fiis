@@ -1,5 +1,5 @@
 'use client'
-import { Bar, BarChart, XAxis, YAxis } from 'recharts'
+import { Bar, BarChart, LabelList, XAxis, YAxis } from 'recharts'
 import {
   ChartConfig,
   ChartContainer,
@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/chart'
 import { FiiDividends } from '@/queries/get-fiis-dividends'
 import { BRL } from '@/utils/intlBr'
+import { useWindowSize } from '@/hooks/use-window-size'
 
 const chartConfig = {
   dividends: {
@@ -20,6 +21,8 @@ interface Props {
 }
 
 export function FiisDividendsChart({ fiisDividends }: Props) {
+  const window = useWindowSize()
+
   const chartData = fiisDividends
     .map((fiiDividends) => {
       const months = Object.keys(fiiDividends.monthlyDividends)
@@ -62,19 +65,36 @@ export function FiisDividendsChart({ fiisDividends }: Props) {
             axisLine={false}
             tickFormatter={(value) => value}
           />
+
           <XAxis dataKey="dividends" type="number" hide />
-          <ChartTooltip
-            cursor={false}
-            content={
-              <ChartTooltipContent
-                itemValueFormatter={(item) =>
-                  BRL.format(parseFloat((item.value as number)?.toFixed(2)))
+          {(window?.width ?? 0) > 1130 && (
+            <ChartTooltip
+              cursor={false}
+              content={
+                <ChartTooltipContent
+                  hideLabel
+                  itemValueFormatter={(item) =>
+                    BRL.format(parseFloat((item.value as number)?.toFixed(2)))
+                  }
+                />
+              }
+            />
+          )}
+
+          <Bar dataKey="dividends" layout="vertical" radius={5}>
+            {(window?.width ?? 0) < 1130 && (
+              <LabelList
+                position="insideLeft"
+                dataKey="dividends"
+                formatter={(value: number) =>
+                  BRL.format(parseFloat((value as number)?.toFixed(2)))
                 }
-                hideLabel
+                fill="white"
+                offset={8}
+                fontSize={12}
               />
-            }
-          />
-          <Bar dataKey="dividends" layout="vertical" radius={5} />
+            )}
+          </Bar>
         </BarChart>
       </ChartContainer>
     </div>
