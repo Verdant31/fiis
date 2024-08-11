@@ -6,9 +6,11 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart'
-import { FiiDividends } from '@/queries/get-fiis-dividends'
+import { getFiisDividends } from '@/queries/get-fiis-dividends'
 import { BRL } from '@/utils/intlBr'
 import { useWindowSize } from '@/hooks/use-window-size'
+import { useQuery } from '@tanstack/react-query'
+import { Skeleton as ShadSkeleton } from './ui/skeleton'
 
 const chartConfig = {
   dividends: {
@@ -16,14 +18,37 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-interface Props {
-  fiisDividends: FiiDividends[]
+const Skeleton = () => {
+  return (
+    <div className="mt-6 max-w-[760px]">
+      <div className="flex items-end justify-between">
+        <div>
+          <ShadSkeleton className="w-[187px] h-[27px]" />
+          <ShadSkeleton className="w-[217px] mt-2 h-[27px]" />
+        </div>
+      </div>
+      <ShadSkeleton className="mt-6 max-w-[760px] lg:h-[430px] min-h-[40px] h-auto w-[100%] rounded-lg" />
+      <ShadSkeleton className="mt-2  max-w-[760px] lg:h-[430px] min-h-[40px] h-auto w-[90%] rounded-lg" />
+      <ShadSkeleton className="mt-2 max-w-[760px] lg:h-[430px] min-h-[40px] h-auto w-[80%] rounded-lg" />
+      <ShadSkeleton className="mt-2 max-w-[760px] lg:h-[430px] min-h-[40px] h-auto w-[70%] rounded-lg" />
+      <ShadSkeleton className="mt-2 max-w-[760px] lg:h-[430px] min-h-[40px] h-auto w-[60%] rounded-lg" />
+    </div>
+  )
 }
+export function FiisDividendsChart() {
+  const { data: dividends, isLoading } = useQuery(
+    ['get-fiis-dividends'],
+    async () => await getFiisDividends(),
+  )
 
-export function FiisDividendsChart({ fiisDividends }: Props) {
   const window = useWindowSize()
 
-  const chartData = fiisDividends
+  if (isLoading) return <Skeleton />
+  if (dividends?.length === 0 || !dividends) return null
+
+  const topFiisIndex = (window.width ?? 0) > 700 ? 10 : 5
+
+  const chartData = dividends
     .map((fiiDividends) => {
       const months = Object.keys(fiiDividends.monthlyDividends)
       return {
@@ -35,17 +60,20 @@ export function FiisDividendsChart({ fiisDividends }: Props) {
       }
     })
     .sort((a, b) => b.dividends - a.dividends)
-    .slice(0, 5)
+    .slice(0, topFiisIndex)
 
   return (
-    <div className="mt-8 max-w-[760px]">
+    <div className="mt-8 max-w-[760px] lg:max-w-[500px] lg:w-full lg:mr-8">
       <div>
         <h1 className="font-semibold text-lg">Pagamento de dividendos</h1>
-        <p className="text-muted-foreground w-[85%]">
-          Top 5 maiores pagadores da carteira
+        <p className="text-muted-foreground w-[85%] text-sm">
+          Top {topFiisIndex} maiores pagadores da carteira
         </p>
       </div>
-      <ChartContainer className="mt-4 max-w-[95%]" config={chartConfig}>
+      <ChartContainer
+        className="mt-4 max-w-[95%] lg:h-[300px] xl:h-[400px]"
+        config={chartConfig}
+      >
         <BarChart
           accessibilityLayer
           data={chartData.map((fii, index) => ({
