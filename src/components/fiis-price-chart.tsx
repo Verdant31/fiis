@@ -23,7 +23,7 @@ import { Skeleton as ShadSkeleton } from './ui/skeleton'
 
 const Skeleton = () => {
   return (
-    <div className="mt-6 max-w-[760px]">
+    <div className="mt-6 max-w-[760px] lg:w-full">
       <div className="flex items-end justify-between">
         <div>
           <ShadSkeleton className="w-[187px] h-[27px]" />
@@ -32,7 +32,7 @@ const Skeleton = () => {
         <ShadSkeleton className="w-[140px] h-[30px]" />
       </div>
 
-      <ShadSkeleton className="mt-6 max-w-[760px] lg:h-[430px] min-h-[217px] h-auto w-[100%] rounded-lg" />
+      <ShadSkeleton className="mt-6 max-w-[760px] lg:h-[430px] min-h-[217px] sm:min-h-[300px] h-auto w-[100%] rounded-lg" />
     </div>
   )
 }
@@ -78,8 +78,10 @@ export function FiisPriceChart() {
     <div className="mt-6 max-w-[760px] lg:w-full">
       <div className="flex items-end justify-between">
         <div>
-          <h1 className="font-semibold text-lg">Histórico de Preços</h1>
-          <p className="text-muted-foreground w-[85%] text-sm">
+          <h1 className="font-semibold text-lg lg:text-xl">
+            Histórico de Preços
+          </h1>
+          <p className="text-muted-foreground w-[85%] text-sm lg:text-base lg:w-full">
             Preço dos FIIS nos ultimos 12 meses
           </p>
         </div>

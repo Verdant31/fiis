@@ -10,3 +10,21 @@ export type Dividend = {
   date: Date
   dividends: number
 }
+
+export type Article = {
+  uuid: string
+  title: string
+  publisher: string
+  link: string
+  providerPublishTime: Date
+  type: string
+  thumbnail: {
+    resolutions: {
+      url: string
+      width: number
+      height: number
+      tag: string
+    }[]
+  }
+  relatedTickers: string[]
+}

@@ -27,11 +27,13 @@ const Skeleton = () => {
           <ShadSkeleton className="w-[217px] mt-2 h-[27px]" />
         </div>
       </div>
-      <ShadSkeleton className="mt-6 max-w-[760px] lg:h-[430px] min-h-[40px] h-auto w-[100%] rounded-lg" />
-      <ShadSkeleton className="mt-2  max-w-[760px] lg:h-[430px] min-h-[40px] h-auto w-[90%] rounded-lg" />
-      <ShadSkeleton className="mt-2 max-w-[760px] lg:h-[430px] min-h-[40px] h-auto w-[80%] rounded-lg" />
-      <ShadSkeleton className="mt-2 max-w-[760px] lg:h-[430px] min-h-[40px] h-auto w-[70%] rounded-lg" />
-      <ShadSkeleton className="mt-2 max-w-[760px] lg:h-[430px] min-h-[40px] h-auto w-[60%] rounded-lg" />
+      <div>
+        <ShadSkeleton className="mt-6 max-w-[760px] min-h-[40px] h-auto w-[100%] rounded-lg  min-w-[430px] xl:min-w-[530p" />
+        <ShadSkeleton className="mt-2 max-w-[760px] min-h-[40px] h-auto w-[90%] rounded-lg min-w-[360px] xl:min-w-[460px]" />
+        <ShadSkeleton className="mt-2 max-w-[760px] min-h-[40px] h-auto w-[80%] rounded-lg min-w-[210px] xl:min-w-[310px]" />
+        <ShadSkeleton className="mt-2 max-w-[760px] min-h-[40px] h-auto w-[70%] rounded-lg min-w-[260px] xl:min-w-[260px]" />
+        <ShadSkeleton className="mt-2 max-w-[760px] min-h-[40px] h-auto w-[60%] rounded-lg min-w-[160px] xl:min-w-[160px]" />
+      </div>
     </div>
   )
 }
@@ -65,8 +67,10 @@ export function FiisDividendsChart() {
   return (
     <div className="mt-8 max-w-[760px] lg:max-w-[500px] lg:w-full lg:mr-8">
       <div>
-        <h1 className="font-semibold text-lg">Pagamento de dividendos</h1>
-        <p className="text-muted-foreground w-[85%] text-sm">
+        <h1 className="font-semibold text-lg lg:text-xl">
+          Pagamento de dividendos
+        </h1>
+        <p className="text-muted-foreground w-[85%] text-sm lg:text-base lg:w-full">
           Top {topFiisIndex} maiores pagadores da carteira
         </p>
       </div>

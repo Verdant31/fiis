@@ -1,4 +1,5 @@
 'use client'
+import Articles from '@/components/articles'
 import FiisCarousel from '@/components/fiis-carousel'
 import { FiisDividendsChart } from '@/components/fiis-dividends-chart'
 import { FiisPriceChart } from '@/components/fiis-price-chart'
@@ -11,6 +12,7 @@ export default function Home() {
         <FiisPriceChart />
         <FiisDividendsChart />
       </div>
+      <Articles />
     </main>
   )
 }
