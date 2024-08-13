@@ -1,9 +1,16 @@
+import { FiisOperations } from '@prisma/client'
+
 export type FiisHistory = {
   fiiName: string
   history: {
     date: Date
     close: number
   }[]
+}
+
+export type FiisOperation = {
+  fiiName: string
+  operations: FiisOperations[]
 }
 
 export type Dividend = {

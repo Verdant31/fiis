@@ -6,6 +6,7 @@ import { FiisOperations } from '@prisma/client'
 import _ from 'lodash'
 import { NextResponse } from 'next/server'
 import yahooFinance from 'yahoo-finance2'
+import { format, addHours } from 'date-fns'
 
 export async function GET() {
   try {
@@ -25,13 +26,12 @@ export async function GET() {
       dividends: Dividend[],
     ) => {
       const monthlyDividends: Record<string, number> = {}
-
       for (const dividend of dividends) {
         let quotesOwnedAtPayment = 0
 
         for (const operation of fiiOperations) {
           const purchaseWasBeforeOrSameDayAsPayment =
-            new Date(operation.date) <= dividend.date
+            new Date(operation.date) <= addHours(dividend.date, 3)
 
           if (purchaseWasBeforeOrSameDayAsPayment) {
             if (operation.type === 'purchase') {
@@ -42,10 +42,8 @@ export async function GET() {
           }
         }
         if (quotesOwnedAtPayment < 0) quotesOwnedAtPayment = 0
-
         const dividendsReceived = quotesOwnedAtPayment * dividend.dividends
-
-        const monthKey = `${dividend.date.getFullYear()}-${String(dividend.date.getMonth() + 1).padStart(2, '0')}`
+        const monthKey = format(addHours(dividend.date, 3), 'yyyy/MM')
 
         if (!monthlyDividends[monthKey]) {
           monthlyDividends[monthKey] = 0
@@ -62,15 +60,12 @@ export async function GET() {
         period2: new Date(),
         events: 'dividends',
       })
-
       return {
         fiiName: fii.fiiName,
         monthlyDividends: calculateMonthlyDividends(fii.operations, dividends),
       }
     })
-
     const results = await Promise.all(promises)
-
     return NextResponse.json({
       results: results ?? [],
       status: 200,

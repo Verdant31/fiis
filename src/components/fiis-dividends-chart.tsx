@@ -6,11 +6,10 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart'
-import { getFiisDividends } from '@/queries/get-fiis-dividends'
 import { BRL } from '@/utils/intlBr'
 import { useWindowSize } from '@/hooks/use-window-size'
-import { useQuery } from '@tanstack/react-query'
 import { Skeleton as ShadSkeleton } from './ui/skeleton'
+import { useFiisDividends } from '@/queries/use-fiis-dividends'
 
 const chartConfig = {
   dividends: {
@@ -38,11 +37,7 @@ const Skeleton = () => {
   )
 }
 export function FiisDividendsChart() {
-  const { data: dividends, isLoading } = useQuery(
-    ['get-fiis-dividends'],
-    async () => await getFiisDividends(),
-  )
-
+  const { data: dividends, isLoading } = useFiisDividends()
   const window = useWindowSize()
 
   if (isLoading) return <Skeleton />

@@ -25,7 +25,7 @@ import { Button } from './ui/button'
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-10 w-full bg-background/95 shadow backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:shadow-secondary">
+    <header className="sticky top-0 z-10 w-full bg-background/95 shadow lg:shadow-none backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:shadow-secondary">
       <div className="mx-4 sm:mx-8 flex h-14 items-center lg:max-w-[1500px] lg:mx-auto">
         <div className="flex items-center w-full justify-between lg:px-6">
           <div className="flex items-center space-x-4 lg:space-x-2">
@@ -79,13 +79,13 @@ export function Header() {
             </Sheet>
             <Logo className="hidden lg:block h-7 w-7" />
             <h1 className="font-bold">stocks.tr</h1>
-            {/* <Button
+            <Button
               onClick={async () => {
                 await fetch('api/init-db')
               }}
             >
               INIT DB
-            </Button> */}
+            </Button>
             <Navbar />
           </div>
           <div className="flex gap-4 items-center mr-2">

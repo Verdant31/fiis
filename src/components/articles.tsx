@@ -33,7 +33,7 @@ const Skeleton = () => {
   )
 }
 
-export default function Articles() {
+export function Articles() {
   const { data: articles, isLoading } = useQuery(
     ['get-articles'],
     async () => await getArticles(),

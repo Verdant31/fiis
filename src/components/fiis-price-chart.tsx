@@ -17,9 +17,8 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import _ from 'lodash'
-import { getFiisHistory } from '@/queries/get-fiis-history'
-import { useQuery } from '@tanstack/react-query'
 import { Skeleton as ShadSkeleton } from './ui/skeleton'
+import { useFiisPriceHistory } from '@/queries/use-fiis-price-history'
 
 const Skeleton = () => {
   return (
@@ -40,10 +39,7 @@ const Skeleton = () => {
 export function FiisPriceChart() {
   const [fiiFilter, setFiiFilter] = useState<string>()
 
-  const { data: fiisHistory, isLoading } = useQuery(
-    ['get-fiis-price-history'],
-    async () => await getFiisHistory(),
-  )
+  const { data: fiisHistory, isLoading } = useFiisPriceHistory()
 
   if (isLoading) return <Skeleton />
   if (fiisHistory?.length === 0 || !fiisHistory) return null
