@@ -42,7 +42,7 @@ export function Articles() {
   if (articles?.length === 0 || !articles) return null
 
   return (
-    <div className="mb-12">
+    <div className="mb-12 mt-6 ">
       <div className="mt-4 lg:mt-6">
         <h1 className="font-semibold text-lg lg:text-xl">Notícias</h1>
         <p className="text-muted-foreground w-[85%] text-sm lg:text-base">

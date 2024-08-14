@@ -35,10 +35,13 @@ export function AnalyticsCarousel() {
     setIsEmblaRendered(true)
   }, [])
 
-  const isLoading = isLoadingOperations || isLoadingDividends
+  if (!isEmblaRendered || isLoadingOperations || isLoadingDividends) {
+    return <Skeleton />
+  }
 
-  if (!isEmblaRendered || isLoading) return <Skeleton />
   const fiis = new FiisController({ operations, dividends })
+
+  const totalValueInvested = fiis.getTotalValueInvested()
 
   return (
     <Carousel
@@ -57,7 +60,7 @@ export function AnalyticsCarousel() {
               </CardTitle>
             </CardHeader>
             <CardContent className="text-white pt-2 text-lg font-semibold tracking-wide">
-              <p>{currencyFormatter(fiis.getTotalValueInvested())}</p>
+              <p>{currencyFormatter(totalValueInvested)}</p>
             </CardContent>
             <CardContent className="text-white text-[12px] font-thin tracking-wide">
               <p>Inclui compras e vendas no cálculo</p>
@@ -83,14 +86,32 @@ export function AnalyticsCarousel() {
           <Card className="bg-background border-zinc-800">
             <CardHeader>
               <CardTitle className="text-md font-normal text-white">
-                Total em FIIs
+                Próximo mês
               </CardTitle>
             </CardHeader>
             <CardContent className="text-white pt-2 text-lg font-semibold tracking-wide">
-              <p>{currencyFormatter(fiis.getTotalValueInvested())}</p>
+              <p>{currencyFormatter(fiis.nextMonthDividends())}</p>
             </CardContent>
             <CardContent className="text-white text-[12px] font-thin tracking-wide">
-              <p>Inclui compras e vendas no cálculo</p>
+              <p>Dividendos para o proximo mês</p>
+            </CardContent>
+          </Card>
+        </CarouselItem>
+        <CarouselItem className="pl-4 basis-[270px]">
+          <Card className="bg-background border-zinc-800">
+            <CardHeader>
+              <CardTitle className="text-md font-normal text-white">
+                Até a meta
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="text-white pt-2 text-lg font-semibold tracking-wide">
+              <p>{currencyFormatter(300000 - totalValueInvested)}</p>
+            </CardContent>
+            <CardContent className="text-white text-[12px] font-thin tracking-wide">
+              <p>
+                {((100 * totalValueInvested) / 300000).toFixed(1)}% da meta
+                alcançado
+              </p>
             </CardContent>
           </Card>
         </CarouselItem>

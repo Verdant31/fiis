@@ -60,6 +60,7 @@ export async function GET() {
         period2: new Date(),
         events: 'dividends',
       })
+
       return {
         fiiName: fii.fiiName,
         monthlyDividends: calculateMonthlyDividends(fii.operations, dividends),
