@@ -31,7 +31,8 @@ export async function GET() {
 
         for (const operation of fiiOperations) {
           const purchaseWasBeforeOrSameDayAsPayment =
-            new Date(operation.date) <= addHours(dividend.date, 3)
+            new Date(operation.date) <= dividend.date
+          // new Date(operation.date) <= addHours(dividend.date, 3)
 
           if (purchaseWasBeforeOrSameDayAsPayment) {
             if (operation.type === 'purchase') {
@@ -44,7 +45,6 @@ export async function GET() {
         if (quotesOwnedAtPayment < 0) quotesOwnedAtPayment = 0
         const dividendsReceived = quotesOwnedAtPayment * dividend.dividends
         const monthKey = format(addHours(dividend.date, 3), 'MM/yyyy')
-
         if (!monthlyDividends[monthKey]) {
           monthlyDividends[monthKey] = 0
         }
@@ -60,7 +60,6 @@ export async function GET() {
         period2: new Date(),
         events: 'dividends',
       })
-
       return {
         fiiName: fii.fiiName,
         monthlyDividends: calculateMonthlyDividends(fii.operations, dividends),

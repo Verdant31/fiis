@@ -88,9 +88,13 @@ export function FiisPriceChart() {
     setModelInput(modelInput)
   }
 
-  const fiisBars = chartData.toSorted(
-    (obj1, obj2) => Object.keys(obj2).length - Object.keys(obj1).length,
-  )?.[0]
+  const fiisBars = Array.from(
+    new Set(
+      chartData
+        .flatMap((item) => Object.keys(item))
+        .filter((key) => key !== 'date'),
+    ),
+  )
 
   return (
     <div className="mt-6 max-w-[760px] lg:w-full">
@@ -227,20 +231,18 @@ export function FiisPriceChart() {
               className="flex-wrap"
               content={<ChartLegendContent />}
             />
-            {Object.keys(fiisBars)
-              .slice(1)
-              .map((data, index) => {
-                return (
-                  <Bar
-                    key={data}
-                    barSize={120}
-                    dataKey={data}
-                    label={data}
-                    stackId="a"
-                    fill={`hsl(var(--chart-${index + 1}))`}
-                  />
-                )
-              })}
+            {fiisBars.map((data, index) => {
+              return (
+                <Bar
+                  key={data}
+                  barSize={120}
+                  dataKey={data}
+                  label={data}
+                  stackId="a"
+                  fill={`hsl(var(--chart-${index + 1}))`}
+                />
+              )
+            })}
           </BarChart>
         </ChartContainer>
       )}
