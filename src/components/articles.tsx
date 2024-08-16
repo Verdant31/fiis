@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client'
 import { getArticles } from '@/queries/get-articles'
 import { useQuery } from '@tanstack/react-query'
