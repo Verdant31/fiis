@@ -119,6 +119,7 @@ const ChartTooltipContent = React.forwardRef<
       itemValueFormatter?: (
         value: Payload<ValueType, NameType>,
       ) => React.ReactNode
+      skipFalsyValues?: boolean
     }
 >(
   (
@@ -137,6 +138,7 @@ const ChartTooltipContent = React.forwardRef<
       nameKey,
       labelKey,
       itemValueFormatter,
+      skipFalsyValues = false,
     },
     ref,
   ) => {
@@ -197,7 +199,9 @@ const ChartTooltipContent = React.forwardRef<
             const key = `${nameKey || item.name || item.dataKey || 'value'}`
             const itemConfig = getPayloadConfigFromPayload(config, item, key)
             const indicatorColor = color || item.payload.fill || item.color
-
+            if (item.value === 0 && skipFalsyValues) {
+              return null
+            }
             return (
               <div
                 key={item.dataKey}
@@ -285,7 +289,6 @@ const ChartLegendContent = React.forwardRef<
     if (!payload?.length) {
       return null
     }
-
     return (
       <div
         ref={ref}
@@ -316,7 +319,7 @@ const ChartLegendContent = React.forwardRef<
                   }}
                 />
               )}
-              {itemConfig?.label}
+              {itemConfig?.label ?? item?.value}
             </div>
           )
         })}

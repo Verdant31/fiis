@@ -1,9 +1,19 @@
 'use client'
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts'
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  XAxis,
+  YAxis,
+  Bar,
+  BarChart,
+} from 'recharts'
 import { parse } from 'date-fns'
 import {
   ChartConfig,
   ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart'
@@ -23,6 +33,10 @@ import { Input } from './ui/input'
 import { Sparkle } from 'lucide-react'
 import { useFiisSummary } from '@/queries/use-fiis-summary'
 import { useCloudflareModel } from '@/queries/use-cloudflare-model'
+import { useFiisDividends } from '@/queries/use-fiis-dividends'
+import { client } from '@/app/providers'
+import { ClipLoader } from 'react-spinners'
+import { currencyFormatter } from '@/utils/currency-formatter'
 
 export enum FiisPriceChartOptions {
   AllBaseTen = 'Base 10',
@@ -37,12 +51,35 @@ export function FiisPriceChart() {
   const { data: fiisHistory, isLoading: isLoadingHistory } =
     useFiisPriceHistory()
   const { data: summary, isLoading: isLoadingSummary } = useFiisSummary()
+  const { data: dividends, isLoading: isLoadingDividends } = useFiisDividends()
 
-  const { data } = useCloudflareModel({
+  const { data, isFetching: isLoadingModelResponse } = useCloudflareModel({
     modelInput,
     summary,
     fiisHistory,
+    setModelInput,
   })
+
+  const isLoading = isLoadingHistory || isLoadingSummary || isLoadingDividends
+
+  if (isLoading) return <Skeleton />
+  if (fiisHistory?.length === 0 || !summary || !fiisHistory) return null
+
+  const fiisController = new FiisController({
+    history: fiisHistory,
+    summary,
+    dividends,
+  })
+
+  const { chartData, yAxisDomain, chartType } =
+    fiisController.formatHistoryToChartData(fiiFilter, data)
+
+  const selectOptions = [
+    FiisPriceChartOptions.AllBaseTen,
+    FiisPriceChartOptions.AllBaseOneHundred,
+    FiisPriceChartOptions.AllBaseNinety,
+    ...fiisHistory.map((fii) => fii.fiiName),
+  ]
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault()
@@ -51,22 +88,9 @@ export function FiisPriceChart() {
     setModelInput(modelInput)
   }
 
-  if (isLoadingHistory || isLoadingSummary) return <Skeleton />
-  if (fiisHistory?.length === 0 || !summary || !fiisHistory) return null
-
-  const fiisController = new FiisController({ history: fiisHistory, summary })
-
-  const { chartData, yAxisDomain } = fiisController.formatHistoryToChartData(
-    fiiFilter,
-    data,
-  )
-
-  const selectOptions = [
-    FiisPriceChartOptions.AllBaseTen,
-    FiisPriceChartOptions.AllBaseOneHundred,
-    FiisPriceChartOptions.AllBaseNinety,
-    ...fiisHistory.map((fii) => fii.fiiName),
-  ]
+  const fiisBars = chartData.toSorted(
+    (obj1, obj2) => Object.keys(obj2).length - Object.keys(obj1).length,
+  )?.[0]
 
   return (
     <div className="mt-6 max-w-[760px] lg:w-full">
@@ -85,10 +109,13 @@ export function FiisPriceChart() {
           onValueChange={(value) => {
             setFiiFilter(value)
             setModelInput('')
+            const el = document.getElementById('modelInput') as HTMLInputElement
+            el.value = ''
+            client.resetQueries({ queryKey: ['cloudflare'] })
           }}
         >
           <SelectTrigger
-            className="w-[160px] rounded-lg sm:ml-auto"
+            className="w-[160px] rounded-lg sm:ml-auto focus:ring-0 focus:ring-offset-0"
             aria-label="Select a value"
           >
             <SelectValue placeholder="Last 3 months" />
@@ -106,63 +133,117 @@ export function FiisPriceChart() {
         <form onSubmit={onSubmit}>
           <Input
             name="modelInput"
-            className="mt-4 bg-zinc-900 pl-10"
+            id="modelInput"
+            className="mt-4 bg-zinc-900 pl-10 pr-12"
             placeholder="Mostre os fundos: XPML11, MXRF11 e BRCO11"
           />
         </form>
+        {isLoadingModelResponse && (
+          <ClipLoader
+            size={20}
+            className="absolute text-muted-foreground right-4 top-[10px]"
+            color="#fff"
+          />
+        )}
 
         <Sparkle
           size={20}
           className="absolute text-muted-foreground left-2 top-[50%] translate-y-[-50%]"
         />
       </div>
-      <ChartContainer className="mt-6" config={{} satisfies ChartConfig}>
-        <LineChart accessibilityLayer data={chartData} margin={{}}>
-          <CartesianGrid vertical={false} />
-          <XAxis
-            dataKey="date"
-            tickLine={false}
-            axisLine={false}
-            tickMargin={8}
-            minTickGap={32}
-            tickFormatter={(value) => {
-              const date = parse(value, 'dd/MM/yyyy', new Date())
-              return date.toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-              })
-            }}
-          />
-          <YAxis
-            axisLine={false}
-            tickLine={false}
-            type="number"
-            domain={yAxisDomain}
-            hide
-            tickFormatter={() => ``}
-          />
-          <ChartTooltip
-            content={
-              <ChartTooltipContent
-                itemValueFormatter={(item) =>
-                  BRL.format(parseFloat((item.value as number)?.toFixed(2)))
-                }
-              />
-            }
-          />
-          {fiisHistory.map((fii, index) => (
-            <Line
-              key={fii.fiiName}
-              dataKey={fii.fiiName}
-              name={fii.fiiName.split('.SA')[0] + ' '}
-              type="monotone"
-              stroke={`hsl(var(--chart-${index + 1}))`}
-              strokeWidth={2}
-              dot={false}
+      {chartType === 'line' ? (
+        <ChartContainer className="mt-6" config={{} satisfies ChartConfig}>
+          <LineChart accessibilityLayer data={chartData} margin={{}}>
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              minTickGap={32}
+              tickFormatter={(value) => {
+                const date = parse(value, 'dd/MM/yyyy', new Date())
+                return date.toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                })
+              }}
             />
-          ))}
-        </LineChart>
-      </ChartContainer>
+            <YAxis
+              axisLine={false}
+              tickLine={false}
+              type="number"
+              domain={yAxisDomain}
+              hide
+              tickFormatter={() => ``}
+            />
+            <ChartTooltip
+              content={
+                <ChartTooltipContent
+                  itemValueFormatter={(item) =>
+                    BRL.format(parseFloat((item.value as number)?.toFixed(2)))
+                  }
+                />
+              }
+            />
+            {fiisHistory.map((fii, index) => (
+              <Line
+                key={fii.fiiName}
+                dataKey={fii.fiiName}
+                name={fii.fiiName.split('.SA')[0] + ' '}
+                type="monotone"
+                stroke={`hsl(var(--chart-${index + 1}))`}
+                strokeWidth={2}
+                dot={false}
+              />
+            ))}
+          </LineChart>
+        </ChartContainer>
+      ) : (
+        <ChartContainer
+          className="mt-6 h-[400px] max-w-[100%]"
+          config={{} satisfies ChartConfig}
+        >
+          <BarChart accessibilityLayer data={chartData}>
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
+            />
+            <ChartTooltip
+              content={
+                <ChartTooltipContent
+                  skipFalsyValues={true}
+                  itemValueFormatter={(item) => {
+                    return currencyFormatter(item.value as number)
+                  }}
+                  hideLabel
+                />
+              }
+            />
+            <ChartLegend
+              className="flex-wrap"
+              content={<ChartLegendContent />}
+            />
+            {Object.keys(fiisBars)
+              .slice(1)
+              .map((data, index) => {
+                return (
+                  <Bar
+                    key={data}
+                    barSize={120}
+                    dataKey={data}
+                    label={data}
+                    stackId="a"
+                    fill={`hsl(var(--chart-${index + 1}))`}
+                  />
+                )
+              })}
+          </BarChart>
+        </ChartContainer>
+      )}
     </div>
   )
 }

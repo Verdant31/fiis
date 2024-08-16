@@ -1,5 +1,5 @@
 import { FiisPriceChartOptions } from '@/components/fiis-price-chart'
-import { CloudflareModelResponse } from '@/queries/use-cloudflare-model'
+import { ParsedCloduflareResponse } from '@/queries/use-cloudflare-model'
 import { FiiDividends } from '@/queries/use-fiis-dividends'
 import { FiisHistory, FiisOperation, FiiSummary } from '@/types/fiis'
 import { format, subMonths } from 'date-fns'
@@ -47,28 +47,58 @@ export class FiisController {
     }, 0)
   }
 
-  formatHistoryToChartData(fiiFilter?: string, data?: CloudflareModelResponse) {
-    if (data && data.errors.length === 0) {
-      const message = data?.result.response
-      const startIndex = message.indexOf('{')
-      const endIndex = message.lastIndexOf('}') + 1
-
-      const jsonString = message.substring(startIndex, endIndex)
-      const jsonObject = JSON.parse(jsonString)
-      console.log(data, jsonObject)
-    }
+  formatHistoryToChartData(
+    fiiFilter?: string,
+    cloudflareData?: ParsedCloduflareResponse,
+  ) {
+    let chartType = 'line'
     const filter = fiiFilter ?? this.history[0].fiiName
     const flatDates = this.history[0].history.map((h) =>
       format(new Date(h.date), 'dd/MM/yyyy'),
     )
 
+    let filteredFiis = this.history.filter((fii) => fii.fiiName === filter)
+    let filteredFlatDates = flatDates
+
     const filterIsCustomOption = Object.values(FiisPriceChartOptions).includes(
       filter as FiisPriceChartOptions,
     )
 
-    let filteredFiis = this.history.filter((fii) => fii.fiiName === filter)
-
-    if (filterIsCustomOption) {
+    if (cloudflareData) {
+      filteredFiis =
+        cloudflareData.funds[0] === 'all'
+          ? this.history
+          : this.history.filter((fii) =>
+              cloudflareData?.funds.includes(fii.fiiName),
+            )
+      switch (cloudflareData?.context) {
+        case 'price history': {
+          filteredFlatDates = flatDates.filter((date) =>
+            cloudflareData?.period.includes(date.slice(3, 10)),
+          )
+          break
+        }
+        case 'dividends': {
+          filteredFlatDates = cloudflareData.period
+          const filteredDividends =
+            cloudflareData.funds[0] === 'all'
+              ? this.dividends
+              : this.dividends.filter((fii) =>
+                  cloudflareData?.funds.includes(fii.fiiName),
+                )
+          filteredFiis = filteredDividends.map((fiiDividend) => {
+            return {
+              fiiName: fiiDividend.fiiName,
+              history: cloudflareData.period.map((month) => ({
+                close: fiiDividend.monthlyDividends[month],
+                date: new Date(),
+              })),
+            }
+          })
+          chartType = 'bar'
+        }
+      }
+    } else if (filterIsCustomOption) {
       switch (filter) {
         case FiisPriceChartOptions.AllBaseTen:
           filteredFiis = this.history.filter((fii) => fii.history[0].close < 30)
@@ -86,34 +116,58 @@ export class FiisController {
       }
     }
 
-    const chartData = flatDates.map((date) => {
-      const dateIndex = flatDates.indexOf(date)
-
+    const chartData = filteredFlatDates.map((date, index) => {
       const fiisPricingAtDateIndex = filteredFiis.reduce(
         (acc: { [key: string]: number }, fii) => {
-          acc[fii.fiiName] = fii.history[dateIndex]?.close
+          const close = fii.history[index]?.close
+          if (close && close > 0) {
+            acc[fii.fiiName] = close
+          }
           return acc
         },
         {},
       )
+      Object.keys(fiisPricingAtDateIndex).forEach((fii) => {
+        if (
+          fiisPricingAtDateIndex[fii] === undefined ||
+          fiisPricingAtDateIndex[fii] === 0
+        ) {
+          delete fiisPricingAtDateIndex[fii]
+        }
+      })
       return { date, ...fiisPricingAtDateIndex }
     })
 
     const yAxisDomain = [
-      (_.min(_.map(filteredFiis[0].history, (h) => h.close)) ?? 0) - 1,
-      (_.max(_.map(filteredFiis[0].history, (h) => h.close)) ?? 0) + 1,
+      (_.min(
+        _.map(
+          filteredFiis[0].history.filter((h) =>
+            filteredFlatDates.includes(format(h.date, 'dd/MM/yyyy')),
+          ),
+          (h) => h.close,
+        ),
+      ) ?? 0) - 1,
+      (_.max(
+        _.map(
+          filteredFiis[0].history.filter((h) =>
+            filteredFlatDates.includes(format(h.date, 'dd/MM/yyyy')),
+          ),
+          (h) => h.close,
+        ),
+      ) ?? 0) + 1,
     ]
 
     return {
       yAxisDomain,
       chartData,
+      chartType,
     }
   }
 
   nextMonthDividends() {
     return this.dividends.reduce((acc, fiiDividends) => {
       const monthKey = format(subMonths(new Date(), 1), 'MM', { locale: ptBR })
-      const lastMonth = `${new Date().getFullYear()}/${monthKey}`
+      const lastMonth = `${monthKey}/${new Date().getFullYear()}`
       acc += fiiDividends.monthlyDividends[lastMonth]
       return acc
     }, 0)

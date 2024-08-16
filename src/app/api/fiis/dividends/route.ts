@@ -43,7 +43,7 @@ export async function GET() {
         }
         if (quotesOwnedAtPayment < 0) quotesOwnedAtPayment = 0
         const dividendsReceived = quotesOwnedAtPayment * dividend.dividends
-        const monthKey = format(addHours(dividend.date, 3), 'yyyy/MM')
+        const monthKey = format(addHours(dividend.date, 3), 'MM/yyyy')
 
         if (!monthlyDividends[monthKey]) {
           monthlyDividends[monthKey] = 0

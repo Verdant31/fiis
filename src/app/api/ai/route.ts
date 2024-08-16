@@ -1,14 +1,28 @@
 'use server'
 import { run } from '@/lib/cloudflare'
+import { addHours } from 'date-fns'
 import { NextRequest, NextResponse } from 'next/server'
+
+const formatMonth = (month: number) => (month < 10 ? `0${month}` : month)
 
 export async function POST(req: NextRequest) {
   try {
     const { modelInput } = await req.json()
+    const currentMonth = addHours(new Date(), 3).getMonth() + 1
     const message = `
-      You are a personal assistant for investment funds. You will receive the user's question and must return a JSON with the following questions answered: Context: The answer must be "price history" or "dividends", the second is Funds: which are the funds to be shown, and the third Period: the period must contain an array with the dates that correspond to the period entered by the user. Example: "last 3 months" would be "2024/08", "2024/07","2024/06". Useful information: 1. If no fund is specified, consider the answer "all" 2. If no date is provided, consider the last 12 months. 3. Dates must be in the "year/month" format
+      You are a personal assistant for investment funds. You will receive the user's question and must return a JSON with the following questions answered: 
+      {
+        context: The answer must be "price history" or "dividends",
+        funds: which are the funds to be shown, must be a array of strings,
+        period: the period must contain an array of strings with the dates that correspond to the period entered by the user. For example, "last 3 months" should be "${formatMonth(currentMonth)}/2024", "${formatMonth(currentMonth - 1)}/2024", "${formatMonth(currentMonth - 2)}/2024". 
+      }
+      Useful information: 
+      1. If no fund is specified, consider the answer "all" 
+      2. If no date is provided, consider the last 12 months.
+      3. Dates must be in the "month/year" format
+      4. The current month is: ${formatMonth(currentMonth)}
     `
-    const response = await run('@cf/meta/llama-3-8b-instruct', {
+    const response = await run('@hf/thebloke/llama-2-13b-chat-awq', {
       messages: [
         {
           role: 'system',

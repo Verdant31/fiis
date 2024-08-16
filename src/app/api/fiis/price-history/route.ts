@@ -7,9 +7,9 @@ import yahooFinance from 'yahoo-finance2'
 export async function GET() {
   try {
     const fiisPurchases = await prisma.fiisOperations.findMany({})
-    const fiis = _.uniqBy(fiisPurchases, 'fiiName')
-      .map((purchase) => purchase.fiiName + '.SA')
-      .filter((f) => f === 'XPML11.SA' || f === 'MXRF11.SA')
+    const fiis = _.uniqBy(fiisPurchases, 'fiiName').map(
+      (purchase) => purchase.fiiName + '.SA',
+    )
 
     const now = new Date()
     const period1 = new Date(
@@ -36,7 +36,6 @@ export async function GET() {
     }))
 
     const results = await Promise.all(promises)
-
     return NextResponse.json({
       results: results ?? [],
       status: 200,

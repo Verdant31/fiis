@@ -40,7 +40,6 @@ export function AnalyticsCarousel() {
   }
 
   const fiis = new FiisController({ operations, dividends })
-
   const totalValueInvested = fiis.getTotalValueInvested()
 
   return (

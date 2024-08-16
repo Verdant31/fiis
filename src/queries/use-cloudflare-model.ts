@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useQuery } from '@tanstack/react-query'
-import { toast } from 'sonner'
 import { api } from '@/lib/axios'
 import { FiisHistory, FiiSummary } from '@/types/fiis'
 import { Dispatch, SetStateAction } from 'react'
+import { parseCloudflareResponse } from '@/utils/parse-cloudflare-response'
 
 interface UseCloudflareModelProps {
   modelInput?: string
@@ -21,6 +21,12 @@ export interface CloudflareModelResponse {
   messages: any[]
 }
 
+export type ParsedCloduflareResponse = {
+  context: string
+  funds: string[]
+  period: string[]
+}
+
 export const useCloudflareModel = ({
   modelInput,
   summary,
@@ -30,21 +36,18 @@ export const useCloudflareModel = ({
   const query = useQuery(
     ['cloudflare'],
     async () => {
-      const { data, status } = await api.post('ai', {
+      const { data } = await api.post('ai', {
         modelInput,
         summary,
         fiisHistory,
       })
 
-      if (status !== 200 || data?.errors?.length > 0) {
-        toast.error(
-          'Houve um erro ao tentar converter sua query, tente reformula-lá ou contate o administrador',
-        )
-        return undefined
-      }
+      const result = parseCloudflareResponse({
+        data: data?.response as CloudflareModelResponse,
+      })
 
       setModelInput && setModelInput('')
-      return data?.response as CloudflareModelResponse
+      return result
     },
     {
       refetchOnWindowFocus: false,
