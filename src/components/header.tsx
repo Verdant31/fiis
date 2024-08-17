@@ -60,7 +60,10 @@ export function Header() {
                     <p className="mt-8 pl-4 text-sm font-semibold text-muted-foreground">
                       Investimentos
                     </p>
-                    <a className="pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-4">
+                    <a
+                      href="/fiis"
+                      className="pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-4"
+                    >
                       <Building2 size={18} />
                       <p className="text-sm">Fundos Imobiliarios</p>
                     </a>

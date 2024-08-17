@@ -28,9 +28,12 @@ export async function GET() {
         }
         return acc
       }, 0)
+      const operations = fii.operations.sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+      )
 
       return {
-        fiiName: fii.fiiName,
+        fiiName: fii.fiiName.split('.SA')[0],
         quotes,
         monthlyYield: summary.dividendRate,
         annualYield: summary.dividendYield,
@@ -39,6 +42,8 @@ export async function GET() {
         type: summary.quoteType,
         high: summary.regularMarketDayHigh,
         low: summary.regularMarketDayLow,
+        operations,
+        valueAtFirstPurchase: operations[operations.length - 1].quotationValue,
       }
     })
 

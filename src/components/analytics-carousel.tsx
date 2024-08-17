@@ -52,7 +52,7 @@ export function AnalyticsCarousel() {
     >
       <CarouselContent className="-ml-4">
         <CarouselItem className="pl-4 basis-[270px]">
-          <Card className="bg-background border-zinc-800">
+          <Card className="bg-zinc-900 ">
             <CardHeader>
               <CardTitle className="text-md font-normal text-white">
                 Total em FIIs
@@ -67,7 +67,7 @@ export function AnalyticsCarousel() {
           </Card>
         </CarouselItem>
         <CarouselItem className="pl-4 basis-[270px]">
-          <Card className="bg-background border-zinc-800">
+          <Card className="bg-zinc-900 ">
             <CardHeader>
               <CardTitle className="text-md font-normal text-white">
                 Dividendos recebidos
@@ -82,7 +82,7 @@ export function AnalyticsCarousel() {
           </Card>
         </CarouselItem>
         <CarouselItem className="pl-4 basis-[270px]">
-          <Card className="bg-background border-zinc-800">
+          <Card className="bg-zinc-900 ">
             <CardHeader>
               <CardTitle className="text-md font-normal text-white">
                 Próximo mês
@@ -97,7 +97,7 @@ export function AnalyticsCarousel() {
           </Card>
         </CarouselItem>
         <CarouselItem className="pl-4 basis-[270px]">
-          <Card className="bg-background border-zinc-800">
+          <Card className="bg-zinc-900 ">
             <CardHeader>
               <CardTitle className="text-md font-normal text-white">
                 Até a meta

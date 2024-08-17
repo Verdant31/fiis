@@ -8,12 +8,19 @@ export type FiisHistory = {
   }[]
 }
 
+export type FiisOperation = {
+  fiiName: string
+  operations: FiisOperations[]
+}
+
 export type FiiSummary = {
   fiiName: string
-  monthlyYield: number
-  annualYield: number
+  monthlyYield?: number
+  annualYield?: number
   price: number | undefined
-  pvp: string | undefined
+  pvp?: string | undefined
+  operations: FiisOperation[]
+  valueAtFirstPurchase: number
   type:
     | 'CRYPTOCURRENCY'
     | 'CURRENCY'
@@ -27,11 +34,6 @@ export type FiiSummary = {
   quotes: number
   high: number | undefined
   low: number | undefined
-}
-
-export type FiisOperation = {
-  fiiName: string
-  operations: FiisOperations[]
 }
 
 export type Dividend = {
