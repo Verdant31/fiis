@@ -17,7 +17,7 @@ export type FiiSummary = {
   fiiName: string
   monthlyYield?: number
   annualYield?: number
-  price: number | undefined
+  price: number
   pvp?: string | undefined
   operations: FiisOperation[]
   valueAtFirstPurchase: number

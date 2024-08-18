@@ -56,7 +56,7 @@ export const fiisSummaryColumns: ColumnDef<FiiSummary>[] = [
     header: 'High/Low',
     cell: ({ row }) => {
       if (!row.original.high || !row.original.low) {
-        return <p className="font-medium">Sem informações</p>
+        return <p className="font-medium">N/A</p>
       }
       return (
         <div className="font-medium flex flex-col md:block">
