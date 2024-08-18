@@ -1,6 +1,6 @@
 'use client'
 import { FiisHistory } from '@/types/fiis'
-import React from 'react'
+import React, { useState } from 'react'
 import { FiisController } from '@/controllers/fii'
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts'
 import { parse } from 'date-fns'
@@ -23,16 +23,11 @@ import {
 interface Props {
   history?: FiisHistory[]
   isLoading: boolean
-  fiiFilter?: string
-  setFiiFilter: (value: string) => void
 }
 
-export function FiisPriceChart({
-  history,
-  isLoading,
-  fiiFilter,
-  setFiiFilter,
-}: Props) {
+export function FiisPriceChart({ history, isLoading }: Props) {
+  const [fiiFilter, setFiiFilter] = useState<string>()
+
   if (isLoading || !history) return <h1>Loading</h1>
 
   const fiisController = new FiisController({
@@ -50,7 +45,7 @@ export function FiisPriceChart({
   ]
 
   return (
-    <div className="mt-8 mb-20 max-w-[760px] lg:w-full">
+    <div className="mx-auto mb-20 max-w-[1280pxpx] lg:w-full lg:basis-[50%] lg:mb-4">
       <div className="flex items-end justify-between">
         <div>
           <h1 className="font-semibold text-lg lg:text-xl">
