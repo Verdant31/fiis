@@ -20,9 +20,10 @@ export default function Fiis() {
   const { data: summary, isLoading } = useFiisSummary()
 
   const selectedFii = summary?.find((fii) => fii.fiiName === selectedFiiName)
+
   return (
     <main className="w-[90%] mx-auto mt-6 overflow-hidden lg:w-[calc(100%-48px)] lg:max-w-[1400px]">
-      <Tabs defaultValue="details">
+      <Tabs defaultValue="general">
         <TabsList className="grid grid-cols-2 w-[400px] mb-4">
           <TabsTrigger value="general">Visão geral</TabsTrigger>
           <TabsTrigger value="details">Detalhes</TabsTrigger>
@@ -47,7 +48,13 @@ export default function Fiis() {
           )}
         </TabsContent>
         <TabsContent value="details">
-          {summary && (
+          {isLoading || !summary ? (
+            <div>
+              <ShadSkeleton className="mt-6 h-[30px] w-[110px]" />
+              <ShadSkeleton className="mt-2 h-[30px] w-full max-w-[300px]" />
+              <ShadSkeleton className="mt-2 h-[40px] w-[160px]" />
+            </div>
+          ) : (
             <div>
               <h1 className="text-xl font-semibold pl-1 ">Fundo</h1>
               <p className="text-sm text-muted-foreground pl-1 w-[90%] mt-1">
@@ -80,7 +87,9 @@ export default function Fiis() {
                     ))}
                 </SelectContent>
               </Select>
-              {selectedFii && <FiiDetails fii={selectedFii} />}
+              {selectedFii && (
+                <FiiDetails fiisLength={summary.length} fii={selectedFii} />
+              )}
             </div>
           )}
         </TabsContent>

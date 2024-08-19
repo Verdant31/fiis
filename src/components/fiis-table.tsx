@@ -37,7 +37,7 @@ export default function FiisTable({ summary, isLoading, operations }: Props) {
     },
     initialState: {
       pagination: {
-        pageSize: 8,
+        pageSize: 11,
       },
     },
   })

@@ -52,20 +52,16 @@ export const fiisSummaryColumns: ColumnDef<FiiSummary>[] = [
     },
   },
   {
-    accessorKey: 'high/low',
-    header: 'High/Low',
+    accessorKey: 'variation',
+    header: 'Variação',
     cell: ({ row }) => {
       if (!row.original.high || !row.original.low) {
         return <p className="font-medium">N/A</p>
       }
+
       return (
         <div className="font-medium flex flex-col md:block">
-          <span className="font-semibold ">
-            {currencyFormatter(row.original.high)} /{' '}
-          </span>
-          <span className="font-semibold ">
-            {currencyFormatter(row.original.low)}
-          </span>
+          {currencyFormatter(row.original.high - row.original.low)}
         </div>
       )
     },

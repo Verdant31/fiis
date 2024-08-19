@@ -51,6 +51,11 @@ export class FiisController {
     fiiFilter?: string,
     cloudflareData?: ParsedCloduflareResponse,
   ) {
+    if (!(this.history?.length > 0))
+      return {
+        chartData: [],
+        yAxisDomain: [],
+      }
     let chartType = 'line'
     const filter = fiiFilter ?? this.history[0].fiiName
     const flatDates = this.history[0].history.map((h) =>
