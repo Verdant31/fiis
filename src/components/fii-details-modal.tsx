@@ -7,7 +7,6 @@ interface Props {
 }
 
 export function FiiDetailsModal({ onClose, details }: Props) {
-  console.log(details)
   return (
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent

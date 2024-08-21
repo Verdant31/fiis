@@ -1,4 +1,4 @@
-import { FiisOperation, FiiSummary } from '@/types/fiis'
+import { FiiSummary } from '@/types/fiis'
 import React, { useState } from 'react'
 import { DataTable } from './table'
 import {
@@ -14,16 +14,19 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
+import { useWindowSize } from '@/hooks/use-window-size'
+import { FiisOperations } from '@prisma/client'
 
 interface Props {
   summary: FiiSummary[]
-  operations: FiisOperation[]
+  operations: FiisOperations[]
   isLoading: boolean
 }
 
 export default function FiisTable({ summary, isLoading, operations }: Props) {
   const [summarySorting, setSummarySorting] = useState<SortingState>([])
   const [operationsSorting, setOperationsSorting] = useState<SortingState>([])
+  const windowSize = useWindowSize()
 
   const summaryTable = useReactTable({
     data: summary,
@@ -37,7 +40,7 @@ export default function FiisTable({ summary, isLoading, operations }: Props) {
     },
     initialState: {
       pagination: {
-        pageSize: 11,
+        pageSize: windowSize.width && windowSize?.width < 600 ? 8 : 8,
       },
     },
   })
@@ -70,7 +73,10 @@ export default function FiisTable({ summary, isLoading, operations }: Props) {
             <TabsTrigger value="operations">Operações</TabsTrigger>
           </TabsList>
           <TabsContent value="fiis">
-            <DataTable className="h-[720px]" table={summaryTable} />
+            <DataTable
+              className="h-[720px] md:h-[540px]"
+              table={summaryTable}
+            />
           </TabsContent>
           <TabsContent value="operations">
             <DataTable className="h-[720px]" table={operationsTable} />

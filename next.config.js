@@ -2,7 +2,11 @@
 
 const nextConfig = {
   experimental: {
-    serverComponentsExternalPackages: ['@node-rs/argon2', 'yahoo-finance2'],
+    serverComponentsExternalPackages: [
+      '@node-rs/argon2',
+      'yahoo-finance2',
+      'jszip',
+    ],
   },
 }
 

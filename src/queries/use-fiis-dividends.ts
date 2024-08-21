@@ -3,9 +3,16 @@ import { toast } from 'sonner'
 import { api } from '@/lib/axios'
 import { YahooApiInternalError } from '@/lib/exceptions'
 
+export type Dividend = {
+  date: string
+  paymentPerQuote: number
+  quotesAtPayment: number
+  total: number
+}
+
 export type FiiDividends = {
   fiiName: string
-  monthlyDividends: Record<string, number>
+  monthlyDividends: Record<string, Dividend>
 }
 
 export const useFiisDividends = () => {

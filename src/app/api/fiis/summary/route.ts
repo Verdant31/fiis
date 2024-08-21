@@ -4,6 +4,7 @@ import { dateToEnFormat } from '@/utils/date-to-en-format'
 import _ from 'lodash'
 import { NextResponse } from 'next/server'
 import yahooFinance from 'yahoo-finance2'
+import { handleFiiMissingInfos } from '@/helpers/handle-fii-missing-info'
 
 export async function GET() {
   try {
@@ -12,6 +13,7 @@ export async function GET() {
 
     const fiis = Object.keys(fiisAsKeys).map((fiiName) => ({
       fiiName: fiiName + '.SA',
+      fiiCnpj: fiisAsKeys[fiiName]?.[0]?.fiiCnpj,
       operations: fiisAsKeys[fiiName].map((operation) => ({
         ...operation,
         date: dateToEnFormat(operation.date),
@@ -31,6 +33,7 @@ export async function GET() {
       const operations = fii.operations.sort(
         (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
       )
+      const hasMissingInfo = !summary.dividendRate || !summary.priceToBook
 
       return {
         fiiName: fii.fiiName.split('.SA')[0],
@@ -44,6 +47,12 @@ export async function GET() {
         low: summary.regularMarketDayLow,
         operations,
         valueAtFirstPurchase: operations[operations.length - 1].quotationValue,
+        ...(hasMissingInfo && {
+          extraInfo: await handleFiiMissingInfos({
+            ...fii,
+            currentQuotePrice: summary.regularMarketPrice as number,
+          }),
+        }),
       }
     })
 

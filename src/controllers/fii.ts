@@ -1,4 +1,4 @@
-import { FiisPriceChartOptions } from '@/components/fiis-price-chart'
+import { FiisPriceChartOptions } from '@/components/fiis-home-chart'
 import { ParsedCloduflareResponse } from '@/queries/use-cloudflare-model'
 import { FiiDividends } from '@/queries/use-fiis-dividends'
 import { FiisHistory, FiisOperation, FiiSummary } from '@/types/fiis'
@@ -38,7 +38,7 @@ export class FiisController {
     return this.dividends.reduce((acc, fiiDividends) => {
       const months = Object.keys(fiiDividends.monthlyDividends)
       const totalFiiDividends = months.reduce((acc, month) => {
-        acc += fiiDividends.monthlyDividends[month]
+        acc += fiiDividends.monthlyDividends[month].total
         return acc
       }, 0)
 
@@ -95,7 +95,7 @@ export class FiisController {
             return {
               fiiName: fiiDividend.fiiName,
               history: cloudflareData.period.map((month) => ({
-                close: fiiDividend.monthlyDividends[month],
+                close: fiiDividend.monthlyDividends[month].total,
                 date: new Date(),
               })),
             }
@@ -173,7 +173,7 @@ export class FiisController {
     return this.dividends.reduce((acc, fiiDividends) => {
       const monthKey = format(subMonths(new Date(), 1), 'MM', { locale: ptBR })
       const lastMonth = `${monthKey}/${new Date().getFullYear()}`
-      acc += fiiDividends.monthlyDividends[lastMonth]
+      acc += fiiDividends.monthlyDividends[lastMonth].total
       return acc
     }, 0)
   }

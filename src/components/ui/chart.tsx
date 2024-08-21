@@ -203,6 +203,7 @@ const ChartTooltipContent = React.forwardRef<
             if (item.value === 0 && skipFalsyValues) {
               return null
             }
+
             return (
               <div
                 key={item.dataKey}

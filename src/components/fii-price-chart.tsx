@@ -11,7 +11,7 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart'
 import { BRL } from '@/utils/intlBr'
-import { FiisPriceChartOptions } from './fiis-price-chart'
+import { FiisPriceChartOptions } from './fiis-home-chart'
 import {
   Select,
   SelectContent,

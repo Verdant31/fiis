@@ -1,12 +1,18 @@
 'use server'
 import { prisma } from '@/lib/prisma'
-import { Dividend } from '@/types/fiis'
 import { dateToEnFormat } from '@/utils/date-to-en-format'
 import { FiisOperations } from '@prisma/client'
 import _ from 'lodash'
 import { NextResponse } from 'next/server'
 import yahooFinance from 'yahoo-finance2'
 import { format, addHours } from 'date-fns'
+
+type FiiDividendObject = {
+  date: Date
+  paymentPerQuote: number
+  quotesAtPayment: number
+  total: number
+}
 
 export async function GET() {
   try {
@@ -23,9 +29,12 @@ export async function GET() {
 
     const calculateMonthlyDividends = (
       fiiOperations: FiisOperations[],
-      dividends: Dividend[],
+      dividends: {
+        date: Date
+        dividends: number
+      }[],
     ) => {
-      const monthlyDividends: Record<string, number> = {}
+      const monthlyDividends: Record<string, FiiDividendObject> = {}
       for (const dividend of dividends) {
         let quotesOwnedAtPayment = 0
 
@@ -46,9 +55,14 @@ export async function GET() {
         const dividendsReceived = quotesOwnedAtPayment * dividend.dividends
         const monthKey = format(addHours(dividend.date, 3), 'MM/yyyy')
         if (!monthlyDividends[monthKey]) {
-          monthlyDividends[monthKey] = 0
+          monthlyDividends[monthKey] = {
+            date: addHours(dividend.date, 3),
+            paymentPerQuote: dividend.dividends,
+            quotesAtPayment: quotesOwnedAtPayment,
+            total: dividendsReceived,
+          }
         }
-        monthlyDividends[monthKey] += dividendsReceived
+        monthlyDividends[monthKey].total = dividendsReceived
       }
 
       return monthlyDividends
@@ -65,7 +79,9 @@ export async function GET() {
         monthlyDividends: calculateMonthlyDividends(fii.operations, dividends),
       }
     })
+
     const results = await Promise.all(promises)
+
     return NextResponse.json({
       results: results ?? [],
       status: 200,

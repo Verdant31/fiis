@@ -51,7 +51,7 @@ export function FiisDividendsChart() {
       return {
         fii: fiiDividends.fiiName.split('11.SA')[0],
         dividends: months.reduce((acc, month) => {
-          acc += fiiDividends.monthlyDividends[month]
+          acc += fiiDividends.monthlyDividends[month].total
           return acc
         }, 0),
       }

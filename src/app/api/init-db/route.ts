@@ -1,6 +1,6 @@
 'use server'
 import { NextResponse } from 'next/server'
-import data from '../../../OPERATIONS.json'
+import data from '../../../OPERATIONS_MOCK.json'
 import { prisma } from '@/lib/prisma'
 import { Operation } from '@prisma/client'
 
@@ -8,6 +8,7 @@ export async function GET() {
   try {
     const response = await prisma.fiisOperations.createMany({
       data: data.map((purchase) => ({
+        fiiCnpj: purchase.cnpj,
         type:
           purchase.operation === 'sale' ? Operation.sale : Operation.purchase,
         fiiName: purchase.asset_name,

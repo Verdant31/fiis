@@ -1,8 +1,10 @@
 'use client'
 
 import { DataTableColumnHeader } from '@/components/table'
-import { FiisOperation, FiiSummary } from '@/types/fiis'
+import { Dividend } from '@/queries/use-fiis-dividends'
+import { FiiSummary } from '@/types/fiis'
 import { currencyFormatter } from '@/utils/currency-formatter'
+import { FiisOperations } from '@prisma/client'
 import { ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
 
@@ -68,7 +70,7 @@ export const fiisSummaryColumns: ColumnDef<FiiSummary>[] = [
   },
 ]
 
-export const operationsSummaryColumns: ColumnDef<FiisOperation>[] = [
+export const operationsSummaryColumns: ColumnDef<FiisOperations>[] = [
   {
     accessorKey: 'fiiName',
     header: 'Nome',
@@ -112,7 +114,65 @@ export const operationsSummaryColumns: ColumnDef<FiisOperation>[] = [
       return 0
     },
     cell: ({ row }) => {
-      console.log()
+      return (
+        <div className="font-medium">
+          {format(new Date(row.getValue('date')), 'dd/MM/yyyy')}
+        </div>
+      )
+    },
+  },
+]
+
+export const dividendsColumns: ColumnDef<Dividend>[] = [
+  {
+    accessorKey: 'quotesAtPayment',
+    header: 'Cotas',
+    cell: ({ row }) => {
+      return (
+        <div className=" font-medium">{row.getValue('quotesAtPayment')}</div>
+      )
+    },
+  },
+  {
+    accessorKey: 'paymentPerQuote',
+    header: 'Por cota',
+    cell: ({ row }) => {
+      return (
+        <div className=" font-medium">
+          {currencyFormatter(row.getValue('paymentPerQuote'))}
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'total',
+    header: 'Total',
+    cell: ({ row }) => {
+      return (
+        <div className=" font-medium">
+          {currencyFormatter(row.getValue('total'))}
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'date',
+    header: ({ column }) => {
+      return <DataTableColumnHeader column={column} title="Data" />
+    },
+    sortingFn: (a, b) => {
+      const dateA = new Date(a.getValue('date'))
+      const dateB = new Date(b.getValue('date'))
+
+      if (dateA < dateB) {
+        return -1
+      }
+      if (dateA > dateB) {
+        return 1
+      }
+      return 0
+    },
+    cell: ({ row }) => {
       return (
         <div className="font-medium">
           {format(new Date(row.getValue('date')), 'dd/MM/yyyy')}

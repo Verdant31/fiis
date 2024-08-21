@@ -30,6 +30,7 @@ model Session {
 model FiisOperations {
   id             String    @id @default(auto()) @map("_id") @db.ObjectId
   fiiName        String    @unique
+  fiiCnpj        String
   date           String
   type           Operation @default(sale)
   qty            Int
@@ -40,6 +41,17 @@ model FiisOperations {
 enum Operation {
   purchase
   sale
+}
+
+model ExtraFiisInfos {
+  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+  fiiCnpj             String   @unique
+  annualYield         Float
+  totalPatrimony      Float
+  sentQuotes          Int
+  patrimonyQuoteValue Float
+  pvp                 Float
+  updatedAt           DateTime @updatedAt
 }
 
 model Payment {

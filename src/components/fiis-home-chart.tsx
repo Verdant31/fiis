@@ -44,7 +44,7 @@ export enum FiisPriceChartOptions {
   AllBaseNinety = 'Base 90',
 }
 
-export function FiisPriceChart() {
+export function FiisHomeChart() {
   const [fiiFilter, setFiiFilter] = useState<string>()
   const [modelInput, setModelInput] = useState<string>('')
 
