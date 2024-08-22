@@ -41,6 +41,7 @@ model FiisOperations {
 enum Operation {
   purchase
   sale
+  unfolding
 }
 
 model ExtraFiisInfos {

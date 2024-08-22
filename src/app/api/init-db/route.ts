@@ -10,7 +10,11 @@ export async function GET() {
       data: data.map((purchase) => ({
         fiiCnpj: purchase.cnpj,
         type:
-          purchase.operation === 'sale' ? Operation.sale : Operation.purchase,
+          purchase.operation === 'sale'
+            ? Operation.sale
+            : purchase.operation === 'unfolding'
+              ? Operation.unfolding
+              : Operation.purchase,
         fiiName: purchase.asset_name,
         date: purchase.purchase_date,
         qty: purchase.quantity_purchased,

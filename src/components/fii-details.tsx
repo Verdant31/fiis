@@ -26,6 +26,8 @@ import {
   useReactTable,
   getCoreRowModel,
   getPaginationRowModel,
+  SortingState,
+  getSortedRowModel,
 } from '@tanstack/react-table'
 import { DataTable } from './table'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -47,6 +49,9 @@ export default function FiiDetails({
   windowWidth,
   operations,
 }: Props) {
+  const [dividendsSorting, setDividendsSorting] = useState<SortingState>([])
+  const [operationsSorting, setOperationsSorting] = useState<SortingState>([])
+
   const [tab, setTab] = useState('price')
 
   const { data: priceHistory, isLoading: isLoadingHistory } =
@@ -70,6 +75,11 @@ export default function FiiDetails({
     columns: operationsSummaryColumns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    onSortingChange: setOperationsSorting,
+    getSortedRowModel: getSortedRowModel(),
+    state: {
+      sorting: operationsSorting,
+    },
     initialState: {
       pagination: {
         pageSize: windowWidth > 1024 ? 7 : 11,
@@ -82,6 +92,11 @@ export default function FiiDetails({
     columns: dividendsColumns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    onSortingChange: setDividendsSorting,
+    getSortedRowModel: getSortedRowModel(),
+    state: {
+      sorting: dividendsSorting,
+    },
     initialState: {
       pagination: {
         pageSize: windowWidth > 1024 ? 7 : 11,
