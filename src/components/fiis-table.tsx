@@ -21,9 +21,15 @@ interface Props {
   summary: FiiSummary[]
   operations: FiisOperations[]
   isLoading: boolean
+  onClickTableRow: (fiiName: string) => void
 }
 
-export default function FiisTable({ summary, isLoading, operations }: Props) {
+export default function FiisTable({
+  summary,
+  isLoading,
+  operations,
+  onClickTableRow,
+}: Props) {
   const [summarySorting, setSummarySorting] = useState<SortingState>([])
   const [operationsSorting, setOperationsSorting] = useState<SortingState>([])
   const windowSize = useWindowSize()
@@ -74,6 +80,7 @@ export default function FiisTable({ summary, isLoading, operations }: Props) {
           </TabsList>
           <TabsContent value="fiis">
             <DataTable
+              onClickRow={(row) => onClickTableRow(row.fiiName)}
               className="h-[720px] md:h-[540px]"
               table={summaryTable}
             />

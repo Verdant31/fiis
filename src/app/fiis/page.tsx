@@ -3,20 +3,16 @@ import { useFiisSummary } from '@/queries/use-fiis-summary'
 import FiisTable from '@/components/fiis-table'
 import { Button } from '@/components/ui/button'
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { Skeleton as ShadSkeleton } from '@/components/ui/skeleton'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { useState } from 'react'
 import FiiDetails from '@/components/fii-details'
 import { useWindowSize } from '@/hooks/use-window-size'
+import { ChevronRight } from 'lucide-react'
 
 export default function Fiis() {
+  const [tab, setTab] = useState('general')
+
   const [selectedFiiName, setSelectedFiiName] = useState<string>()
   const { data: summary, isLoading } = useFiisSummary()
   const window = useWindowSize()
@@ -25,17 +21,34 @@ export default function Fiis() {
 
   return (
     <main className="w-[90%] mx-auto mt-6 overflow-hidden lg:w-[calc(100%-48px)] lg:max-w-[1400px] pb-20">
-      <Tabs defaultValue="general">
-        <TabsList className="grid grid-cols-2 w-[250px] lg:w-[400px] mb-4">
-          <TabsTrigger value="general">Visão geral</TabsTrigger>
-          <TabsTrigger value="details">Detalhes</TabsTrigger>
-        </TabsList>
-        <TabsContent value="general">
+      <div className="flex items-center gap-2 lg:text-lg">
+        <h1
+          className={`cursor-pointer ${tab === 'details' && 'text-muted-foreground '}`}
+          onClick={() => setTab('general')}
+        >
+          Fundos Imobiliários
+        </h1>
+        {tab === 'details' && (
+          <div className="flex items-center gap-2">
+            <ChevronRight className="shrink-0" size={24} />
+            {selectedFiiName}
+          </div>
+        )}
+      </div>
+      <Tabs
+        value={tab}
+        onValueChange={(value: string) => {
+          setTab(value)
+        }}
+        defaultValue="general"
+      >
+        <TabsContent value="general" className="mt-4">
           <div className="bg-zinc-900 p-6 rounded-md">
             <p className="text-2xl font-semibold">Seus FIIs</p>
             <p className="mt-2">
-              Aqui você tem acesso à algumas informações sobre todos seus
-              fundos, como: quotação, histórico de compras, P/VP.
+              Para verificar detalhes como: quotação, histórico de compras, P/VP
+              basta clicar na linha da tabela referente ao FII que deseja ver
+              mais informações.
             </p>
             <Button className="mt-4 ">Cadastrar nova operação</Button>
           </div>
@@ -46,6 +59,10 @@ export default function Fiis() {
               operations={summary.map((fii) => fii.operations).flat()}
               summary={summary.filter((fii) => fii.quotes > 0)}
               isLoading={isLoading}
+              onClickTableRow={(value) => {
+                setSelectedFiiName(value)
+                setTab('details')
+              }}
             />
           )}
         </TabsContent>
@@ -58,37 +75,6 @@ export default function Fiis() {
             </div>
           ) : (
             <div>
-              <h1 className="text-xl font-semibold pl-1 lg:text-2xl">Fundo</h1>
-              <p className="text-sm text-muted-foreground pl-1 w-[90%] mt-1 lg:text-base">
-                Escolha o fundo entre o seu portifólio que deseja ver mais
-                informações sobre.
-              </p>
-              <Select
-                value={selectedFiiName}
-                onValueChange={(value) => {
-                  setSelectedFiiName(value)
-                }}
-              >
-                <SelectTrigger
-                  className="w-[200px] rounded-lg mt-2 focus:ring-0 focus:ring-offset-0"
-                  aria-label="Select a value"
-                >
-                  <SelectValue placeholder="Selecione um fundo" />
-                </SelectTrigger>
-                <SelectContent className="rounded-xl">
-                  {summary
-                    .map((fii) => fii.fiiName)
-                    .map((option) => (
-                      <SelectItem
-                        key={option}
-                        value={option}
-                        className="rounded-lg"
-                      >
-                        {option.split('.SA')[0]}
-                      </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
               {selectedFii && (
                 <FiiDetails
                   windowWidth={window?.width ?? 0}

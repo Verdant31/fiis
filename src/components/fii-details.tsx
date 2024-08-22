@@ -181,11 +181,11 @@ export default function FiiDetails({
       </div>
       <div>
         <h1 className="mt-4 text-xl font-semibold">Gráficos</h1>
-        <div className="xl:flex xl:w-full xl:gap-12 xl:items-end">
+        <div className="xl:flex xl:w-full xl:gap-12 ">
           {!priceHistory || isLoading ? (
             <ShadSkeleton className="w-full h-[300px] lg:basis-[50%] lg:h-[400px] mt-4" />
           ) : (
-            <div className="mt-4 max-h-[400px] basis-[50%] grow-0">
+            <div className="mt-4 max-h-[400px] lg:max-h-[500px] basis-[50%] grow-0">
               <Tabs
                 value={tab}
                 onValueChange={(value: string) => {
@@ -193,13 +193,13 @@ export default function FiiDetails({
                 }}
                 defaultValue="price"
               >
-                <TabsList className="grid grid-cols-2 w-[250px] lg:w-[400px] mb-4">
+                <TabsList className="lg:mb-8 grid grid-cols-2 w-[250px] lg:w-[400px] mb-4">
                   <TabsTrigger value="price">Preço</TabsTrigger>
                   <TabsTrigger value="dividends">Dividendos</TabsTrigger>
                 </TabsList>
                 <TabsContent value="price">
                   <ChartContainer
-                    className="w-full h-full"
+                    className="w-full h-full lg:max-h-[400px]"
                     config={{} satisfies ChartConfig}
                   >
                     <LineChart accessibilityLayer data={chartData} margin={{}}>
@@ -289,9 +289,9 @@ export default function FiiDetails({
               </Tabs>
             </div>
           )}
-          <div className="xl:basis-[50%] mt-6">
+          <div className="xl:basis-[50%] mt-4">
             <Tabs defaultValue="operations">
-              <TabsList className="grid grid-cols-2 w-[250px] lg:w-[400px] mb-4">
+              <TabsList className="lg:mb-8 grid grid-cols-2 w-[250px] lg:w-[400px] mb-4">
                 <TabsTrigger value="operations">Operações</TabsTrigger>
                 <TabsTrigger value="dividends">Dividendos</TabsTrigger>
               </TabsList>
