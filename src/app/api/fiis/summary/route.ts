@@ -23,7 +23,7 @@ export async function GET() {
     const promises = fiis.map(async (fii) => {
       const summary = await yahooFinance.quote(fii.fiiName)
       const quotes = fii.operations.reduce((acc, operation) => {
-        if (operation.type === 'purchase') {
+        if (operation.type === 'purchase' || operation.type === 'unfolding') {
           acc += operation.qty
         } else if (operation.type === 'sale') {
           acc -= operation.qty

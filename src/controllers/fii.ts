@@ -1,8 +1,13 @@
 import { FiisPriceChartOptions } from '@/components/fiis-home-chart'
 import { ParsedCloduflareResponse } from '@/queries/use-cloudflare-model'
 import { FiiDividends } from '@/queries/use-fiis-dividends'
-import { FiisHistory, FiisOperation, FiiSummary } from '@/types/fiis'
-import { format, subMonths } from 'date-fns'
+import {
+  DividendPeriods,
+  FiisHistory,
+  FiisOperation,
+  FiiSummary,
+} from '@/types/fiis'
+import { differenceInMonths, format, subMonths } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import _ from 'lodash'
 
@@ -32,6 +37,40 @@ export class FiisController {
       acc += total
       return acc
     }, 0)
+  }
+
+  getTotalDividendsPerMonth(period: DividendPeriods) {
+    const now = new Date()
+
+    let months: string[] = []
+    if (period === DividendPeriods.Total) {
+      const flatOperations = this.operations.map((fii) => fii.operations).flat()
+      const firstFiiPurchase = _.minBy(flatOperations, (o) => o.date)
+      if (!firstFiiPurchase) {
+        return []
+      }
+      const periodFromTheBegin = differenceInMonths(now, firstFiiPurchase.date)
+
+      months = _.range(periodFromTheBegin)
+        .map((_, i) => format(subMonths(now, i), 'MM/yyyy'))
+        .toReversed()
+    } else {
+      months = _.range(period)
+        .map((_, i) => format(subMonths(now, i), 'MM/yyyy'))
+        .toReversed()
+    }
+    const chartData = months.map((date) => {
+      const monthDividends = this.dividends.reduce((acc, fii) => {
+        const dividend = fii.monthlyDividends[date]?.total
+        if (dividend) {
+          acc += dividend
+        }
+        return acc
+      }, 0)
+      return { date, total: monthDividends }
+    })
+
+    return chartData
   }
 
   getTotalDividends() {

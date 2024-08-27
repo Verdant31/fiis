@@ -1,12 +1,8 @@
-import { FiiSummary } from '@/types/fiis'
+import { DividendPeriods, FiisOperation, FiiSummary } from '@/types/fiis'
 import React, { useState } from 'react'
 import { DataTable } from './table'
-import {
-  fiisSummaryColumns,
-  operationsSummaryColumns,
-} from '@/app/fiis/columns'
+import { fiisSummaryColumns } from '@/app/fiis/columns'
 import { Skeleton as ShadSkeleton } from './ui/skeleton'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   getCoreRowModel,
   getPaginationRowModel,
@@ -14,12 +10,22 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table'
+import { useFiisDividends } from '@/queries/use-fiis-dividends'
+import { FiisController } from '@/controllers/fii'
+import { CartesianGrid, XAxis, Bar, BarChart, YAxis } from 'recharts'
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from './ui/chart'
+import { currencyFormatter } from '@/utils/currency-formatter'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { useWindowSize } from '@/hooks/use-window-size'
-import { FiisOperations } from '@prisma/client'
-
 interface Props {
   summary: FiiSummary[]
-  operations: FiisOperations[]
+  operations: FiisOperation[]
   isLoading: boolean
   onClickTableRow: (fiiName: string) => void
 }
@@ -31,9 +37,12 @@ export default function FiisTable({
   onClickTableRow,
 }: Props) {
   const [summarySorting, setSummarySorting] = useState<SortingState>([])
-  const [operationsSorting, setOperationsSorting] = useState<SortingState>([])
-  const windowSize = useWindowSize()
+  const [selectedPeriod, setSelectedPeriod] = useState<DividendPeriods>(
+    DividendPeriods['6M'],
+  )
 
+  const { data: dividends, isLoading: isLoadingDividends } = useFiisDividends()
+  const windowSize = useWindowSize()
   const summaryTable = useReactTable({
     data: summary,
     columns: fiisSummaryColumns,
@@ -44,51 +53,110 @@ export default function FiisTable({
     state: {
       sorting: summarySorting,
     },
-    initialState: {
-      pagination: {
-        pageSize: windowSize.width && windowSize?.width < 600 ? 8 : 8,
-      },
-    },
+    initialState: {},
   })
 
-  const operationsTable = useReactTable({
-    data: operations,
-    columns: operationsSummaryColumns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setOperationsSorting,
-    getSortedRowModel: getSortedRowModel(),
-    state: {
-      sorting: operationsSorting,
-    },
-    initialState: {
-      pagination: {
-        pageSize: 11,
-      },
-    },
-  })
+  if (isLoading || isLoadingDividends || !summary) return <Skeleton />
 
-  if (isLoading || !summary) return <Skeleton />
+  const fiiController = new FiisController({ dividends, operations })
+
+  const dividendsChartData =
+    fiiController.getTotalDividendsPerMonth(selectedPeriod)
 
   return (
-    <div className="lg:basis-[50%] mb-4 mt-6">
-      <div>
-        <Tabs defaultValue="fiis">
-          <TabsList className="grid grid-cols-2 w-[200px] mb-4">
-            <TabsTrigger value="fiis">FIis</TabsTrigger>
-            <TabsTrigger value="operations">Operações</TabsTrigger>
-          </TabsList>
-          <TabsContent value="fiis">
-            <DataTable
-              onClickRow={(row) => onClickTableRow(row.fiiName)}
-              className="h-[720px] md:h-[540px]"
-              table={summaryTable}
+    <div className="flex mt-6 flex-col gap-4 lg:gap-12 lg:flex-row-reverse">
+      <div className="lg:basis-[50%] ">
+        <div className="flex mb-4  justify-between items-end">
+          <div className="w-[65%]">
+            <h1 className="text-xl font-semibold ">Dividendos</h1>
+            <p className="text-muted-foreground text-sm">
+              Valores de dividendos pagos pelos fundos nos ultimos meses
+            </p>
+          </div>
+          <Select
+            onValueChange={(value) => {
+              console.log({ value })
+              setSelectedPeriod(
+                DividendPeriods[value as keyof typeof DividendPeriods],
+              )
+            }}
+            defaultValue="6M"
+          >
+            <SelectTrigger
+              className="w-[90px] rounded-lg sm:ml-auto focus:ring-0 focus:ring-offset-0"
+              aria-label="Select a value"
+            >
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent className="rounded-xl">
+              {['1M', '3M', '6M', '12M', 'Total'].map((option) => (
+                <SelectItem key={option} value={option} className="rounded-lg">
+                  {option}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <ChartContainer
+          {...(windowSize.width &&
+            windowSize.width > 1024 && {
+              responsiveContainerWidth: '100%',
+              responsiveContainerHeight: 500,
+            })}
+          config={{}}
+        >
+          <BarChart accessibilityLayer data={dividendsChartData}>
+            <CartesianGrid vertical={false} />
+            <XAxis
+              dataKey="date"
+              tickLine={false}
+              tickMargin={10}
+              axisLine={false}
             />
-          </TabsContent>
-          <TabsContent value="operations">
-            <DataTable className="h-[720px]" table={operationsTable} />
-          </TabsContent>
-        </Tabs>
+            <ChartTooltip
+              cursor={false}
+              label="Dividendo"
+              content={
+                <ChartTooltipContent
+                  itemValueFormatter={(item) =>
+                    currencyFormatter(item.value as number)
+                  }
+                  hideLabel
+                />
+              }
+            />
+            <YAxis
+              axisLine={false}
+              tickLine={false}
+              domain={[0, 'dataMax + 100']}
+              type="number"
+              hide
+            />
+            <Bar
+              name="Dividendo"
+              dataKey="total"
+              fill="hsl(var(--chart-1))"
+              radius={8}
+              amplitude={300}
+            />
+          </BarChart>
+        </ChartContainer>
+      </div>
+      <div className="lg:basis-[50%]">
+        <div className="flex mb-4  justify-between items-end">
+          <div className="w-[90%] lg:w-full">
+            <h1 className="text-xl font-semibold ">Lista</h1>
+            <p className="text-muted-foreground text-sm">
+              Tabela com todos os seus fundos (incluindo os que estão com as
+              cotas zeradas)
+            </p>
+          </div>
+        </div>
+        <DataTable
+          onClickRow={(row) => onClickTableRow(row.fiiName)}
+          className="max-h-[630px] md:h-[540px] lg:h-[490px]"
+          table={summaryTable}
+        />
       </div>
     </div>
   )

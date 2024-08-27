@@ -28,14 +28,15 @@ model Session {
 }
 
 model FiisOperations {
-  id             String    @id @default(auto()) @map("_id") @db.ObjectId
-  fiiName        String    @unique
-  fiiCnpj        String
-  date           String
-  type           Operation @default(sale)
-  qty            Int
-  quotationValue Float     @default(0)
-  pvp            Float?    @default(0)
+  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
+  fiiName             String    @unique
+  fiiCnpj             String
+  date                String
+  type                Operation @default(sale)
+  qty                 Int
+  quotationValue      Float     @default(0)
+  pvp                 Float?    @default(0)
+  unfoldingProportion Int?
 }
 
 enum Operation {

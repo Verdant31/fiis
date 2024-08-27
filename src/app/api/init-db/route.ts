@@ -19,6 +19,7 @@ export async function GET() {
         date: purchase.purchase_date,
         qty: purchase.quantity_purchased,
         quotationValue: purchase.price_paid,
+        unfoldingProportion: purchase?.unfoldingProportion,
       })),
     })
     return NextResponse.json({

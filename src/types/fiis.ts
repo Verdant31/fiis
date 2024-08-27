@@ -55,6 +55,14 @@ export type Article = {
   relatedTickers: string[]
 }
 
+export enum DividendPeriods {
+  '1M' = 1,
+  '3M' = 3,
+  '6M' = 6,
+  '12M' = 12,
+  'Total' = 99,
+}
+
 export type FiiCVMRawData = {
   CNPJ_Fundo: string
   Cotas_Emitidas: string

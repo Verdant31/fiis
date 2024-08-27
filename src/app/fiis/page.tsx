@@ -20,7 +20,7 @@ export default function Fiis() {
   const selectedFii = summary?.find((fii) => fii.fiiName === selectedFiiName)
 
   return (
-    <main className="w-[90%] mx-auto mt-6 overflow-hidden lg:w-[calc(100%-48px)] lg:max-w-[1400px] pb-20">
+    <main className="w-[90%] mx-auto mt-6 overflow-hidden lg:w-[calc(100%-48px)] lg:max-w-[1400px] pb-12">
       <div className="flex items-center gap-2 lg:text-lg">
         <h1
           className={`cursor-pointer ${tab === 'details' && 'text-muted-foreground '}`}
@@ -43,21 +43,28 @@ export default function Fiis() {
         defaultValue="general"
       >
         <TabsContent value="general" className="mt-4">
-          <div className="bg-zinc-900 p-6 rounded-md">
-            <p className="text-2xl font-semibold">Seus FIIs</p>
-            <p className="mt-2">
+          <div className="bg-zinc-900 p-5 rounded-md">
+            <p className="text-xl font-semibold">Seus FIIs</p>
+            <p className="mt-2 text-sm">
               Para verificar detalhes como: quotação, histórico de compras, P/VP
               basta clicar na linha da tabela referente ao FII que deseja ver
               mais informações.
             </p>
-            <Button className="mt-4 ">Cadastrar nova operação</Button>
+            <Button className="mt-4" size="sm">
+              Cadastrar nova operação
+            </Button>
           </div>
           {isLoading || !summary ? (
             <ShadSkeleton className="my-6 h-[600px] w-full" />
           ) : (
             <FiisTable
-              operations={summary.map((fii) => fii.operations).flat()}
-              summary={summary.filter((fii) => fii.quotes > 0)}
+              operations={summary
+                .map((fii) => ({
+                  operations: fii.operations,
+                  fiiName: fii.fiiName,
+                }))
+                .flat()}
+              summary={summary}
               isLoading={isLoading}
               onClickTableRow={(value) => {
                 setSelectedFiiName(value)

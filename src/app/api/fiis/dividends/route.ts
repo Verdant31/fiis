@@ -6,6 +6,7 @@ import _ from 'lodash'
 import { NextResponse } from 'next/server'
 import yahooFinance from 'yahoo-finance2'
 import { format, addHours } from 'date-fns'
+import { handleUnfoldings } from '@/helpers/handle-unfoldings'
 
 type FiiDividendObject = {
   date: Date
@@ -36,23 +37,12 @@ export async function GET() {
     ) => {
       const monthlyDividends: Record<string, FiiDividendObject> = {}
       for (const dividend of dividends) {
-        let quotesOwnedAtPayment = 0
+        const { quotesOwnedAtPayment, dividendsReceived } = handleUnfoldings({
+          fiiOperations,
+          dividends,
+          dividend,
+        })
 
-        for (const operation of fiiOperations) {
-          const purchaseWasBeforeOrSameDayAsPayment =
-            new Date(operation.date) <= dividend.date
-          // new Date(operation.date) <= addHours(dividend.date, 3)
-
-          if (purchaseWasBeforeOrSameDayAsPayment) {
-            if (operation.type === 'purchase') {
-              quotesOwnedAtPayment += operation.qty
-            } else if (operation.type === 'sale') {
-              quotesOwnedAtPayment -= operation.qty
-            }
-          }
-        }
-        if (quotesOwnedAtPayment < 0) quotesOwnedAtPayment = 0
-        const dividendsReceived = quotesOwnedAtPayment * dividend.dividends
         const monthKey = format(addHours(dividend.date, 3), 'MM/yyyy')
         if (!monthlyDividends[monthKey]) {
           monthlyDividends[monthKey] = {
@@ -74,6 +64,7 @@ export async function GET() {
         period2: new Date(),
         events: 'dividends',
       })
+
       return {
         fiiName: fii.fiiName,
         monthlyDividends: calculateMonthlyDividends(fii.operations, dividends),
@@ -81,7 +72,9 @@ export async function GET() {
     })
 
     const results = await Promise.all(promises)
-
+    // for (const a of results) {
+    //   console.log(a.monthlyDividends)
+    // }
     return NextResponse.json({
       results: results ?? [],
       status: 200,
