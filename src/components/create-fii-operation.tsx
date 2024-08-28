@@ -19,8 +19,12 @@ import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { formatCnpj } from '@/utils/format-cnpj'
 import { FormInputData, formSchema } from '../lib/forms/create-fii-operation'
+import { api } from '@/lib/axios'
+import { toast } from 'sonner'
+import { ClipLoader } from 'react-spinners'
 
 export function CreateFiiOperation() {
+  const [modal, setModal] = useState({ isOpen: false, isLoading: false })
   const [date, setDate] = useState<Date | undefined>(new Date())
   const [operationType, setOperationType] = useState<Operation>(
     Operation.purchase,
@@ -33,14 +37,34 @@ export function CreateFiiOperation() {
     formState: { errors },
   } = useForm<FormInputData>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: 'XPML11.SA',
+      price: (60.48).toString(),
+      quotes: '24',
+      cnpj: '28.757.546/0001-00',
+    },
   })
 
-  const onSubmit = (data: FormInputData) => {
-    console.log({ data })
+  const onSubmit = async (formData: FormInputData) => {
+    setModal((p) => ({ ...p, isLoading: true }))
+
+    const { data } = await api.post('/fiis/create-operation', {
+      ...formData,
+      operationType,
+      date,
+    })
+    if (data?.status !== 200) {
+      return toast.error(data?.message)
+    }
+    toast.success(data?.message)
+    setModal({ isOpen: false, isLoading: false })
   }
 
   return (
-    <Dialog>
+    <Dialog
+      open={modal.isOpen}
+      onOpenChange={(isOpen) => setModal({ isOpen, isLoading: false })}
+    >
       <DialogTrigger asChild>
         <Button className="mt-4" size="sm">
           Cadastrar nova operação
@@ -156,7 +180,14 @@ export function CreateFiiOperation() {
 
         <DialogFooter>
           <Button onClick={handleSubmit(onSubmit)} type="submit">
-            Save changes
+            {modal.isLoading ? (
+              <div className="flex gap-2 items-center">
+                <ClipLoader size={18} />
+                <span>Salvando...</span>
+              </div>
+            ) : (
+              'Salvar'
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>

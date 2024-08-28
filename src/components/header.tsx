@@ -77,13 +77,13 @@ export function Header() {
             </Sheet>
             <Logo className="hidden lg:block h-7 w-7" />
             <h1 className="font-bold">stocks.tr</h1>
-            {/* <Button
+            <Button
               onClick={async () => {
                 await fetch('api/init-db')
               }}
             >
               INIT DB
-            </Button> */}
+            </Button>
             <Navbar />
           </div>
           <div className="flex gap-4 items-center mr-2">

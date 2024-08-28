@@ -1,6 +1,5 @@
 'use server'
 import { prisma } from '@/lib/prisma'
-import { dateToEnFormat } from '@/utils/date-to-en-format'
 import _ from 'lodash'
 import { NextResponse } from 'next/server'
 import yahooFinance from 'yahoo-finance2'
@@ -14,10 +13,7 @@ export async function GET() {
     const fiis = Object.keys(fiisAsKeys).map((fiiName) => ({
       fiiName: fiiName + '.SA',
       fiiCnpj: fiisAsKeys[fiiName]?.[0]?.fiiCnpj,
-      operations: fiisAsKeys[fiiName].map((operation) => ({
-        ...operation,
-        date: dateToEnFormat(operation.date),
-      })),
+      operations: fiisAsKeys[fiiName],
     }))
 
     const promises = fiis.map(async (fii) => {

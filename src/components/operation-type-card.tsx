@@ -20,7 +20,7 @@ export default function OperationTypeCard({
     <div
       data-active={type === currentType}
       onClick={() => onChange(type)}
-      className="operation-type-card"
+      className="operation-type-card sm:px-10"
     >
       {OperationText[type]}
     </div>

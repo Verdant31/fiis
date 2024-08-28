@@ -1,8 +1,9 @@
 'use server'
 import { NextResponse } from 'next/server'
-import data from '../../../OPERATIONS_MOCK.json'
+import data from '../../../OPERATIONS.json'
 import { prisma } from '@/lib/prisma'
 import { Operation } from '@prisma/client'
+import { dateToEnFormat } from '@/utils/date-to-en-format'
 
 export async function GET() {
   try {
@@ -16,7 +17,7 @@ export async function GET() {
               ? Operation.unfolding
               : Operation.purchase,
         fiiName: purchase.asset_name,
-        date: purchase.purchase_date,
+        date: dateToEnFormat(purchase.purchase_date),
         qty: purchase.quantity_purchased,
         quotationValue: purchase.price_paid,
         unfoldingProportion: purchase?.unfoldingProportion,

@@ -1,6 +1,5 @@
 'use server'
 import { prisma } from '@/lib/prisma'
-import { dateToEnFormat } from '@/utils/date-to-en-format'
 import { FiisOperations } from '@prisma/client'
 import _ from 'lodash'
 import { NextResponse } from 'next/server'
@@ -22,10 +21,7 @@ export async function GET() {
 
     const fiis = Object.keys(fiisAsKeys).map((fiiName) => ({
       fiiName: fiiName + '.SA',
-      operations: fiisAsKeys[fiiName].map((operation) => ({
-        ...operation,
-        date: dateToEnFormat(operation.date),
-      })),
+      operations: fiisAsKeys[fiiName],
     }))
 
     const calculateMonthlyDividends = (

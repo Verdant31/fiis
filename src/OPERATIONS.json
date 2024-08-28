@@ -1,9 +1,11 @@
-[   
-    {
-        "purchase_date": "25/09/2023 10:10",
-        "price_paid": 101.76,
-        "quantity_purchased": 5,
-        "asset_name": "BTLG11",
-        "operation": "sale"
-   }
+[
+  {
+    "purchase_date": "25/09/2023 10:10",
+    "price_paid": 101.76,
+    "quantity_purchased": 5,
+    "asset_name": "BTLG11",
+    "operation": "sale",
+    "cnpj": "28.757.546/0001-00",
+    "unfoldingProportion": null
+  }
 ]
