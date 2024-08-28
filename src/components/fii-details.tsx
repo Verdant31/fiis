@@ -32,7 +32,7 @@ import {
 import { DataTable } from './table'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useUniqueFiiDividends } from '@/queries/use-unique-fii-dividends'
-import CalendarArrowDown from './calendar-arrow-down'
+import CalendarArrowDown from './icons/calendar-arrow-down'
 import { FiisOperations } from '@prisma/client'
 import { Dividend } from '@/queries/use-fiis-dividends'
 

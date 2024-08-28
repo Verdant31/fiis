@@ -113,7 +113,9 @@
   .success-text {
     @apply text-green-600 text-sm;
   }
-
+  .operation-type-card {
+    @apply py-3 px-5 border-[2px] border-zinc-950 data-[active=true]:border-zinc-500 data-[active=true]:transition-all data-[active=true]:duration-300 bg-zinc-900 rounded-md text-sm
+  }
   .error-text {
     @apply text-red-600 text-sm;
   }

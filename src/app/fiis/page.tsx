@@ -1,14 +1,13 @@
 'use client'
 import { useFiisSummary } from '@/queries/use-fiis-summary'
 import FiisTable from '@/components/fiis-table'
-import { Button } from '@/components/ui/button'
-
 import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { Skeleton as ShadSkeleton } from '@/components/ui/skeleton'
 import { useState } from 'react'
 import FiiDetails from '@/components/fii-details'
 import { useWindowSize } from '@/hooks/use-window-size'
 import { ChevronRight } from 'lucide-react'
+import { CreateFiiOperation } from '@/components/create-fii-operation'
 
 export default function Fiis() {
   const [tab, setTab] = useState('general')
@@ -50,9 +49,7 @@ export default function Fiis() {
               basta clicar na linha da tabela referente ao FII que deseja ver
               mais informações.
             </p>
-            <Button className="mt-4" size="sm">
-              Cadastrar nova operação
-            </Button>
+            <CreateFiiOperation />
           </div>
           {isLoading || !summary ? (
             <ShadSkeleton className="my-6 h-[600px] w-full" />

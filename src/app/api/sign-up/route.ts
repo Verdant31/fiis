@@ -53,20 +53,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: (err as Error)?.message, status: 500 })
   }
 }
-
-// const passwordHash = await hash(password, {
-// // recommended minimum parameters
-// memoryCost: 19456,
-// timeCost: 2,
-// outputLen: 32,
-// parallelism: 1
-// });
-// const userId = generateIdFromEntropySize(10); // 16 characters long
-
-// // TODO: check if email is already used
-// const user = await prisma.user.findUnique({where:{email: email}});
-
-// const session = await lucia.createSession(userId, {});
-// const sessionCookie = lucia.createSessionCookie(session.id);
-// cookies().set(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
-// return redirect("/");
