@@ -11,7 +11,11 @@ export const useFiisSummary = () => {
       toast.error(response?.data?.message)
       throw new YahooApiInternalError()
     }
-    return response.data.results as FiiSummary[]
+    //  sort by quotes quantity
+    const sortedResults = (response.data.results as FiiSummary[]).toSorted(
+      (a, b) => b.quotes - a.quotes,
+    )
+    return sortedResults
   })
 
   return query

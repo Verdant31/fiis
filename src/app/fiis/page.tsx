@@ -1,6 +1,5 @@
 'use client'
 import { useFiisSummary } from '@/queries/use-fiis-summary'
-import FiisTable from '@/components/fiis-table'
 import { Tabs, TabsContent } from '@/components/ui/tabs'
 import { Skeleton as ShadSkeleton } from '@/components/ui/skeleton'
 import { useState } from 'react'
@@ -8,6 +7,7 @@ import FiiDetails from '@/components/fii-details'
 import { useWindowSize } from '@/hooks/use-window-size'
 import { ChevronRight } from 'lucide-react'
 import { CreateFiiOperation } from '@/components/create-fii-operation'
+import { FiisGeneralInfo } from '@/components/fiis-general-info'
 
 export default function Fiis() {
   const [tab, setTab] = useState('general')
@@ -36,9 +36,7 @@ export default function Fiis() {
       </div>
       <Tabs
         value={tab}
-        onValueChange={(value: string) => {
-          setTab(value)
-        }}
+        onValueChange={(value: string) => setTab(value)}
         defaultValue="general"
       >
         <TabsContent value="general" className="mt-4">
@@ -54,7 +52,7 @@ export default function Fiis() {
           {isLoading || !summary ? (
             <ShadSkeleton className="my-6 h-[600px] w-full" />
           ) : (
-            <FiisTable
+            <FiisGeneralInfo
               operations={summary
                 .map((fii) => ({
                   operations: fii.operations,

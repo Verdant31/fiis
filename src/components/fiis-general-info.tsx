@@ -1,5 +1,5 @@
 import { DividendPeriods, FiisOperation, FiiSummary } from '@/types/fiis'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { DataTable } from './table'
 import { fiisSummaryColumns } from '@/app/fiis/columns'
 import { Skeleton as ShadSkeleton } from './ui/skeleton'
@@ -23,6 +23,8 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { useWindowSize } from '@/hooks/use-window-size'
+import { ExpandedFiisTableMobile } from './expanded-fiis-table-mobile'
+
 interface Props {
   summary: FiiSummary[]
   operations: FiisOperation[]
@@ -30,12 +32,16 @@ interface Props {
   onClickTableRow: (fiiName: string) => void
 }
 
-export default function FiisTable({
+export function FiisGeneralInfo({
   summary,
   isLoading,
   operations,
   onClickTableRow,
 }: Props) {
+  const [columnVisibility, setColumnVisibility] = useState({
+    totalInvested: false,
+    currentTotal: false,
+  })
   const [summarySorting, setSummarySorting] = useState<SortingState>([])
   const [selectedPeriod, setSelectedPeriod] = useState<DividendPeriods>(
     DividendPeriods['6M'],
@@ -43,7 +49,8 @@ export default function FiisTable({
 
   const { data: dividends, isLoading: isLoadingDividends } = useFiisDividends()
   const windowSize = useWindowSize()
-  const summaryTable = useReactTable({
+
+  const summarryTableProps = {
     data: summary,
     columns: fiisSummaryColumns,
     getCoreRowModel: getCoreRowModel(),
@@ -52,22 +59,36 @@ export default function FiisTable({
     getSortedRowModel: getSortedRowModel(),
     state: {
       sorting: summarySorting,
+      columnVisibility,
     },
-    initialState: {},
-  })
+    initialState: {
+      pagination: {
+        pageSize: 7,
+      },
+    },
+  }
+  const summaryTable = useReactTable(summarryTableProps)
+
+  useEffect(() => {
+    if (!windowSize?.width) return
+    const width = windowSize.width
+    setColumnVisibility({
+      totalInvested: width > 1280 ? true : width > 600 && width < 1024,
+      currentTotal: width > 1280 ? true : width > 820 && width < 1024,
+    })
+  }, [windowSize])
 
   if (isLoading || isLoadingDividends || !summary) return <Skeleton />
 
   const fiiController = new FiisController({ dividends, operations })
-
   const dividendsChartData =
     fiiController.getTotalDividendsPerMonth(selectedPeriod)
 
   return (
     <div className="flex mt-6 flex-col gap-4 lg:gap-12 lg:flex-row-reverse">
-      <div className="lg:basis-[50%] ">
+      <div className="lg:basis-[45%] ">
         <div className="flex mb-4  justify-between items-end">
-          <div className="w-[65%]">
+          <div className="w-[65%] lg:w-full">
             <h1 className="text-xl font-semibold ">Dividendos</h1>
             <p className="text-muted-foreground text-sm">
               Valores de dividendos pagos pelos fundos nos ultimos meses
@@ -101,7 +122,7 @@ export default function FiisTable({
           {...(windowSize.width &&
             windowSize.width > 1024 && {
               responsiveContainerWidth: '100%',
-              responsiveContainerHeight: 500,
+              responsiveContainerHeight: 480,
             })}
           config={{}}
         >
@@ -142,8 +163,8 @@ export default function FiisTable({
           </BarChart>
         </ChartContainer>
       </div>
-      <div className="lg:basis-[50%]">
-        <div className="flex mb-4  justify-between items-end">
+      <div className="lg:basis-[55%]">
+        <div className="flex mb-4 gap-4 justify-between items-end">
           <div className="w-[90%] lg:w-full">
             <h1 className="text-xl font-semibold ">Lista</h1>
             <p className="text-muted-foreground text-sm">
@@ -151,6 +172,7 @@ export default function FiisTable({
               cotas zeradas)
             </p>
           </div>
+          <ExpandedFiisTableMobile summarryTableProps={summarryTableProps} />
         </div>
         <DataTable
           onClickRow={(row) => onClickTableRow(row.fiiName)}
