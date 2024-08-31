@@ -96,7 +96,6 @@ export function FiisGeneralInfo({
           </div>
           <Select
             onValueChange={(value) => {
-              console.log({ value })
               setSelectedPeriod(
                 DividendPeriods[value as keyof typeof DividendPeriods],
               )

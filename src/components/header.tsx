@@ -12,11 +12,18 @@ import {
   LayoutDashboard,
   Linkedin,
   MenuIcon,
+  Dot,
 } from 'lucide-react'
 import Link from 'next/link'
 import { Logo } from './logo'
 import { Navbar } from './navbar'
 import { Button } from './ui/button'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion'
 
 export function Header() {
   return (
@@ -60,13 +67,34 @@ export function Header() {
                     <p className="mt-8 pl-4 text-sm font-semibold text-muted-foreground">
                       Investimentos
                     </p>
-                    <a
-                      href="/fiis"
-                      className="pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-4"
-                    >
-                      <Building2 size={18} />
-                      <p className="text-sm">Fundos Imobiliarios</p>
-                    </a>
+                    <Accordion type="single" collapsible className="w-full ">
+                      <AccordionItem value="item-1" className="border-0">
+                        <AccordionTrigger className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-4">
+                          <div className="flex items-center gap-4">
+                            <Building2 size={18} />
+                            <p className="text-sm">Fundos Imobiliarios</p>
+                          </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="pl-4 flex flex-col">
+                          <a
+                            href="/fiis"
+                            className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1"
+                          >
+                            <Dot size={18} />
+                            <p>Visão geral</p>
+                          </a>
+                          <a className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1">
+                            <Dot size={18} />
+                            <p>Cadastrar operação</p>
+                          </a>
+                          <a className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1">
+                            <Dot size={18} />
+                            <p>Exportar dados</p>
+                          </a>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+
                     <a className="pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 ">
                       <Landmark size={18} />
                       <p className="text-sm">Renda fixa</p>

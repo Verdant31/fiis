@@ -82,7 +82,7 @@ export default function FiiDetails({
     },
     initialState: {
       pagination: {
-        pageSize: windowWidth > 1024 ? 7 : 11,
+        pageSize: windowWidth > 1024 ? 6 : 11,
       },
     },
   })
@@ -99,7 +99,7 @@ export default function FiiDetails({
     },
     initialState: {
       pagination: {
-        pageSize: windowWidth > 1024 ? 7 : 11,
+        pageSize: windowWidth > 1024 ? 6 : 11,
       },
     },
   })
@@ -182,6 +182,22 @@ export default function FiiDetails({
                 </p>
               </div>
             )}
+          </div>
+          <div className="space-y-2 w-[85%] ">
+            <p
+              style={{ backgroundColor: fiiColor }}
+              className="py-1 pl-2  font-medium rounded-[2px] "
+            >
+              Total Inv.
+            </p>
+            <p>
+              {currencyFormatter(
+                fii.operations.reduce((acc, op) => {
+                  if (op.type === 'purchase') acc += op.qty * op.quotationValue
+                  return acc
+                }, 0),
+              )}
+            </p>
           </div>
         </div>
         <div className="flex items-center gap-2 mt-4">

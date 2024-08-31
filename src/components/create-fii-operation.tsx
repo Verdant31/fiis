@@ -67,7 +67,7 @@ export function CreateFiiOperation() {
     >
       <DialogTrigger asChild>
         <Button className="mt-4" size="sm">
-          Cadastrar nova operação
+          Nova operação
         </Button>
       </DialogTrigger>
       <DialogContent className="w-[95%]">
