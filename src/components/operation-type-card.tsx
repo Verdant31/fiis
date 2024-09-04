@@ -1,7 +1,7 @@
-import { $Enums, Operation } from '@prisma/client'
-import React, { Dispatch, SetStateAction } from 'react'
+import { Operation } from '@prisma/client'
+import React from 'react'
 
-enum OperationText {
+export enum OperationText {
   'purchase' = 'Compra',
   'sale' = 'Venda',
   'unfolding' = 'Desdobramento',
@@ -14,7 +14,7 @@ export default function OperationTypeCard({
 }: {
   type: Operation
   currentType: Operation
-  onChange: Dispatch<SetStateAction<$Enums.Operation>>
+  onChange: (type: Operation) => void
 }) {
   return (
     <div

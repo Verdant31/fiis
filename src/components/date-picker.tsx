@@ -20,6 +20,7 @@ interface Props {
   placeholder?: string
   date: Date | undefined
   setDate: React.Dispatch<React.SetStateAction<Date | undefined>>
+  dateFormat?: string
 }
 
 export function DatePicker({
@@ -28,6 +29,7 @@ export function DatePicker({
   className,
   placeholder,
   showIcon = true,
+  dateFormat = 'PPP',
 }: Props) {
   return (
     <Popover>
@@ -42,7 +44,7 @@ export function DatePicker({
         >
           {showIcon && <CalendarIcon className="mr-2 h-4 w-4" />}
           {date ? (
-            format(date, 'PP', { locale: ptBR })
+            format(date, dateFormat, { locale: ptBR })
           ) : (
             <span>{placeholder ?? 'Pick a date'}</span>
           )}

@@ -83,7 +83,10 @@ export function Header() {
                             <Dot size={18} />
                             <p>Visão geral</p>
                           </a>
-                          <a className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1">
+                          <a
+                            href="register-operations"
+                            className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1"
+                          >
                             <Dot size={18} />
                             <p>Cadastrar operação</p>
                           </a>

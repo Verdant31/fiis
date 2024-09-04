@@ -6,7 +6,6 @@ import { useState } from 'react'
 import FiiDetails from '@/components/fii-details'
 import { useWindowSize } from '@/hooks/use-window-size'
 import { ChevronRight } from 'lucide-react'
-import { CreateFiiOperation } from '@/components/create-fii-operation'
 import { FiisGeneralInfo } from '@/components/fiis-general-info'
 
 export default function Fiis() {
@@ -47,7 +46,6 @@ export default function Fiis() {
               basta clicar na linha da tabela referente ao FII que deseja ver
               mais informações.
             </p>
-            <CreateFiiOperation />
           </div>
           {isLoading || !summary ? (
             <ShadSkeleton className="my-6 h-[600px] w-full" />

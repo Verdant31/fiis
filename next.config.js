@@ -6,6 +6,7 @@ const nextConfig = {
       '@node-rs/argon2',
       'yahoo-finance2',
       'jszip',
+      'papaparse',
     ],
   },
 }
