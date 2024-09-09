@@ -21,16 +21,12 @@ const intervalsFilterOptions = ['Dias', 'Mês', 'Ano', 'Todos', 'Personalizado']
 
 export default function Statements() {
   const [intervalType, setIntervalTupe] = useState<IntervalsFilterType>('Mês')
-  const [intervalValue, setIntervalValue] = useState<
-    IntervalsValueType | undefined
-  >(new Date())
+  const [intervalValue, setIntervalValue] = useState<IntervalsValueType | undefined>(new Date())
   const [fiiName, setFiiName] = useState<string>()
-  const [tableDataType, setTableDataType] =
-    useState<TableDataType>('operations')
+  const [tableDataType, setTableDataType] = useState<TableDataType>('dividends')
 
   const { data: dividends, isLoading } = useFiisDividends()
-  const { data: operations, isLoading: isLoadingOperations } =
-    useFiisOperations()
+  const { data: operations, isLoading: isLoadingOperations } = useFiisOperations()
 
   if (isLoading || isLoadingOperations) return null
 
@@ -44,7 +40,6 @@ export default function Statements() {
     fiiName,
     tableDataType,
   })
-  console.log(data)
 
   return (
     <main className="mx-6 mt-6">
