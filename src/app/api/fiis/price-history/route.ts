@@ -25,9 +25,9 @@ export async function GET() {
 
     const promises = fiis.map(async (fiiName) => ({
       history: await yahooFinance
-        .historical(fiiName, queryInterval)
+        .chart(fiiName, queryInterval)
         .then((response) =>
-          response.map((day) => ({
+          response.quotes.map((day) => ({
             date: day.date,
             close: day.close,
           })),
