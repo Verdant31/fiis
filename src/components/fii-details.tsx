@@ -21,7 +21,7 @@ import {
 } from './ui/chart'
 import { format, parse } from 'date-fns'
 import { Skeleton as ShadSkeleton } from './ui/skeleton'
-import { dividendsColumns, operationsSummaryColumns } from '@/app/fiis/columns'
+import { dividendsColumns, operationsSummaryColumns } from '@/app/fiis/general/columns'
 import {
   useReactTable,
   getCoreRowModel,

@@ -1,7 +1,7 @@
 import { DividendPeriods, FiisOperation, FiiSummary } from '@/types/fiis'
 import React, { useEffect, useState } from 'react'
 import { DataTable } from './table'
-import { fiisSummaryColumns } from '@/app/fiis/columns'
+import { fiisSummaryColumns } from '@/app/fiis/general/columns'
 import { Skeleton as ShadSkeleton } from './ui/skeleton'
 import {
   getCoreRowModel,

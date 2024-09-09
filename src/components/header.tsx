@@ -77,22 +77,25 @@ export function Header() {
                         </AccordionTrigger>
                         <AccordionContent className="pl-4 flex flex-col">
                           <a
-                            href="/fiis"
+                            href="/fiis/general"
                             className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1"
                           >
                             <Dot size={18} />
                             <p>Visão geral</p>
                           </a>
                           <a
-                            href="register-operations"
+                            href="/fiis/register-operations"
                             className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1"
                           >
                             <Dot size={18} />
                             <p>Cadastrar operação</p>
                           </a>
-                          <a className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1">
+                          <a
+                            href="/fiis/statements"
+                            className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1"
+                          >
                             <Dot size={18} />
-                            <p>Exportar dados</p>
+                            <p>Extratos</p>
                           </a>
                         </AccordionContent>
                       </AccordionItem>
