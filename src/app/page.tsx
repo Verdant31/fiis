@@ -36,7 +36,7 @@ export default function Home() {
     if (response?.status !== 200) {
       return toast.error(response?.message);
     }
-    router.push("/dashboard");
+    router.push("/dashboard/home");
   };
 
   return (

@@ -1,12 +1,22 @@
 "use server";
 import { prisma } from "@/lib/prisma";
+import { validateRequest } from "@/lib/validate-request";
 import { FiisOperation } from "@/types/fiis";
 import _ from "lodash";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const fiisOperations = await prisma.fiisOperations.findMany({});
+    const { user } = await validateRequest();
+    if (!user) {
+      return NextResponse.json({ message: "Unauthorized", status: 401 });
+    }
+
+    const fiisOperations = await prisma.fiisOperations.findMany({
+      where: {
+        userId: user.id,
+      },
+    });
     const operations: FiisOperation[] = [];
 
     const groupedOperations = _.groupBy(fiisOperations, "fiiName");

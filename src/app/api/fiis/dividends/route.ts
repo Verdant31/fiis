@@ -7,6 +7,7 @@ import yahooFinance from "yahoo-finance2";
 import { format, addHours } from "date-fns";
 import { handleUnfoldings } from "@/helpers/handle-unfoldings";
 import { chartToDividendsMapper } from "@/helpers/chart-to-dividends-mapper";
+import { validateRequest } from "@/lib/validate-request";
 
 type FiiDividendObject = {
   date: Date;
@@ -17,7 +18,16 @@ type FiiDividendObject = {
 
 export async function GET() {
   try {
-    const fiisOperations = await prisma.fiisOperations.findMany({});
+    const { user } = await validateRequest();
+    if (!user) {
+      return NextResponse.json({ message: "Unauthorized", status: 401 });
+    }
+
+    const fiisOperations = await prisma.fiisOperations.findMany({
+      where: {
+        userId: user.id,
+      },
+    });
     const fiisAsKeys = _.groupBy(fiisOperations, "fiiName");
 
     const fiis = Object.keys(fiisAsKeys).map((fiiName) => ({

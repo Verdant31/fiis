@@ -24,6 +24,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { apiUrl } from "@/lib/axios";
 
 export function Header() {
   return (
@@ -113,7 +114,7 @@ export function Header() {
             <h1 className="font-bold">stocks.tr</h1>
             {/* <Button
               onClick={async () => {
-                await fetch('api/init-db')
+                await fetch(`${apiUrl}/init-db`);
               }}
             >
               INIT DB

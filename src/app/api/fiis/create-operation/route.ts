@@ -3,6 +3,7 @@ import { Operation } from "@prisma/client";
 import { NextResponse } from "next/server";
 import { outputFormSchema } from "../../../../lib/forms/create-fii-operation";
 import yahooFinance from "yahoo-finance2";
+import { validateRequest } from "@/lib/validate-request";
 
 interface Payload {
   name: string;
@@ -15,6 +16,11 @@ interface Payload {
 
 export async function POST(req: Request) {
   try {
+    const { user } = await validateRequest();
+    if (!user) {
+      return NextResponse.json({ message: "Unauthorized", status: 401 });
+    }
+
     const body: Payload = await req.json();
     const parse = outputFormSchema.safeParse(body);
     if (parse.error) {
@@ -49,6 +55,7 @@ export async function POST(req: Request) {
         qty: body.quotes,
         type: body.operationType,
         quotationValue: body.price,
+        userId: user.id,
       },
     });
     return NextResponse.json({

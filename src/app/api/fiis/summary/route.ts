@@ -4,10 +4,20 @@ import _ from "lodash";
 import { NextResponse } from "next/server";
 import yahooFinance from "yahoo-finance2";
 import { handleFiiMissingInfos } from "@/helpers/handle-fii-missing-info";
+import { validateRequest } from "@/lib/validate-request";
 
 export async function GET() {
   try {
-    const fiisOperations = await prisma.fiisOperations.findMany({});
+    const { user } = await validateRequest();
+    if (!user) {
+      return NextResponse.json({ message: "Unauthorized", status: 401 });
+    }
+
+    const fiisOperations = await prisma.fiisOperations.findMany({
+      where: {
+        userId: user.id,
+      },
+    });
     const fiisAsKeys = _.groupBy(fiisOperations, "fiiName");
 
     const fiis = Object.keys(fiisAsKeys).map((fiiName) => ({

@@ -6,49 +6,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
-import { useFiisDividends } from "@/queries/use-fiis-dividends";
-import { FiisController } from "@/controllers/fii";
-import {
-  IntervalsFilterType,
-  IntervalsValueType,
-  TableDataType,
-} from "@/types/statements";
+import { Fragment } from "react";
+import { IntervalsFilterType, TableDataType } from "@/types/statements";
 import SelectInterval from "@/components/select-interval";
-import { useFiisOperations } from "@/queries/use-fiis-operations";
+import { useStatementsFilterContext } from "@/contexts/StatementsFilters";
 
 const intervalsFilterOptions = ["Dias", "Mês", "Ano", "Todos", "Personalizado"];
 
-export default function Statements() {
-  const [intervalType, setIntervalTupe] = useState<IntervalsFilterType>("Mês");
-  const [intervalValue, setIntervalValue] = useState<
-    IntervalsValueType | undefined
-  >(new Date());
-  const [fiiName, setFiiName] = useState<string>();
-  const [tableDataType, setTableDataType] =
-    useState<TableDataType>("dividends");
-
-  const { data: dividends, isLoading } = useFiisDividends();
-  const { data: operations, isLoading: isLoadingOperations } =
-    useFiisOperations();
-
-  if (isLoading || isLoadingOperations) return null;
-
-  const fiis = ["Nenhum", ...(dividends?.map((fii) => fii.fiiName) ?? [])];
-  const data = new FiisController({
-    dividends,
-    operations,
-  }).getDataToStatements({
-    intervalType,
-    intervalValue,
+interface Props {
+  fiis: string[];
+}
+export function StatementsFilters({ fiis }: Props) {
+  const {
     fiiName,
+    intervalType,
+    setFiiName,
+    setIntervalTupe,
+    setIntervalValue,
+    setTableDataType,
     tableDataType,
-  });
-  console.log(data);
+  } = useStatementsFilterContext();
 
   return (
-    <main className="mx-6 mt-6">
-      <h1 className="text-3xl font-semibold text-center">Extratos</h1>
+    <Fragment>
       <div className="flex items-center gap-6 mt-6 ">
         <div>
           <p className="mb-2 font-medium">Período</p>
@@ -141,6 +121,6 @@ export default function Statements() {
           </div>
         </div>
       </div>
-    </main>
+    </Fragment>
   );
 }

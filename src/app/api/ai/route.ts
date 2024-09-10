@@ -1,5 +1,6 @@
 "use server";
 import { run } from "@/lib/cloudflare";
+import { validateRequest } from "@/lib/validate-request";
 import { addHours } from "date-fns";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -7,6 +8,10 @@ const formatMonth = (month: number) => (month < 10 ? `0${month}` : month);
 
 export async function POST(req: NextRequest) {
   try {
+    const { user } = await validateRequest();
+    if (!user) {
+      return NextResponse.json({ message: "Unauthorized", status: 401 });
+    }
     const { modelInput } = await req.json();
     const currentMonth = addHours(new Date(), 3).getMonth() + 1;
     const message = `

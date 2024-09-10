@@ -14,9 +14,10 @@ datasource db {
 model User {
   id String @id @map("_id")
 
-  email         String    @unique
+  email         String           @unique
   password_hash String
   sessions      Session[]
+  operations    FiisOperations[]
 }
 
 model Session {
@@ -37,6 +38,8 @@ model FiisOperations {
   quotationValue      Float     @default(0)
   pvp                 Float?    @default(0)
   unfoldingProportion Int?
+  User                User?     @relation(fields: [userId], references: [id])
+  userId              String?
 }
 
 enum Operation {

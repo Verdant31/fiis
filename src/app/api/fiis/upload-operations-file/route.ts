@@ -4,6 +4,7 @@ import { parse } from "date-fns";
 import { NextResponse } from "next/server";
 import { FormOutputData } from "../../../../lib/forms/create-fii-operation";
 import { uniqBy } from "lodash";
+import { validateRequest } from "@/lib/validate-request";
 
 const columns = [
   "data_compra",
@@ -23,6 +24,11 @@ enum OperationTypeColumn {
 
 export async function POST(req: Request) {
   try {
+    const { user } = await validateRequest();
+    if (!user) {
+      return NextResponse.json({ message: "Unauthorized", status: 401 });
+    }
+
     const body = await req.json();
     const results: string[][] = body.parsingResults;
 
@@ -74,6 +80,7 @@ export async function POST(req: Request) {
           fiiCnpj: cnpj,
           fiiName: name,
           quotationValue: price,
+          userId: user.id,
         };
       }),
     });

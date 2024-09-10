@@ -1,9 +1,11 @@
+import { Pathname } from "@/components/pathname";
 import { GeistMono } from "geist/font/mono";
 import { GeistSans } from "geist/font/sans";
 import type { Metadata } from "next";
 import { Toaster } from "sonner";
 import "./globals.css";
-import Providers from "./providers";
+import { validateRequest } from "@/lib/validate-request";
+import Providers from "../providers";
 
 export const metadata: Metadata = {
   title: "Stocks.tr",
@@ -15,6 +17,9 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { user } = await validateRequest();
+
+  console.log(user);
   return (
     <html
       className={`${GeistSans.variable} ${GeistMono.variable} dark`}
@@ -22,7 +27,9 @@ export default async function RootLayout({
     >
       <Toaster richColors />
       <body className={GeistSans.className}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <Pathname>{children}</Pathname>
+        </Providers>
       </body>
     </html>
   );

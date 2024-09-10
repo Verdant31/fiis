@@ -1,13 +1,23 @@
 "use server";
 import { prisma } from "@/lib/prisma";
+import { validateRequest } from "@/lib/validate-request";
 import _ from "lodash";
 import { NextResponse } from "next/server";
 import yahooFinance from "yahoo-finance2";
 
 export async function GET() {
   try {
-    const fiisPurchases = await prisma.fiisOperations.findMany({});
-    const fiis = _.uniqBy(fiisPurchases, "fiiName").map(
+    const { user } = await validateRequest();
+    if (!user) {
+      return NextResponse.json({ message: "Unauthorized", status: 401 });
+    }
+
+    const fiisOperations = await prisma.fiisOperations.findMany({
+      where: {
+        userId: user.id,
+      },
+    });
+    const fiis = _.uniqBy(fiisOperations, "fiiName").map(
       (purchase) => purchase.fiiName + ".SA",
     );
 
