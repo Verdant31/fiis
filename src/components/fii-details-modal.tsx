@@ -1,9 +1,9 @@
-import { Dialog, DialogContent } from '@/components/ui/dialog'
-import { FiiSummary } from '@/types/fiis'
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { FiiSummary } from "@/types/fiis";
 
 interface Props {
-  onClose: (value: boolean) => void
-  details?: FiiSummary
+  onClose: (value: boolean) => void;
+  details?: FiiSummary;
 }
 
 export function FiiDetailsModal({ onClose, details }: Props) {
@@ -22,5 +22,5 @@ export function FiiDetailsModal({ onClose, details }: Props) {
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

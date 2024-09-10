@@ -1,9 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
-'use client'
-import { getArticles } from '@/queries/get-articles'
-import { useQuery } from '@tanstack/react-query'
-import { CandlestickChart } from 'lucide-react'
-import { Skeleton as ShadSkeleton } from './ui/skeleton'
+"use client";
+import { getArticles } from "@/queries/get-articles";
+import { useQuery } from "@tanstack/react-query";
+import { CandlestickChart } from "lucide-react";
+import { Skeleton as ShadSkeleton } from "./ui/skeleton";
 
 const Skeleton = () => {
   return (
@@ -31,16 +31,16 @@ const Skeleton = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export function Articles() {
   const { data: articles, isLoading } = useQuery(
-    ['get-articles'],
+    ["get-articles"],
     async () => await getArticles(),
-  )
-  if (isLoading) return <Skeleton />
-  if (articles?.length === 0 || !articles) return null
+  );
+  if (isLoading) return <Skeleton />;
+  if (articles?.length === 0 || !articles) return null;
 
   return (
     <div className="mb-12 mt-6 ">
@@ -53,7 +53,7 @@ export function Articles() {
       <div className="lg:grid lg:grid-cols-2 lg:gap-2">
         {articles &&
           articles.map((article) => {
-            const thumb = article?.thumbnail?.resolutions?.at(-1)?.url
+            const thumb = article?.thumbnail?.resolutions?.at(-1)?.url;
             return (
               <div key={article.uuid} className="mt-4 gap-4 items-start flex">
                 {thumb ? (
@@ -81,9 +81,9 @@ export function Articles() {
                   </span>
                 </div>
               </div>
-            )
+            );
           })}
       </div>
     </div>
-  )
+  );
 }

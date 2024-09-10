@@ -1,35 +1,35 @@
-import { DividendPeriods, FiisOperation, FiiSummary } from '@/types/fiis'
-import React, { useEffect, useState } from 'react'
-import { DataTable } from './table'
-import { fiisSummaryColumns } from '@/app/fiis/general/columns'
-import { Skeleton as ShadSkeleton } from './ui/skeleton'
+import { DividendPeriods, FiisOperation, FiiSummary } from "@/types/fiis";
+import React, { useEffect, useState } from "react";
+import { DataTable } from "./table";
+import { fiisSummaryColumns } from "@/app/fiis/general/columns";
+import { Skeleton as ShadSkeleton } from "./ui/skeleton";
 import {
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   SortingState,
   useReactTable,
-} from '@tanstack/react-table'
-import { useFiisDividends } from '@/queries/use-fiis-dividends'
-import { FiisController } from '@/controllers/fii'
-import { CartesianGrid, XAxis, Bar, BarChart, YAxis } from 'recharts'
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from './ui/chart'
-import { currencyFormatter } from '@/utils/currency-formatter'
+} from "@tanstack/react-table";
+import { useFiisDividends } from "@/queries/use-fiis-dividends";
+import { FiisController } from "@/controllers/fii";
+import { CartesianGrid, XAxis, Bar, BarChart, YAxis } from "recharts";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "./ui/chart";
+import { currencyFormatter } from "@/utils/currency-formatter";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { useWindowSize } from '@/hooks/use-window-size'
-import { ExpandedFiisTableMobile } from './expanded-fiis-table-mobile'
+} from "@/components/ui/select";
+import { useWindowSize } from "@/hooks/use-window-size";
+import { ExpandedFiisTableMobile } from "./expanded-fiis-table-mobile";
 
 interface Props {
-  summary: FiiSummary[]
-  operations: FiisOperation[]
-  isLoading: boolean
-  onClickTableRow: (fiiName: string) => void
+  summary: FiiSummary[];
+  operations: FiisOperation[];
+  isLoading: boolean;
+  onClickTableRow: (fiiName: string) => void;
 }
 
 export function FiisGeneralInfo({
@@ -41,14 +41,14 @@ export function FiisGeneralInfo({
   const [columnVisibility, setColumnVisibility] = useState({
     totalInvested: false,
     currentTotal: false,
-  })
-  const [summarySorting, setSummarySorting] = useState<SortingState>([])
+  });
+  const [summarySorting, setSummarySorting] = useState<SortingState>([]);
   const [selectedPeriod, setSelectedPeriod] = useState<DividendPeriods>(
-    DividendPeriods['6M'],
-  )
+    DividendPeriods["6M"],
+  );
 
-  const { data: dividends, isLoading: isLoadingDividends } = useFiisDividends()
-  const windowSize = useWindowSize()
+  const { data: dividends, isLoading: isLoadingDividends } = useFiisDividends();
+  const windowSize = useWindowSize();
 
   const summarryTableProps = {
     data: summary,
@@ -66,23 +66,23 @@ export function FiisGeneralInfo({
         pageSize: 7,
       },
     },
-  }
-  const summaryTable = useReactTable(summarryTableProps)
+  };
+  const summaryTable = useReactTable(summarryTableProps);
 
   useEffect(() => {
-    if (!windowSize?.width) return
-    const width = windowSize.width
+    if (!windowSize?.width) return;
+    const width = windowSize.width;
     setColumnVisibility({
       totalInvested: width > 1280 ? true : width > 600 && width < 1024,
       currentTotal: width > 1280 ? true : width > 820 && width < 1024,
-    })
-  }, [windowSize])
+    });
+  }, [windowSize]);
 
-  if (isLoading || isLoadingDividends || !summary) return <Skeleton />
+  if (isLoading || isLoadingDividends || !summary) return <Skeleton />;
 
-  const fiiController = new FiisController({ dividends, operations })
+  const fiiController = new FiisController({ dividends, operations });
   const dividendsChartData =
-    fiiController.getTotalDividendsPerMonth(selectedPeriod)
+    fiiController.getTotalDividendsPerMonth(selectedPeriod);
 
   return (
     <div className="flex mt-6 flex-col gap-4 lg:gap-12 lg:flex-row-reverse">
@@ -98,7 +98,7 @@ export function FiisGeneralInfo({
             onValueChange={(value) => {
               setSelectedPeriod(
                 DividendPeriods[value as keyof typeof DividendPeriods],
-              )
+              );
             }}
             defaultValue="6M"
           >
@@ -109,7 +109,7 @@ export function FiisGeneralInfo({
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
-              {['1M', '3M', '6M', '12M', 'Total'].map((option) => (
+              {["1M", "3M", "6M", "12M", "Total"].map((option) => (
                 <SelectItem key={option} value={option} className="rounded-lg">
                   {option}
                 </SelectItem>
@@ -120,7 +120,7 @@ export function FiisGeneralInfo({
         <ChartContainer
           {...(windowSize.width &&
             windowSize.width > 1024 && {
-              responsiveContainerWidth: '100%',
+              responsiveContainerWidth: "100%",
               responsiveContainerHeight: 480,
             })}
           config={{}}
@@ -148,7 +148,7 @@ export function FiisGeneralInfo({
             <YAxis
               axisLine={false}
               tickLine={false}
-              domain={[0, 'dataMax + 100']}
+              domain={[0, "dataMax + 100"]}
               type="number"
               hide
             />
@@ -180,9 +180,9 @@ export function FiisGeneralInfo({
         />
       </div>
     </div>
-  )
+  );
 }
 
 const Skeleton = () => {
-  return <ShadSkeleton className="my-6 h-[600px] w-full" />
-}
+  return <ShadSkeleton className="my-6 h-[600px] w-full" />;
+};

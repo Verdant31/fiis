@@ -2,52 +2,52 @@
 import {
   CloudflareModelResponse,
   ParsedCloduflareResponse,
-} from '@/queries/use-cloudflare-model'
-import { toast } from 'sonner'
+} from "@/queries/use-cloudflare-model";
+import { toast } from "sonner";
 
 export const parseCloudflareResponse = ({
   data,
 }: {
-  data: CloudflareModelResponse
+  data: CloudflareModelResponse;
 }) => {
-  let hasError = false
+  let hasError = false;
 
   if (data?.errors?.length > 0) {
     toast.error(
-      'Houve um erro ao tentar converter sua query, tente reformula-lá ou contate o administrador',
-    )
-    hasError = true
+      "Houve um erro ao tentar converter sua query, tente reformula-lá ou contate o administrador",
+    );
+    hasError = true;
   }
 
-  const message = data?.result.response
-  const startIndex = message.indexOf('{')
-  const endIndex = message.lastIndexOf('}') + 1
+  const message = data?.result.response;
+  const startIndex = message.indexOf("{");
+  const endIndex = message.lastIndexOf("}") + 1;
 
-  const jsonString = message.substring(startIndex, endIndex)
-  const jsonObject = JSON.parse(jsonString) as ParsedCloduflareResponse
+  const jsonString = message.substring(startIndex, endIndex);
+  const jsonObject = JSON.parse(jsonString) as ParsedCloduflareResponse;
   if (!isCloudFlareParsedResponse(jsonObject)) {
-    hasError = true
+    hasError = true;
     toast.error(
-      'O modelo não foi capaz de formatar seu pedido nos dados do gráfico.',
-    )
+      "O modelo não foi capaz de formatar seu pedido nos dados do gráfico.",
+    );
   }
-  if (hasError) return undefined
-  return jsonObject
-}
+  if (hasError) return undefined;
+  return jsonObject;
+};
 
 const isCloudFlareParsedResponse = (
   obj: any,
 ): obj is ParsedCloduflareResponse => {
   return (
     obj &&
-    typeof obj === 'object' &&
-    'context' in obj &&
-    'funds' in obj &&
-    'period' in obj &&
-    typeof obj.context === 'string' &&
+    typeof obj === "object" &&
+    "context" in obj &&
+    "funds" in obj &&
+    "period" in obj &&
+    typeof obj.context === "string" &&
     Array.isArray(obj.funds) &&
-    obj.funds.every((fund: any) => typeof fund === 'string') &&
+    obj.funds.every((fund: any) => typeof fund === "string") &&
     Array.isArray(obj.period) &&
-    obj.period.every((p: any) => typeof p === 'string')
-  )
-}
+    obj.period.every((p: any) => typeof p === "string")
+  );
+};

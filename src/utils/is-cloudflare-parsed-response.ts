@@ -1,4 +1,4 @@
-import { ParsedCloduflareResponse } from '@/queries/use-cloudflare-model'
+import { ParsedCloduflareResponse } from "@/queries/use-cloudflare-model";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const isCloudFlareParsedResponse = (
@@ -6,10 +6,10 @@ export const isCloudFlareParsedResponse = (
 ): parsedObject is ParsedCloduflareResponse => {
   return (
     parsedObject &&
-    typeof parsedObject.context === 'string' &&
+    typeof parsedObject.context === "string" &&
     Array.isArray(parsedObject.funds) &&
-    parsedObject.funds.every((fund: any) => typeof fund === 'string') &&
+    parsedObject.funds.every((fund: any) => typeof fund === "string") &&
     Array.isArray(parsedObject.period) &&
-    parsedObject.period.every((p: any) => typeof p === 'string')
-  )
-}
+    parsedObject.period.every((p: any) => typeof p === "string")
+  );
+};

@@ -1,36 +1,40 @@
-'use client'
+"use client";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { useState } from 'react'
-import { useFiisDividends } from '@/queries/use-fiis-dividends'
-import { FiisController } from '@/controllers/fii'
+} from "@/components/ui/select";
+import { useState } from "react";
+import { useFiisDividends } from "@/queries/use-fiis-dividends";
+import { FiisController } from "@/controllers/fii";
 import {
   IntervalsFilterType,
   IntervalsValueType,
   TableDataType,
-} from '@/types/statements'
-import SelectInterval from '@/components/select-interval'
-import { useFiisOperations } from '@/queries/use-fiis-operations'
+} from "@/types/statements";
+import SelectInterval from "@/components/select-interval";
+import { useFiisOperations } from "@/queries/use-fiis-operations";
 
-const intervalsFilterOptions = ['Dias', 'Mês', 'Ano', 'Todos', 'Personalizado']
+const intervalsFilterOptions = ["Dias", "Mês", "Ano", "Todos", "Personalizado"];
 
 export default function Statements() {
-  const [intervalType, setIntervalTupe] = useState<IntervalsFilterType>('Mês')
-  const [intervalValue, setIntervalValue] = useState<IntervalsValueType | undefined>(new Date())
-  const [fiiName, setFiiName] = useState<string>()
-  const [tableDataType, setTableDataType] = useState<TableDataType>('dividends')
+  const [intervalType, setIntervalTupe] = useState<IntervalsFilterType>("Mês");
+  const [intervalValue, setIntervalValue] = useState<
+    IntervalsValueType | undefined
+  >(new Date());
+  const [fiiName, setFiiName] = useState<string>();
+  const [tableDataType, setTableDataType] =
+    useState<TableDataType>("dividends");
 
-  const { data: dividends, isLoading } = useFiisDividends()
-  const { data: operations, isLoading: isLoadingOperations } = useFiisOperations()
+  const { data: dividends, isLoading } = useFiisDividends();
+  const { data: operations, isLoading: isLoadingOperations } =
+    useFiisOperations();
 
-  if (isLoading || isLoadingOperations) return null
+  if (isLoading || isLoadingOperations) return null;
 
-  const fiis = ['Nenhum', ...(dividends?.map((fii) => fii.fiiName) ?? [])]
+  const fiis = ["Nenhum", ...(dividends?.map((fii) => fii.fiiName) ?? [])];
   const data = new FiisController({
     dividends,
     operations,
@@ -39,7 +43,8 @@ export default function Statements() {
     intervalValue,
     fiiName,
     tableDataType,
-  })
+  });
+  console.log(data);
 
   return (
     <main className="mx-6 mt-6">
@@ -68,7 +73,7 @@ export default function Statements() {
                     value={option}
                     className="rounded-lg"
                   >
-                    {option.split('.SA')[0]}
+                    {option.split(".SA")[0]}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -76,7 +81,7 @@ export default function Statements() {
           </div>
         </div>
         <div className="w-full">
-          {intervalType !== 'Todos' && (
+          {intervalType !== "Todos" && (
             <p className="mb-2 font-medium">{intervalType}</p>
           )}
           <SelectInterval
@@ -104,7 +109,7 @@ export default function Statements() {
                     value={option}
                     className="rounded-lg"
                   >
-                    {option.split('.SA')[0]}
+                    {option.split(".SA")[0]}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -137,5 +142,5 @@ export default function Statements() {
         </div>
       </div>
     </main>
-  )
+  );
 }

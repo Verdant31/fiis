@@ -5,107 +5,109 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { useState } from 'react'
-import * as React from 'react'
-import { format } from 'date-fns'
+} from "@/components/ui/select";
+import { useState } from "react";
+import * as React from "react";
+import { format } from "date-fns";
 import {
   Calendar as CalendarIcon,
   ChevronLeft,
   ChevronRight,
-} from 'lucide-react'
+} from "lucide-react";
 
-import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/button'
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover'
-import { ptBR } from 'date-fns/locale'
-import { Calendar } from './ui/calendar'
-import { IntervalsValueType } from '@/types/statements'
+} from "@/components/ui/popover";
+import { ptBR } from "date-fns/locale";
+import { Calendar } from "./ui/calendar";
+import { IntervalsValueType } from "@/types/statements";
 
 const months = [
-  'Jan',
-  'Fev',
-  'Mar',
-  'Abr',
-  'Maio',
-  'Jun',
-  'Jul',
-  'Ago',
-  'Set',
-  'Out',
-  'Nov',
-  'Dez',
-]
-const days = ['1 dia', '7 dias', '15 dias', '30 dias', '60 dias']
-const currenyYear = new Date().getFullYear().toString()
+  "Jan",
+  "Fev",
+  "Mar",
+  "Abr",
+  "Maio",
+  "Jun",
+  "Jul",
+  "Ago",
+  "Set",
+  "Out",
+  "Nov",
+  "Dez",
+];
+const days = ["1 dia", "7 dias", "15 dias", "30 dias", "60 dias"];
+const currenyYear = new Date().getFullYear().toString();
 
 interface Props {
-  interval: 'Dias' | 'Mês' | 'Ano' | 'Todos' | 'Personalizado'
+  interval: "Dias" | "Mês" | "Ano" | "Todos" | "Personalizado";
   setIntervalValue: React.Dispatch<
     React.SetStateAction<IntervalsValueType | undefined>
-  >
+  >;
 }
 
 export type DateInRangeModeType = {
-  from?: Date
-  to?: Date
-}
+  from?: Date;
+  to?: Date;
+};
 
 export default function SelectInterval({ interval, setIntervalValue }: Props) {
-  const fifteenDaysAgo = new Date(new Date().setDate(new Date().getDate() - 15))
+  const fifteenDaysAgo = new Date(
+    new Date().setDate(new Date().getDate() - 15),
+  );
   const [customInterval, setCustomInterval] = useState<
     DateInRangeModeType | undefined
   >({
     from: fifteenDaysAgo,
     to: new Date(),
-  })
-  const [daysInterval, setDaysInterval] = useState<string>('15 dias')
-  const [yearInterval, setYearInterval] = useState<string>(currenyYear)
-  const [monthDate, setMonthDate] = useState(new Date())
+  });
+  const [daysInterval, setDaysInterval] = useState<string>("15 dias");
+  const [yearInterval, setYearInterval] = useState<string>(currenyYear);
+  const [monthDate, setMonthDate] = useState(new Date());
 
   const handleSelectMonth = (month: number) => {
-    const newDate = new Date(monthDate)
-    newDate.setMonth(month)
-    setMonthDate(newDate)
-  }
+    const newDate = new Date(monthDate);
+    newDate.setMonth(month);
+    setMonthDate(newDate);
+  };
 
   const years = Array.from({ length: 4 }, (_, i) =>
     (new Date().getFullYear() - i).toString(),
-  )
+  );
 
   React.useEffect(() => {
     if (
-      interval === 'Personalizado' &&
+      interval === "Personalizado" &&
       customInterval?.from &&
       customInterval?.to
     )
-      setIntervalValue(customInterval)
-    else if (interval === 'Dias') setIntervalValue(daysInterval)
-    else if (interval === 'Ano') setIntervalValue(yearInterval)
-    else if (interval === 'Mês') setIntervalValue(monthDate)
-  }, [customInterval, daysInterval, yearInterval, monthDate, interval])
+      setIntervalValue(customInterval);
+    else if (interval === "Dias") setIntervalValue(daysInterval);
+    else if (interval === "Ano") setIntervalValue(yearInterval);
+    else if (interval === "Mês") setIntervalValue(monthDate);
+  }, [customInterval, daysInterval, yearInterval, monthDate, interval]);
 
   switch (interval) {
-    case 'Personalizado': {
+    case "Personalizado": {
       return (
         <Popover>
           <PopoverTrigger asChild>
             <Button
-              variant={'outline'}
+              variant={"outline"}
               className={cn(
-                'justify-start w-full  text-left font-normal',
-                !customInterval && 'text-muted-foreground',
+                "justify-start w-full  text-left font-normal",
+                !customInterval && "text-muted-foreground",
               )}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
               {customInterval && customInterval.from && customInterval.to ? (
                 <span>
-                  {format(customInterval.from, 'd MMM yy ', { locale: ptBR })} -{' '}
-                  {format(customInterval.to, 'd MMM yy', { locale: ptBR })}
+                  {format(customInterval.from, "d MMM yy ", { locale: ptBR })} -{" "}
+                  {format(customInterval.to, "d MMM yy", { locale: ptBR })}
                 </span>
               ) : (
                 <span>Selecione duas datas</span>
@@ -125,12 +127,12 @@ export default function SelectInterval({ interval, setIntervalValue }: Props) {
             />
           </PopoverContent>
         </Popover>
-      )
+      );
     }
-    case 'Todos': {
-      return null
+    case "Todos": {
+      return null;
     }
-    case 'Ano': {
+    case "Ano": {
       return (
         <Select
           defaultValue={years[0]}
@@ -146,14 +148,14 @@ export default function SelectInterval({ interval, setIntervalValue }: Props) {
           <SelectContent className="rounded-xl">
             {years.map((option) => (
               <SelectItem key={option} value={option} className="rounded-lg">
-                {option.split('.SA')[0]}
+                {option.split(".SA")[0]}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
-      )
+      );
     }
-    case 'Dias': {
+    case "Dias": {
       return (
         <Select
           defaultValue="15 dias"
@@ -169,27 +171,27 @@ export default function SelectInterval({ interval, setIntervalValue }: Props) {
           <SelectContent className="rounded-xl">
             {days.map((option) => (
               <SelectItem key={option} value={option} className="rounded-lg">
-                {option.split('.SA')[0]}
+                {option.split(".SA")[0]}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
-      )
+      );
     }
-    case 'Mês': {
+    case "Mês": {
       return (
         <Popover>
           <PopoverTrigger asChild>
             <Button
-              variant={'outline'}
+              variant={"outline"}
               className={cn(
-                'justify-start text-left font-normal w-full capitalize',
-                !monthDate && 'text-muted-foreground',
+                "justify-start text-left font-normal w-full capitalize",
+                !monthDate && "text-muted-foreground",
               )}
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
               {monthDate ? (
-                format(monthDate, 'MMMM', { locale: ptBR })
+                format(monthDate, "MMMM", { locale: ptBR })
               ) : (
                 <span>Selecione um mês</span>
               )}
@@ -227,7 +229,7 @@ export default function SelectInterval({ interval, setIntervalValue }: Props) {
             </div>
           </PopoverContent>
         </Popover>
-      )
+      );
     }
   }
 }

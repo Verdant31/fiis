@@ -1,21 +1,21 @@
-'use client'
-import { Bar, BarChart, LabelList, XAxis, YAxis } from 'recharts'
+"use client";
+import { Bar, BarChart, LabelList, XAxis, YAxis } from "recharts";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from '@/components/ui/chart'
-import { BRL } from '@/utils/intlBr'
-import { useWindowSize } from '@/hooks/use-window-size'
-import { Skeleton as ShadSkeleton } from './ui/skeleton'
-import { useFiisDividends } from '@/queries/use-fiis-dividends'
+} from "@/components/ui/chart";
+import { BRL } from "@/utils/intlBr";
+import { useWindowSize } from "@/hooks/use-window-size";
+import { Skeleton as ShadSkeleton } from "./ui/skeleton";
+import { useFiisDividends } from "@/queries/use-fiis-dividends";
 
 const chartConfig = {
   dividends: {
-    label: 'Dividends',
+    label: "Dividends",
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 const Skeleton = () => {
   return (
@@ -34,30 +34,30 @@ const Skeleton = () => {
         <ShadSkeleton className="mt-2 max-w-[760px] min-h-[40px] h-auto w-[60%] rounded-lg min-w-[160px] xl:min-w-[160px]" />
       </div>
     </div>
-  )
-}
+  );
+};
 export function FiisDividendsChart() {
-  const { data: dividends, isLoading } = useFiisDividends()
-  const window = useWindowSize()
+  const { data: dividends, isLoading } = useFiisDividends();
+  const window = useWindowSize();
 
-  if (isLoading) return <Skeleton />
-  if (dividends?.length === 0 || !dividends) return null
+  if (isLoading) return <Skeleton />;
+  if (dividends?.length === 0 || !dividends) return null;
 
-  const topFiisIndex = (window.width ?? 0) > 700 ? 10 : 5
+  const topFiisIndex = (window.width ?? 0) > 700 ? 10 : 5;
 
   const chartData = dividends
     .map((fiiDividends) => {
-      const months = Object.keys(fiiDividends.monthlyDividends)
+      const months = Object.keys(fiiDividends.monthlyDividends);
       return {
-        fii: fiiDividends.fiiName.split('11.SA')[0],
+        fii: fiiDividends.fiiName.split("11.SA")[0],
         dividends: months.reduce((acc, month) => {
-          acc += fiiDividends.monthlyDividends[month].total
-          return acc
+          acc += fiiDividends.monthlyDividends[month].total;
+          return acc;
         }, 0),
-      }
+      };
     })
     .sort((a, b) => b.dividends - a.dividends)
-    .slice(0, topFiisIndex)
+    .slice(0, topFiisIndex);
 
   return (
     <div className="mt-8 max-w-[760px] lg:max-w-[500px] lg:w-full lg:mr-8">
@@ -125,5 +125,5 @@ export function FiisDividendsChart() {
         </BarChart>
       </ChartContainer>
     </div>
-  )
+  );
 }

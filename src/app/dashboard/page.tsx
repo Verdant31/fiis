@@ -1,8 +1,8 @@
-'use client'
-import { AnalyticsCarousel } from '@/components/analytics-carousel'
-import { Articles } from '@/components/articles'
-import { FiisDividendsChart } from '@/components/fiis-dividends-chart'
-import { FiisHomeChart } from '@/components/fiis-home-chart'
+"use client";
+import { AnalyticsCarousel } from "@/components/analytics-carousel";
+import { Articles } from "@/components/articles";
+import { FiisDividendsChart } from "@/components/fiis-dividends-chart";
+import { FiisHomeChart } from "@/components/fiis-home-chart";
 
 export default function Home() {
   return (
@@ -14,5 +14,5 @@ export default function Home() {
       </div>
       <Articles />
     </main>
-  )
+  );
 }

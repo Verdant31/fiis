@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import {
   CartesianGrid,
   Line,
@@ -7,8 +7,8 @@ import {
   YAxis,
   Bar,
   BarChart,
-} from 'recharts'
-import { parse } from 'date-fns'
+} from "recharts";
+import { parse } from "date-fns";
 import {
   ChartConfig,
   ChartContainer,
@@ -16,85 +16,85 @@ import {
   ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-} from '@/components/ui/chart'
-import { BRL } from '@/utils/intlBr'
-import { FormEvent, useState } from 'react'
+} from "@/components/ui/chart";
+import { BRL } from "@/utils/intlBr";
+import { FormEvent, useState } from "react";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { Skeleton as ShadSkeleton } from './ui/skeleton'
-import { useFiisPriceHistory } from '@/queries/use-fiis-price-history'
-import { FiisController } from '@/controllers/fii'
-import { Input } from './ui/input'
-import { Sparkle } from 'lucide-react'
-import { useFiisSummary } from '@/queries/use-fiis-summary'
-import { useCloudflareModel } from '@/queries/use-cloudflare-model'
-import { useFiisDividends } from '@/queries/use-fiis-dividends'
-import { client } from '@/app/providers'
-import { ClipLoader } from 'react-spinners'
-import { currencyFormatter } from '@/utils/currency-formatter'
+} from "@/components/ui/select";
+import { Skeleton as ShadSkeleton } from "./ui/skeleton";
+import { useFiisPriceHistory } from "@/queries/use-fiis-price-history";
+import { FiisController } from "@/controllers/fii";
+import { Input } from "./ui/input";
+import { Sparkle } from "lucide-react";
+import { useFiisSummary } from "@/queries/use-fiis-summary";
+import { useCloudflareModel } from "@/queries/use-cloudflare-model";
+import { useFiisDividends } from "@/queries/use-fiis-dividends";
+import { client } from "@/app/providers";
+import { ClipLoader } from "react-spinners";
+import { currencyFormatter } from "@/utils/currency-formatter";
 
 export enum FiisPriceChartOptions {
-  AllBaseTen = 'Base 10',
-  AllBaseOneHundred = 'Base 100',
-  AllBaseNinety = 'Base 90',
+  AllBaseTen = "Base 10",
+  AllBaseOneHundred = "Base 100",
+  AllBaseNinety = "Base 90",
 }
 
 export function FiisHomeChart() {
-  const [fiiFilter, setFiiFilter] = useState<string>()
-  const [modelInput, setModelInput] = useState<string>('')
+  const [fiiFilter, setFiiFilter] = useState<string>();
+  const [modelInput, setModelInput] = useState<string>("");
 
   const { data: fiisHistory, isLoading: isLoadingHistory } =
-    useFiisPriceHistory()
-  const { data: summary, isLoading: isLoadingSummary } = useFiisSummary()
-  const { data: dividends, isLoading: isLoadingDividends } = useFiisDividends()
+    useFiisPriceHistory();
+  const { data: summary, isLoading: isLoadingSummary } = useFiisSummary();
+  const { data: dividends, isLoading: isLoadingDividends } = useFiisDividends();
 
   const { data, isFetching: isLoadingModelResponse } = useCloudflareModel({
     modelInput,
     summary,
     fiisHistory,
     setModelInput,
-  })
+  });
 
-  const isLoading = isLoadingHistory || isLoadingSummary || isLoadingDividends
+  const isLoading = isLoadingHistory || isLoadingSummary || isLoadingDividends;
 
-  if (isLoading) return <Skeleton />
-  if (fiisHistory?.length === 0 || !summary || !fiisHistory) return null
+  if (isLoading) return <Skeleton />;
+  if (fiisHistory?.length === 0 || !summary || !fiisHistory) return null;
 
   const fiisController = new FiisController({
     history: fiisHistory,
     summary,
     dividends,
-  })
+  });
 
   const { chartData, yAxisDomain, chartType } =
-    fiisController.formatHistoryToChartData(fiiFilter, data)
+    fiisController.formatHistoryToChartData(fiiFilter, data);
 
   const selectOptions = [
     FiisPriceChartOptions.AllBaseTen,
     FiisPriceChartOptions.AllBaseOneHundred,
     FiisPriceChartOptions.AllBaseNinety,
     ...fiisHistory.map((fii) => fii.fiiName),
-  ]
+  ];
 
   const onSubmit = (e: FormEvent) => {
-    e.preventDefault()
-    const data = new FormData(e.target as HTMLFormElement)
-    const modelInput = data.get('modelInput') as string
-    setModelInput(modelInput)
-  }
+    e.preventDefault();
+    const data = new FormData(e.target as HTMLFormElement);
+    const modelInput = data.get("modelInput") as string;
+    setModelInput(modelInput);
+  };
 
   const fiisBars = Array.from(
     new Set(
       chartData
         .flatMap((item) => Object.keys(item))
-        .filter((key) => key !== 'date'),
+        .filter((key) => key !== "date"),
     ),
-  )
+  );
 
   return (
     <div className="mt-6 max-w-[760px] lg:w-full">
@@ -111,11 +111,13 @@ export function FiisHomeChart() {
           defaultValue={selectOptions[3]}
           value={fiiFilter}
           onValueChange={(value) => {
-            setFiiFilter(value)
-            setModelInput('')
-            const el = document.getElementById('modelInput') as HTMLInputElement
-            el.value = ''
-            client.resetQueries({ queryKey: ['cloudflare'] })
+            setFiiFilter(value);
+            setModelInput("");
+            const el = document.getElementById(
+              "modelInput",
+            ) as HTMLInputElement;
+            el.value = "";
+            client.resetQueries({ queryKey: ["cloudflare"] });
           }}
         >
           <SelectTrigger
@@ -127,7 +129,7 @@ export function FiisHomeChart() {
           <SelectContent className="rounded-xl">
             {selectOptions.map((option) => (
               <SelectItem key={option} value={option} className="rounded-lg">
-                {option.split('.SA')[0]}
+                {option.split(".SA")[0]}
               </SelectItem>
             ))}
           </SelectContent>
@@ -155,7 +157,7 @@ export function FiisHomeChart() {
           className="absolute text-muted-foreground left-2 top-[50%] translate-y-[-50%]"
         />
       </div>
-      {chartType === 'line' ? (
+      {chartType === "line" ? (
         <ChartContainer className="mt-6" config={{} satisfies ChartConfig}>
           <LineChart accessibilityLayer data={chartData} margin={{}}>
             <CartesianGrid vertical={false} />
@@ -166,11 +168,11 @@ export function FiisHomeChart() {
               tickMargin={8}
               minTickGap={32}
               tickFormatter={(value) => {
-                const date = parse(value, 'dd/MM/yyyy', new Date())
-                return date.toLocaleDateString('en-US', {
-                  month: 'short',
-                  day: 'numeric',
-                })
+                const date = parse(value, "dd/MM/yyyy", new Date());
+                return date.toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                });
               }}
             />
             <YAxis
@@ -194,7 +196,7 @@ export function FiisHomeChart() {
               <Line
                 key={fii.fiiName}
                 dataKey={fii.fiiName}
-                name={fii.fiiName.split('.SA')[0] + ' '}
+                name={fii.fiiName.split(".SA")[0] + " "}
                 type="monotone"
                 stroke={`hsl(var(--chart-${index + 1}))`}
                 strokeWidth={2}
@@ -221,7 +223,7 @@ export function FiisHomeChart() {
                 <ChartTooltipContent
                   skipFalsyValues={true}
                   itemValueFormatter={(item) => {
-                    return currencyFormatter(item.value as number)
+                    return currencyFormatter(item.value as number);
                   }}
                   hideLabel
                 />
@@ -241,13 +243,13 @@ export function FiisHomeChart() {
                   stackId="a"
                   fill={`hsl(var(--chart-${index + 1}))`}
                 />
-              )
+              );
             })}
           </BarChart>
         </ChartContainer>
       )}
     </div>
-  )
+  );
 }
 
 const Skeleton = () => {
@@ -263,5 +265,5 @@ const Skeleton = () => {
 
       <ShadSkeleton className="mt-6 max-w-[760px] lg:h-[430px] min-h-[217px] sm:min-h-[300px] h-auto w-[100%] rounded-lg" />
     </div>
-  )
-}
+  );
+};

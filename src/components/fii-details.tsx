@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { FiisController } from '@/controllers/fii'
-import { useFiisPriceHistory } from '@/queries/use-fiis-price-history'
-import { FiiSummary } from '@/types/fiis'
-import { currencyFormatter } from '@/utils/currency-formatter'
-import React, { useMemo, useState } from 'react'
+import { FiisController } from "@/controllers/fii";
+import { useFiisPriceHistory } from "@/queries/use-fiis-price-history";
+import { FiiSummary } from "@/types/fiis";
+import { currencyFormatter } from "@/utils/currency-formatter";
+import React, { useMemo, useState } from "react";
 import {
   CartesianGrid,
   Line,
@@ -12,35 +12,38 @@ import {
   YAxis,
   Bar,
   BarChart,
-} from 'recharts'
+} from "recharts";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from './ui/chart'
-import { format, parse } from 'date-fns'
-import { Skeleton as ShadSkeleton } from './ui/skeleton'
-import { dividendsColumns, operationsSummaryColumns } from '@/app/fiis/general/columns'
+} from "./ui/chart";
+import { format, parse } from "date-fns";
+import { Skeleton as ShadSkeleton } from "./ui/skeleton";
+import {
+  dividendsColumns,
+  operationsSummaryColumns,
+} from "@/app/fiis/general/columns";
 import {
   useReactTable,
   getCoreRowModel,
   getPaginationRowModel,
   SortingState,
   getSortedRowModel,
-} from '@tanstack/react-table'
-import { DataTable } from './table'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useUniqueFiiDividends } from '@/queries/use-unique-fii-dividends'
-import CalendarArrowDown from './icons/calendar-arrow-down'
-import { FiisOperations } from '@prisma/client'
-import { Dividend } from '@/queries/use-fiis-dividends'
+} from "@tanstack/react-table";
+import { DataTable } from "./table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useUniqueFiiDividends } from "@/queries/use-unique-fii-dividends";
+import CalendarArrowDown from "./icons/calendar-arrow-down";
+import { FiisOperations } from "@prisma/client";
+import { Dividend } from "@/queries/use-fiis-dividends";
 
 interface Props {
-  fii: FiiSummary
-  fiisLength: number
-  windowWidth: number
-  operations: FiisOperations[]
+  fii: FiiSummary;
+  fiisLength: number;
+  windowWidth: number;
+  operations: FiisOperations[];
 }
 
 export default function FiiDetails({
@@ -49,26 +52,26 @@ export default function FiiDetails({
   windowWidth,
   operations,
 }: Props) {
-  const [dividendsSorting, setDividendsSorting] = useState<SortingState>([])
-  const [operationsSorting, setOperationsSorting] = useState<SortingState>([])
+  const [dividendsSorting, setDividendsSorting] = useState<SortingState>([]);
+  const [operationsSorting, setOperationsSorting] = useState<SortingState>([]);
 
-  const [tab, setTab] = useState('price')
+  const [tab, setTab] = useState("price");
 
   const { data: priceHistory, isLoading: isLoadingHistory } =
-    useFiisPriceHistory()
+    useFiisPriceHistory();
   const { data: fiiDividends, isLoading: isLoadingDividends } =
-    useUniqueFiiDividends({ operations, key: fii.fiiName })
+    useUniqueFiiDividends({ operations, key: fii.fiiName });
 
-  const fiisController = new FiisController({ history: priceHistory ?? [] })
+  const fiisController = new FiisController({ history: priceHistory ?? [] });
 
   const { chartData, yAxisDomain } = fiisController.formatHistoryToChartData(
-    fii.fiiName + '.SA',
-  )
+    fii.fiiName + ".SA",
+  );
 
   const randomChartColorIndex = useMemo(
     () => Math.floor(Math.random() * fiisLength + 1),
     [fii],
-  )
+  );
 
   const operationsTable = useReactTable({
     data: fii.operations,
@@ -85,7 +88,7 @@ export default function FiiDetails({
         pageSize: windowWidth > 1024 ? 6 : 11,
       },
     },
-  })
+  });
 
   const dividendsTable = useReactTable({
     data: fiiDividends?.dividends as Dividend[],
@@ -102,10 +105,10 @@ export default function FiiDetails({
         pageSize: windowWidth > 1024 ? 6 : 11,
       },
     },
-  })
+  });
 
-  const fiiColor = `hsl(var(--chart-${randomChartColorIndex}))`
-  const isLoading = isLoadingHistory || isLoadingDividends
+  const fiiColor = `hsl(var(--chart-${randomChartColorIndex}))`;
+  const isLoading = isLoadingHistory || isLoadingDividends;
 
   return (
     <div>
@@ -137,7 +140,7 @@ export default function FiiDetails({
             >
               P/VP
             </p>
-            <p>{fii?.pvp ? fii?.pvp : !fii?.extraInfo?.pvp ? 'N/A' : null}</p>
+            <p>{fii?.pvp ? fii?.pvp : !fii?.extraInfo?.pvp ? "N/A" : null}</p>
             {!fii?.pvp && fii.extraInfo?.pvp && (
               <div className="flex gap-2 items-center">
                 <CalendarArrowDown />
@@ -169,9 +172,9 @@ export default function FiiDetails({
             </p>
             <p>
               {fii?.annualYield
-                ? fii?.annualYield.toFixed(2) + '%'
+                ? fii?.annualYield.toFixed(2) + "%"
                 : !fii?.extraInfo?.annualYield
-                  ? 'N/A'
+                  ? "N/A"
                   : null}
             </p>
             {!fii?.annualYield && fii.extraInfo?.annualYield && (
@@ -193,8 +196,8 @@ export default function FiiDetails({
             <p>
               {currencyFormatter(
                 fii.operations.reduce((acc, op) => {
-                  if (op.type === 'purchase') acc += op.qty * op.quotationValue
-                  return acc
+                  if (op.type === "purchase") acc += op.qty * op.quotationValue;
+                  return acc;
                 }, 0),
               )}
             </p>
@@ -220,7 +223,7 @@ export default function FiiDetails({
               <Tabs
                 value={tab}
                 onValueChange={(value: string) => {
-                  setTab(value)
+                  setTab(value);
                 }}
                 defaultValue="price"
               >
@@ -242,11 +245,11 @@ export default function FiiDetails({
                         tickMargin={8}
                         minTickGap={32}
                         tickFormatter={(value) => {
-                          const date = parse(value, 'dd/MM/yyyy', new Date())
-                          return date.toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                          })
+                          const date = parse(value, "dd/MM/yyyy", new Date());
+                          return date.toLocaleDateString("en-US", {
+                            month: "short",
+                            day: "numeric",
+                          });
                         }}
                       />
                       <YAxis
@@ -266,9 +269,9 @@ export default function FiiDetails({
                         }
                       />
                       <Line
-                        key={fii.fiiName + '.SA'}
-                        dataKey={fii.fiiName + '.SA'}
-                        name={fii.fiiName.split('.SA')[0] + ' '}
+                        key={fii.fiiName + ".SA"}
+                        dataKey={fii.fiiName + ".SA"}
+                        name={fii.fiiName.split(".SA")[0] + " "}
                         type="monotone"
                         stroke={fiiColor}
                         strokeWidth={2}
@@ -292,8 +295,8 @@ export default function FiiDetails({
                         tickMargin={10}
                         axisLine={false}
                         tickFormatter={(value) => {
-                          const date = parse(value, 'MM/yyyy', new Date())
-                          return format(date, 'MM/yy')
+                          const date = parse(value, "MM/yyyy", new Date());
+                          return format(date, "MM/yy");
                         }}
                       />
                       <ChartTooltip
@@ -343,5 +346,5 @@ export default function FiiDetails({
         </div>
       </div>
     </div>
-  )
+  );
 }

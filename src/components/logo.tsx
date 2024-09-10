@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils'
+import { cn } from "@/lib/utils";
 
 export function Logo(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -13,7 +13,7 @@ export function Logo(props: React.SVGProps<SVGSVGElement>) {
       strokeWidth="1.75"
       strokeLinecap="round"
       strokeLinejoin="round"
-      className={cn('lucide lucide-chart-candlestick', props.className)}
+      className={cn("lucide lucide-chart-candlestick", props.className)}
     >
       <path d="M9 5v4" />
       <rect width="4" height="6" x="7" y="9" rx="1" />
@@ -23,5 +23,5 @@ export function Logo(props: React.SVGProps<SVGSVGElement>) {
       <path d="M17 13v3" />
       <path d="M3 3v16a2 2 0 0 0 2 2h16" />
     </svg>
-  )
+  );
 }

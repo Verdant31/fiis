@@ -1,10 +1,10 @@
-'use client'
+"use client";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTrigger,
-} from '@/components/ui/sheet'
+} from "@/components/ui/sheet";
 import {
   Building2,
   Github,
@@ -13,17 +13,17 @@ import {
   Linkedin,
   MenuIcon,
   Dot,
-} from 'lucide-react'
-import Link from 'next/link'
-import { Logo } from './logo'
-import { Navbar } from './navbar'
-import { Button } from './ui/button'
+} from "lucide-react";
+import Link from "next/link";
+import { Logo } from "./logo";
+import { Navbar } from "./navbar";
+import { Button } from "./ui/button";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/components/ui/accordion'
+} from "@/components/ui/accordion";
 
 export function Header() {
   return (
@@ -139,5 +139,5 @@ export function Header() {
         </div>
       </div>
     </header>
-  )
+  );
 }

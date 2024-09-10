@@ -1,42 +1,42 @@
-'use client'
+"use client";
 
-import { DataTableColumnHeader } from '@/components/table'
-import { Dividend } from '@/queries/use-fiis-dividends'
-import { FiiSummary } from '@/types/fiis'
-import { currencyFormatter } from '@/utils/currency-formatter'
-import { FiisOperations } from '@prisma/client'
-import { ColumnDef } from '@tanstack/react-table'
-import { format } from 'date-fns'
+import { DataTableColumnHeader } from "@/components/table";
+import { Dividend } from "@/queries/use-fiis-dividends";
+import { FiiSummary } from "@/types/fiis";
+import { currencyFormatter } from "@/utils/currency-formatter";
+import { FiisOperations } from "@prisma/client";
+import { ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
 
 export const fiisSummaryColumns: ColumnDef<FiiSummary>[] = [
   {
-    accessorKey: 'fiiName',
-    header: 'Nome',
+    accessorKey: "fiiName",
+    header: "Nome",
     cell: ({ row }) => {
-      return <div className="font-medium">{row.getValue('fiiName')}</div>
+      return <div className="font-medium">{row.getValue("fiiName")}</div>;
     },
   },
   {
-    accessorKey: 'quotes',
+    accessorKey: "quotes",
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Cotas" />
+      return <DataTableColumnHeader column={column} title="Cotas" />;
     },
     cell: ({ row }) => {
-      return <div className=" font-medium">{row.getValue('quotes')}</div>
+      return <div className=" font-medium">{row.getValue("quotes")}</div>;
     },
   },
   {
-    accessorKey: 'price',
+    accessorKey: "price",
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Preço" />
+      return <DataTableColumnHeader column={column} title="Preço" />;
     },
     cell: ({ row }) => {
-      const price = row.getValue('price') as number
+      const price = row.getValue("price") as number;
       const changedValue =
-        100 - (row.original.valueAtFirstPurchase * 100) / price
+        100 - (row.original.valueAtFirstPurchase * 100) / price;
       return (
         <div className="font-medium flex flex-col sm:flex-row sm:gap-1">
-          {currencyFormatter(row.getValue('price'))}
+          {currencyFormatter(row.getValue("price"))}
           {changedValue > 0 ? (
             <span className="font-semibold text-green-500">
               ({changedValue.toFixed(1)}%)
@@ -47,55 +47,55 @@ export const fiisSummaryColumns: ColumnDef<FiiSummary>[] = [
             </span>
           )}
         </div>
-      )
+      );
     },
   },
   {
-    accessorKey: 'variation',
-    header: 'Variação',
+    accessorKey: "variation",
+    header: "Variação",
     cell: ({ row }) => {
       if (!row.original.high || !row.original.low) {
-        return <p className="font-medium">N/A</p>
+        return <p className="font-medium">N/A</p>;
       }
 
       return (
         <div className="font-medium flex flex-col md:block">
           {currencyFormatter(row.original.high - row.original.low)}
         </div>
-      )
+      );
     },
   },
   {
-    accessorKey: 'totalInvested',
-    header: 'Total investido',
+    accessorKey: "totalInvested",
+    header: "Total investido",
     cell: ({ row }) => {
       const total = row.original.operations.reduce((acc, op) => {
-        if (op.type === 'purchase') acc += op.quotationValue * op.qty
-        return acc
-      }, 0)
+        if (op.type === "purchase") acc += op.quotationValue * op.qty;
+        return acc;
+      }, 0);
 
       return (
         <div className="font-medium flex flex-col md:block">
           {currencyFormatter(total)}
         </div>
-      )
+      );
     },
   },
   {
-    accessorKey: 'currentTotal',
-    header: 'Total atual',
+    accessorKey: "currentTotal",
+    header: "Total atual",
     cell: ({ row }) => {
       const total = row.original.operations.reduce((acc, op) => {
-        if (op.type === 'purchase') acc += op.quotationValue * op.qty
-        return acc
-      }, 0)
+        if (op.type === "purchase") acc += op.quotationValue * op.qty;
+        return acc;
+      }, 0);
 
       const currentTotal = row.original.operations.reduce((acc, op) => {
-        if (op.type === 'purchase') acc += row.original.price * op.qty
-        return acc
-      }, 0)
+        if (op.type === "purchase") acc += row.original.price * op.qty;
+        return acc;
+      }, 0);
 
-      const variation = (currentTotal * 100) / total - 100
+      const variation = (currentTotal * 100) / total - 100;
 
       return (
         <div className="font-medium flex items-center gap-1">
@@ -110,50 +110,50 @@ export const fiisSummaryColumns: ColumnDef<FiiSummary>[] = [
             </span>
           )}
         </div>
-      )
+      );
     },
   },
-]
+];
 
 export const fiisSummaryColumnsMobile: ColumnDef<FiiSummary>[] = [
   {
-    accessorKey: 'fiiName',
-    header: 'Nome',
+    accessorKey: "fiiName",
+    header: "Nome",
     cell: ({ row }) => {
-      return <div className="font-medium">{row.getValue('fiiName')}</div>
+      return <div className="font-medium">{row.getValue("fiiName")}</div>;
     },
   },
   {
-    accessorKey: 'totalInvested',
-    header: 'Total investido',
+    accessorKey: "totalInvested",
+    header: "Total investido",
     cell: ({ row }) => {
       const total = row.original.operations.reduce((acc, op) => {
-        if (op.type === 'purchase') acc += op.quotationValue * op.qty
-        return acc
-      }, 0)
+        if (op.type === "purchase") acc += op.quotationValue * op.qty;
+        return acc;
+      }, 0);
 
       return (
         <div className="font-medium flex flex-col md:block">
           {currencyFormatter(total)}
         </div>
-      )
+      );
     },
   },
   {
-    accessorKey: 'currentTotal',
-    header: 'Total atual',
+    accessorKey: "currentTotal",
+    header: "Total atual",
     cell: ({ row }) => {
       const total = row.original.operations.reduce((acc, op) => {
-        if (op.type === 'purchase') acc += op.quotationValue * op.qty
-        return acc
-      }, 0)
+        if (op.type === "purchase") acc += op.quotationValue * op.qty;
+        return acc;
+      }, 0);
 
       const currentTotal = row.original.operations.reduce((acc, op) => {
-        if (op.type === 'purchase') acc += row.original.price * op.qty
-        return acc
-      }, 0)
+        if (op.type === "purchase") acc += row.original.price * op.qty;
+        return acc;
+      }, 0);
 
-      const variation = (currentTotal * 100) / total - 100
+      const variation = (currentTotal * 100) / total - 100;
 
       return (
         <div className="font-medium flex items-center gap-1">
@@ -168,119 +168,119 @@ export const fiisSummaryColumnsMobile: ColumnDef<FiiSummary>[] = [
             </span>
           )}
         </div>
-      )
+      );
     },
   },
-]
+];
 
 export const operationsSummaryColumns: ColumnDef<FiisOperations>[] = [
   {
-    accessorKey: 'fiiName',
-    header: 'Nome',
+    accessorKey: "fiiName",
+    header: "Nome",
     cell: ({ row }) => {
-      return <div className=" font-medium">{row.getValue('fiiName')}</div>
+      return <div className=" font-medium">{row.getValue("fiiName")}</div>;
     },
   },
   {
-    accessorKey: 'qty',
-    header: 'Cotas',
+    accessorKey: "qty",
+    header: "Cotas",
     cell: ({ row }) => {
-      return <div className=" font-medium">{row.getValue('qty')}</div>
+      return <div className=" font-medium">{row.getValue("qty")}</div>;
     },
   },
   {
-    accessorKey: 'quotationValue',
-    header: 'Preço',
+    accessorKey: "quotationValue",
+    header: "Preço",
     cell: ({ row }) => {
       return (
         <div className=" font-medium">
-          {currencyFormatter(row.getValue('quotationValue'))}
+          {currencyFormatter(row.getValue("quotationValue"))}
         </div>
-      )
+      );
     },
   },
   {
-    accessorKey: 'date',
+    accessorKey: "date",
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Data" />
+      return <DataTableColumnHeader column={column} title="Data" />;
     },
     sortingFn: (a, b) => {
-      const dateA = new Date(a.getValue('date'))
-      const dateB = new Date(b.getValue('date'))
+      const dateA = new Date(a.getValue("date"));
+      const dateB = new Date(b.getValue("date"));
 
       if (dateA < dateB) {
-        return -1
+        return -1;
       }
       if (dateA > dateB) {
-        return 1
+        return 1;
       }
-      return 0
+      return 0;
     },
     cell: ({ row }) => {
       return (
         <div className="font-medium">
-          {format(new Date(row.getValue('date')), 'dd/MM/yyyy')}
+          {format(new Date(row.getValue("date")), "dd/MM/yyyy")}
         </div>
-      )
+      );
     },
   },
-]
+];
 
 export const dividendsColumns: ColumnDef<Dividend>[] = [
   {
-    accessorKey: 'quotesAtPayment',
-    header: 'Cotas',
+    accessorKey: "quotesAtPayment",
+    header: "Cotas",
     cell: ({ row }) => {
       return (
-        <div className=" font-medium">{row.getValue('quotesAtPayment')}</div>
-      )
+        <div className=" font-medium">{row.getValue("quotesAtPayment")}</div>
+      );
     },
   },
   {
-    accessorKey: 'paymentPerQuote',
-    header: 'Por cota',
-    cell: ({ row }) => {
-      return (
-        <div className=" font-medium">
-          {currencyFormatter(row.getValue('paymentPerQuote'))}
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: 'total',
-    header: 'Total',
+    accessorKey: "paymentPerQuote",
+    header: "Por cota",
     cell: ({ row }) => {
       return (
         <div className=" font-medium">
-          {currencyFormatter(row.getValue('total'))}
+          {currencyFormatter(row.getValue("paymentPerQuote"))}
         </div>
-      )
+      );
     },
   },
   {
-    accessorKey: 'date',
+    accessorKey: "total",
+    header: "Total",
+    cell: ({ row }) => {
+      return (
+        <div className=" font-medium">
+          {currencyFormatter(row.getValue("total"))}
+        </div>
+      );
+    },
+  },
+  {
+    accessorKey: "date",
     header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Data" />
+      return <DataTableColumnHeader column={column} title="Data" />;
     },
     sortingFn: (a, b) => {
-      const dateA = new Date(a.getValue('date'))
-      const dateB = new Date(b.getValue('date'))
+      const dateA = new Date(a.getValue("date"));
+      const dateB = new Date(b.getValue("date"));
 
       if (dateA < dateB) {
-        return -1
+        return -1;
       }
       if (dateA > dateB) {
-        return 1
+        return 1;
       }
-      return 0
+      return 0;
     },
     cell: ({ row }) => {
       return (
         <div className="font-medium">
-          {format(new Date(row.getValue('date')), 'dd/MM/yyyy')}
+          {format(new Date(row.getValue("date")), "dd/MM/yyyy")}
         </div>
-      )
+      );
     },
   },
-]
+];

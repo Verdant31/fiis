@@ -1,16 +1,16 @@
-'use client'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+"use client";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-} from '@/components/ui/carousel'
-import { useEffect, useState } from 'react'
-import { Skeleton as ShadSkeleton } from './ui/skeleton'
-import { useFiisOperations } from '@/queries/use-fiis-operations'
-import { FiisController } from '@/controllers/fii'
-import { currencyFormatter } from '@/utils/currency-formatter'
-import { useFiisDividends } from '@/queries/use-fiis-dividends'
+} from "@/components/ui/carousel";
+import { useEffect, useState } from "react";
+import { Skeleton as ShadSkeleton } from "./ui/skeleton";
+import { useFiisOperations } from "@/queries/use-fiis-operations";
+import { FiisController } from "@/controllers/fii";
+import { currencyFormatter } from "@/utils/currency-formatter";
+import { useFiisDividends } from "@/queries/use-fiis-dividends";
 
 const Skeleton = () => {
   return (
@@ -18,29 +18,29 @@ const Skeleton = () => {
       {Array.from({ length: 3 }).map((_, index) => (
         <ShadSkeleton
           key={index}
-          className={`w-[244px] h-[104px] ${index === 1 && 'shrink-0'}`}
+          className={`w-[244px] h-[104px] ${index === 1 && "shrink-0"}`}
         />
       ))}
     </div>
-  )
-}
+  );
+};
 
 export function AnalyticsCarousel() {
-  const [isEmblaRendered, setIsEmblaRendered] = useState(false)
+  const [isEmblaRendered, setIsEmblaRendered] = useState(false);
   const { data: operations, isLoading: isLoadingOperations } =
-    useFiisOperations()
-  const { data: dividends, isLoading: isLoadingDividends } = useFiisDividends()
+    useFiisOperations();
+  const { data: dividends, isLoading: isLoadingDividends } = useFiisDividends();
 
   useEffect(() => {
-    setIsEmblaRendered(true)
-  }, [])
+    setIsEmblaRendered(true);
+  }, []);
 
   if (!isEmblaRendered || isLoadingOperations || isLoadingDividends) {
-    return <Skeleton />
+    return <Skeleton />;
   }
 
-  const fiis = new FiisController({ operations, dividends })
-  const totalValueInvested = fiis.getTotalValueInvested()
+  const fiis = new FiisController({ operations, dividends });
+  const totalValueInvested = fiis.getTotalValueInvested();
 
   return (
     <Carousel
@@ -116,5 +116,5 @@ export function AnalyticsCarousel() {
         </CarouselItem>
       </CarouselContent>
     </Carousel>
-  )
+  );
 }

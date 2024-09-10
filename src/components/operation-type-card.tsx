@@ -1,10 +1,10 @@
-import { Operation } from '@prisma/client'
-import React from 'react'
+import { Operation } from "@prisma/client";
+import React from "react";
 
 export enum OperationText {
-  'purchase' = 'Compra',
-  'sale' = 'Venda',
-  'unfolding' = 'Desdobramento',
+  "purchase" = "Compra",
+  "sale" = "Venda",
+  "unfolding" = "Desdobramento",
 }
 
 export default function OperationTypeCard({
@@ -12,9 +12,9 @@ export default function OperationTypeCard({
   type,
   onChange,
 }: {
-  type: Operation
-  currentType: Operation
-  onChange: (type: Operation) => void
+  type: Operation;
+  currentType: Operation;
+  onChange: (type: Operation) => void;
 }) {
   return (
     <div
@@ -24,5 +24,5 @@ export default function OperationTypeCard({
     >
       {OperationText[type]}
     </div>
-  )
+  );
 }

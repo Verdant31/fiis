@@ -1,31 +1,31 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useQuery } from '@tanstack/react-query'
-import { api } from '@/lib/axios'
-import { FiisHistory, FiiSummary } from '@/types/fiis'
-import { Dispatch, SetStateAction } from 'react'
-import { parseCloudflareResponse } from '@/utils/parse-cloudflare-response'
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/axios";
+import { FiisHistory, FiiSummary } from "@/types/fiis";
+import { Dispatch, SetStateAction } from "react";
+import { parseCloudflareResponse } from "@/utils/parse-cloudflare-response";
 
 interface UseCloudflareModelProps {
-  modelInput?: string
-  summary?: FiiSummary[]
-  fiisHistory?: FiisHistory[]
-  setModelInput?: Dispatch<SetStateAction<string>>
+  modelInput?: string;
+  summary?: FiiSummary[];
+  fiisHistory?: FiisHistory[];
+  setModelInput?: Dispatch<SetStateAction<string>>;
 }
 
 export interface CloudflareModelResponse {
   result: {
-    response: string
-  }
-  success: boolean
-  errors: any[]
-  messages: any[]
+    response: string;
+  };
+  success: boolean;
+  errors: any[];
+  messages: any[];
 }
 
 export type ParsedCloduflareResponse = {
-  context: string
-  funds: string[]
-  period: string[]
-}
+  context: string;
+  funds: string[];
+  period: string[];
+};
 
 export const useCloudflareModel = ({
   modelInput,
@@ -34,20 +34,20 @@ export const useCloudflareModel = ({
   setModelInput,
 }: UseCloudflareModelProps) => {
   const query = useQuery(
-    ['cloudflare'],
+    ["cloudflare"],
     async () => {
-      const { data } = await api.post('ai', {
+      const { data } = await api.post("ai", {
         modelInput,
         summary,
         fiisHistory,
-      })
+      });
 
       const result = parseCloudflareResponse({
         data: data?.response as CloudflareModelResponse,
-      })
+      });
 
-      setModelInput && setModelInput('')
-      return result
+      setModelInput && setModelInput("");
+      return result;
     },
     {
       refetchOnWindowFocus: false,
@@ -56,6 +56,6 @@ export const useCloudflareModel = ({
         Boolean((fiisHistory ?? [])?.length > 0) &&
         Boolean(modelInput && modelInput.length > 0),
     },
-  )
-  return query
-}
+  );
+  return query;
+};

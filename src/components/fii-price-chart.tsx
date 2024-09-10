@@ -1,48 +1,48 @@
-'use client'
-import { FiisHistory } from '@/types/fiis'
-import React, { useState } from 'react'
-import { FiisController } from '@/controllers/fii'
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts'
-import { parse } from 'date-fns'
+"use client";
+import { FiisHistory } from "@/types/fiis";
+import React, { useState } from "react";
+import { FiisController } from "@/controllers/fii";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import { parse } from "date-fns";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from '@/components/ui/chart'
-import { BRL } from '@/utils/intlBr'
-import { FiisPriceChartOptions } from './fiis-home-chart'
+} from "@/components/ui/chart";
+import { BRL } from "@/utils/intlBr";
+import { FiisPriceChartOptions } from "./fiis-home-chart";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from "@/components/ui/select";
 
 interface Props {
-  history?: FiisHistory[]
-  isLoading: boolean
+  history?: FiisHistory[];
+  isLoading: boolean;
 }
 
 export function FiisPriceChart({ history, isLoading }: Props) {
-  const [fiiFilter, setFiiFilter] = useState<string>()
+  const [fiiFilter, setFiiFilter] = useState<string>();
 
-  if (isLoading || !history) return <h1>Loading</h1>
+  if (isLoading || !history) return <h1>Loading</h1>;
 
   const fiisController = new FiisController({
     history,
-  })
+  });
 
   const { chartData, yAxisDomain } =
-    fiisController.formatHistoryToChartData(fiiFilter)
+    fiisController.formatHistoryToChartData(fiiFilter);
 
   const selectOptions = [
     FiisPriceChartOptions.AllBaseTen,
     FiisPriceChartOptions.AllBaseOneHundred,
     FiisPriceChartOptions.AllBaseNinety,
     ...history.map((fii) => fii.fiiName),
-  ]
+  ];
 
   return (
     <div className="mx-auto mb-20 max-w-[1280pxpx] lg:w-full lg:basis-[50%] lg:mb-4">
@@ -59,7 +59,7 @@ export function FiisPriceChart({ history, isLoading }: Props) {
           defaultValue={selectOptions[3]}
           value={fiiFilter}
           onValueChange={(value) => {
-            setFiiFilter(value)
+            setFiiFilter(value);
           }}
         >
           <SelectTrigger
@@ -71,7 +71,7 @@ export function FiisPriceChart({ history, isLoading }: Props) {
           <SelectContent className="rounded-xl">
             {selectOptions.map((option) => (
               <SelectItem key={option} value={option} className="rounded-lg">
-                {option.split('.SA')[0]}
+                {option.split(".SA")[0]}
               </SelectItem>
             ))}
           </SelectContent>
@@ -87,11 +87,11 @@ export function FiisPriceChart({ history, isLoading }: Props) {
             tickMargin={8}
             minTickGap={32}
             tickFormatter={(value) => {
-              const date = parse(value, 'dd/MM/yyyy', new Date())
-              return date.toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-              })
+              const date = parse(value, "dd/MM/yyyy", new Date());
+              return date.toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+              });
             }}
           />
           <YAxis
@@ -115,7 +115,7 @@ export function FiisPriceChart({ history, isLoading }: Props) {
             <Line
               key={fii.fiiName}
               dataKey={fii.fiiName}
-              name={fii.fiiName.split('.SA')[0] + ' '}
+              name={fii.fiiName.split(".SA")[0] + " "}
               type="monotone"
               stroke={`hsl(var(--chart-${index + 1}))`}
               strokeWidth={2}
@@ -125,5 +125,5 @@ export function FiisPriceChart({ history, isLoading }: Props) {
         </LineChart>
       </ChartContainer>
     </div>
-  )
+  );
 }

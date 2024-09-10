@@ -1,9 +1,9 @@
-'use server'
-import { NextResponse } from 'next/server'
-import data from '../../../OPERATIONS_MOCK.json'
-import { prisma } from '@/lib/prisma'
-import { Operation } from '@prisma/client'
-import { dateToEnFormat } from '@/utils/date-to-en-format'
+"use server";
+import { NextResponse } from "next/server";
+import data from "../../../OPERATIONS_MOCK.json";
+import { prisma } from "@/lib/prisma";
+import { Operation } from "@prisma/client";
+import { dateToEnFormat } from "@/utils/date-to-en-format";
 
 export async function GET() {
   try {
@@ -11,9 +11,9 @@ export async function GET() {
       data: data.map((purchase) => ({
         fiiCnpj: purchase.cnpj,
         type:
-          purchase.operation === 'sale'
+          purchase.operation === "sale"
             ? Operation.sale
-            : purchase.operation === 'unfolding'
+            : purchase.operation === "unfolding"
               ? Operation.unfolding
               : Operation.purchase,
         fiiName: purchase.asset_name,
@@ -22,14 +22,14 @@ export async function GET() {
         quotationValue: purchase.price_paid,
         unfoldingProportion: purchase?.unfoldingProportion,
       })),
-    })
+    });
     return NextResponse.json({
-      message: 'DB sucessfuly initiated',
+      message: "DB sucessfuly initiated",
       status: 200,
       response,
-    })
+    });
   } catch (err) {
-    console.log({ err })
-    return NextResponse.json({ message: (err as Error)?.message, status: 500 })
+    console.log({ err });
+    return NextResponse.json({ message: (err as Error)?.message, status: 500 });
   }
 }

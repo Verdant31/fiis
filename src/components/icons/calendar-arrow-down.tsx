@@ -1,8 +1,8 @@
-import React from 'react'
+import React from "react";
 
 interface Props {
-  size?: number
-  className?: string
+  size?: number;
+  className?: string;
 }
 export default function CalendarArrowDown({ size, className }: Props) {
   return (
@@ -25,5 +25,5 @@ export default function CalendarArrowDown({ size, className }: Props) {
       <path d="M3 10h18" />
       <path d="M8 2v4" />
     </svg>
-  )
+  );
 }

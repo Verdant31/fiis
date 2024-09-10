@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import { flexRender, Table as TableType, Column } from '@tanstack/react-table'
+import { flexRender, Table as TableType, Column } from "@tanstack/react-table";
 
 import {
   Table,
@@ -9,8 +9,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { cn } from '@/lib/utils'
+} from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -19,28 +19,28 @@ import {
   ArrowDownIcon,
   ArrowUpIcon,
   CaretSortIcon,
-} from '@radix-ui/react-icons'
+} from "@radix-ui/react-icons";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from "@/components/ui/select";
 
-import { Button } from '@/components/ui/button'
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from "@/components/ui/dropdown-menu";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface DataTableProps<TData, TValue> {
-  onClickRow?: (original: TData) => void
-  className?: string | undefined
-  table: TableType<TData>
+  onClickRow?: (original: TData) => void;
+  className?: string | undefined;
+  table: TableType<TData>;
 }
 
 export function DataTable<TData, TValue>({
@@ -51,7 +51,7 @@ export function DataTable<TData, TValue>({
   return (
     <div
       className={cn(
-        'rounded-md border flex flex-col justify-between',
+        "rounded-md border flex flex-col justify-between",
         className,
       )}
     >
@@ -69,7 +69,7 @@ export function DataTable<TData, TValue>({
                           header.getContext(),
                         )}
                   </TableHead>
-                )
+                );
               })}
             </TableRow>
           ))}
@@ -80,7 +80,7 @@ export function DataTable<TData, TValue>({
               <TableRow
                 key={row.id}
                 onClick={() => onClickRow && onClickRow(row.original)}
-                data-state={row.getIsSelected() && 'selected'}
+                data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
@@ -120,13 +120,13 @@ export function DataTable<TData, TValue>({
         </Button>
       </div>
     </div>
-  )
+  );
 }
 
 interface DataTableColumnHeaderProps<TData, TValue>
   extends React.HTMLAttributes<HTMLDivElement> {
-  column: Column<TData, TValue>
-  title: string
+  column: Column<TData, TValue>;
+  title: string;
 }
 
 export function DataTableColumnHeader<TData, TValue>({
@@ -135,18 +135,18 @@ export function DataTableColumnHeader<TData, TValue>({
   className,
 }: DataTableColumnHeaderProps<TData, TValue>) {
   if (!column.getCanSort()) {
-    return <div className={cn(className)}>{title}</div>
+    return <div className={cn(className)}>{title}</div>;
   }
 
   return (
-    <div className={cn('flex items-center space-x-2', className)}>
+    <div className={cn("flex items-center space-x-2", className)}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="sm" className="-ml-3 h-8 ">
             <span>{title}</span>
-            {column.getIsSorted() === 'desc' ? (
+            {column.getIsSorted() === "desc" ? (
               <ArrowDownIcon className="ml-2 h-4 w-4" />
-            ) : column.getIsSorted() === 'asc' ? (
+            ) : column.getIsSorted() === "asc" ? (
               <ArrowUpIcon className="ml-2 h-4 w-4" />
             ) : (
               <CaretSortIcon className="ml-2 h-4 w-4" />
@@ -174,12 +174,12 @@ export function DataTableColumnHeader<TData, TValue>({
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-  )
+  );
 }
 
 interface DataTablePaginationProps<TData> {
-  table: TableType<TData>
-  paginationSteps: number[]
+  table: TableType<TData>;
+  paginationSteps: number[];
 }
 
 export function DataTablePagination<TData>({
@@ -194,7 +194,7 @@ export function DataTablePagination<TData>({
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
-              table.setPageSize(Number(value))
+              table.setPageSize(Number(value));
             }}
           >
             <SelectTrigger className="h-8 w-[70px] rounded-[6px] border-zinc-800">
@@ -217,7 +217,7 @@ export function DataTablePagination<TData>({
           </Select>
         </div>
         <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-          Pagína {table.getState().pagination.pageIndex + 1} de{' '}
+          Pagína {table.getState().pagination.pageIndex + 1} de{" "}
           {table.getPageCount()}
         </div>
         <div className="flex items-center space-x-2">
@@ -260,5 +260,5 @@ export function DataTablePagination<TData>({
         </div>
       </div>
     </div>
-  )
+  );
 }

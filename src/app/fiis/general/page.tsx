@@ -1,32 +1,32 @@
-'use client'
-import { useFiisSummary } from '@/queries/use-fiis-summary'
-import { Tabs, TabsContent } from '@/components/ui/tabs'
-import { Skeleton as ShadSkeleton } from '@/components/ui/skeleton'
-import { useState } from 'react'
-import FiiDetails from '@/components/fii-details'
-import { useWindowSize } from '@/hooks/use-window-size'
-import { ChevronRight } from 'lucide-react'
-import { FiisGeneralInfo } from '@/components/fiis-general-info'
+"use client";
+import { useFiisSummary } from "@/queries/use-fiis-summary";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { Skeleton as ShadSkeleton } from "@/components/ui/skeleton";
+import { useState } from "react";
+import FiiDetails from "@/components/fii-details";
+import { useWindowSize } from "@/hooks/use-window-size";
+import { ChevronRight } from "lucide-react";
+import { FiisGeneralInfo } from "@/components/fiis-general-info";
 
 export default function Fiis() {
-  const [tab, setTab] = useState('general')
+  const [tab, setTab] = useState("general");
 
-  const [selectedFiiName, setSelectedFiiName] = useState<string>()
-  const { data: summary, isLoading } = useFiisSummary()
-  const window = useWindowSize()
+  const [selectedFiiName, setSelectedFiiName] = useState<string>();
+  const { data: summary, isLoading } = useFiisSummary();
+  const window = useWindowSize();
 
-  const selectedFii = summary?.find((fii) => fii.fiiName === selectedFiiName)
+  const selectedFii = summary?.find((fii) => fii.fiiName === selectedFiiName);
 
   return (
     <main className="w-[90%] mx-auto mt-6 overflow-hidden lg:w-[calc(100%-48px)] lg:max-w-[1400px] pb-12">
       <div className="flex items-center gap-2 lg:text-lg">
         <h1
-          className={`cursor-pointer ${tab === 'details' && 'text-muted-foreground '}`}
-          onClick={() => setTab('general')}
+          className={`cursor-pointer ${tab === "details" && "text-muted-foreground "}`}
+          onClick={() => setTab("general")}
         >
           Fundos Imobiliários
         </h1>
-        {tab === 'details' && (
+        {tab === "details" && (
           <div className="flex items-center gap-2">
             <ChevronRight className="shrink-0" size={24} />
             {selectedFiiName}
@@ -60,8 +60,8 @@ export default function Fiis() {
               summary={summary}
               isLoading={isLoading}
               onClickTableRow={(value) => {
-                setSelectedFiiName(value)
-                setTab('details')
+                setSelectedFiiName(value);
+                setTab("details");
               }}
             />
           )}
@@ -88,5 +88,5 @@ export default function Fiis() {
         </TabsContent>
       </Tabs>
     </main>
-  )
+  );
 }

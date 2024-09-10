@@ -1,18 +1,18 @@
-import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog'
-import { useState } from 'react'
-import { ExpandIcon } from 'lucide-react'
-import { DataTable } from './table'
-import { TableOptions, useReactTable } from '@tanstack/react-table'
-import { FiiSummary } from '@/types/fiis'
-import { fiisSummaryColumnsMobile } from '@/app/fiis/general/columns'
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { useState } from "react";
+import { ExpandIcon } from "lucide-react";
+import { DataTable } from "./table";
+import { TableOptions, useReactTable } from "@tanstack/react-table";
+import { FiiSummary } from "@/types/fiis";
+import { fiisSummaryColumnsMobile } from "@/app/fiis/general/columns";
 
 interface Props {
-  summarryTableProps: TableOptions<FiiSummary>
+  summarryTableProps: TableOptions<FiiSummary>;
 }
 
 export function ExpandedFiisTableMobile({ summarryTableProps }: Props) {
-  const [modal, setModal] = useState({ isOpen: false, isLoading: false })
+  const [modal, setModal] = useState({ isOpen: false, isLoading: false });
 
   const summaryTableMobile = useReactTable({
     ...summarryTableProps,
@@ -20,7 +20,7 @@ export function ExpandedFiisTableMobile({ summarryTableProps }: Props) {
     state: {
       sorting: summarryTableProps?.state?.sorting,
     },
-  })
+  });
 
   return (
     <Dialog
@@ -38,5 +38,5 @@ export function ExpandedFiisTableMobile({ summarryTableProps }: Props) {
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
