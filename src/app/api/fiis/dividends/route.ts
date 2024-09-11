@@ -14,6 +14,7 @@ type FiiDividendObject = {
   paymentPerQuote: number;
   quotesAtPayment: number;
   total: number;
+  fiiName: string;
 };
 
 export async function GET() {
@@ -57,6 +58,7 @@ export async function GET() {
             paymentPerQuote: dividend.dividends,
             quotesAtPayment: quotesOwnedAtPayment,
             total: dividendsReceived,
+            fiiName: fiiOperations[0].fiiName,
           };
         }
         monthlyDividends[monthKey].total = dividendsReceived;

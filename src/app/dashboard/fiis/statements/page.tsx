@@ -1,10 +1,10 @@
 "use client";
-import { FiiDividends, useFiisDividends } from "@/queries/use-fiis-dividends";
+import { useFiisDividends } from "@/queries/use-fiis-dividends";
 import { useFiisOperations } from "@/queries/use-fiis-operations";
 import { StatementsFilterContextProvider } from "@/contexts/StatementsFilters";
 import { StatementsFilters } from "@/components/statements/filters";
 import { StatementsMain } from "@/components/statements/main";
-import { FiisOperation } from "@/types/fiis";
+import { FiiDividends, FiiGroupedOperations } from "@/types/fiis";
 
 export default function Statements() {
   const { data: dividends, isLoading: isLoadingDividends } = useFiisDividends();
@@ -25,7 +25,7 @@ export default function Statements() {
         <h1 className="text-3xl font-semibold text-center">Extratos</h1>
         <StatementsFilters fiis={fiis} />
         <StatementsMain
-          operations={operations as FiisOperation[]}
+          operations={operations as FiiGroupedOperations[]}
           dividends={dividends as FiiDividends[]}
         />
       </main>

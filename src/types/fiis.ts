@@ -8,9 +8,22 @@ export type FiisHistory = {
   }[];
 };
 
-export type FiisOperation = {
+export type FiiGroupedOperations = {
   fiiName: string;
   operations: FiisOperations[];
+};
+
+export type Dividend = {
+  date: string;
+  paymentPerQuote: number;
+  quotesAtPayment: number;
+  total: number;
+  fiiName: string;
+};
+
+export type FiiDividends = {
+  fiiName: string;
+  monthlyDividends: Record<string, Dividend>;
 };
 
 export type FiiSummary = {
