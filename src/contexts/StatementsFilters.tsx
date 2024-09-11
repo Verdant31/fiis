@@ -13,10 +13,12 @@ import {
 } from "react";
 
 type StatementsFilterState = {
-  intervalType: IntervalsFilterType;
-  intervalValue: IntervalsValueType | undefined;
-  fiiName: string | undefined;
-  tableDataType: TableDataType;
+  filters: {
+    intervalType: IntervalsFilterType;
+    intervalValue: IntervalsValueType | undefined;
+    fiiName: string | undefined;
+    tableDataType: TableDataType;
+  };
 };
 
 type StatementsFilterActions = {
@@ -44,13 +46,15 @@ export const StatementsFilterContextProvider = (props: {
   return (
     <StatementsFilterContext.Provider
       value={{
-        intervalType,
+        filters: {
+          intervalType,
+          intervalValue,
+          fiiName,
+          tableDataType,
+        },
         setIntervalTupe,
-        intervalValue,
         setIntervalValue,
-        fiiName,
         setFiiName,
-        tableDataType,
         setTableDataType,
       }}
     >

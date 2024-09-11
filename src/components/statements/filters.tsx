@@ -18,13 +18,11 @@ interface Props {
 }
 export function StatementsFilters({ fiis }: Props) {
   const {
-    fiiName,
-    intervalType,
     setFiiName,
     setIntervalTupe,
     setIntervalValue,
     setTableDataType,
-    tableDataType,
+    filters: { fiiName, intervalType, tableDataType },
   } = useStatementsFilterContext();
 
   return (

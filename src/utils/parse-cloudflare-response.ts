@@ -24,6 +24,7 @@ export const parseCloudflareResponse = ({
   const endIndex = message.lastIndexOf("}") + 1;
 
   const jsonString = message.substring(startIndex, endIndex);
+  console.log(jsonString);
   const jsonObject = JSON.parse(jsonString) as ParsedCloduflareResponse;
   if (!isCloudFlareParsedResponse(jsonObject)) {
     hasError = true;

@@ -8,18 +8,17 @@ interface Props {
 }
 
 export function StatementsMain({ dividends, operations }: Props) {
-  const { fiiName, intervalType, tableDataType, intervalValue } =
-    useStatementsFilterContext();
+  const { filters } = useStatementsFilterContext();
 
-  const data = new FiisController({
+  const fiis = new FiisController({
     dividends,
     operations,
-  }).getDataToStatements({
-    intervalType,
-    intervalValue,
-    fiiName,
-    tableDataType,
   });
+
+  const data =
+    filters.tableDataType === "dividends"
+      ? fiis.getDividendsStatements(filters)
+      : fiis.getOperationsStatements(filters);
 
   console.log(data);
 
@@ -27,5 +26,6 @@ export function StatementsMain({ dividends, operations }: Props) {
   //   data,
   //   columns: [],
   // });
-  return <div>{/* <DataTable table={table} /> */}</div>;
+
+  return <div className="w-[50%] break-words">{JSON.stringify(data)}</div>;
 }

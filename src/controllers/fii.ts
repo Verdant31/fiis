@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { FiisPriceChartOptions } from "@/components/fiis-home-chart";
 import { DateInRangeModeType } from "@/components/select-interval";
+import { filterDividendsFromDate } from "@/helpers/filter-dividends-from-date";
 import { ParsedCloduflareResponse } from "@/queries/use-cloudflare-model";
 import {
   DividendPeriods,
@@ -231,31 +232,71 @@ export class FiisController {
     }, 0);
   }
 
-  getDataToStatements(
-    filters: StatementsFiltersData,
-  ): Dividend[] | FiisOperations[] {
-    const data =
-      filters?.tableDataType === "dividends" ? this.dividends : this.operations;
-
+  getDividendsStatements(filters: StatementsFiltersData): Dividend[] {
     const filteredData = filters.fiiName
-      ? data.filter((fii) => fii.fiiName === filters.fiiName)
-      : data;
+      ? this.dividends.filter((fii) => fii.fiiName === filters.fiiName)
+      : this.dividends;
 
     switch (filters.intervalType) {
       case "Mês": {
-        if (filters.tableDataType === "dividends") {
-          const filter = new Date(filters.intervalValue as string);
-          const selectedMonthKey = format(filter, "MM/yyyy");
-          const dividends = (filteredData as FiiDividends[]).map(
-            (fii) => fii.monthlyDividends[selectedMonthKey],
-          );
-          console.log(dividends);
-          return dividends.filter((div) => div?.total && div?.total > 0);
-        }
+        const filter = new Date(filters.intervalValue as string);
+        const selectedMonthKey = format(filter, "MM/yyyy");
+        const dividends = filteredData.map(
+          (fii) => fii.monthlyDividends[selectedMonthKey],
+        );
+        return dividends.filter((div) => div?.total && div?.total > 0);
+      }
+      case "Personalizado": {
+        const filter = filters.intervalValue as DateInRangeModeType;
+        const from = new Date(filter.from as Date);
+        const to = new Date(filter.to as Date);
 
-        const flatOperations = (filteredData as FiiGroupedOperations[])
-          .map((fii) => fii.operations)
-          .flat();
+        const dividends = filterDividendsFromDate({
+          dividends: filteredData,
+          filterDateFn: (date) => date >= from && date <= to,
+        });
+        return dividends;
+      }
+      case "Todos": {
+        const dividends = filterDividendsFromDate({
+          dividends: filteredData,
+        });
+
+        return dividends;
+      }
+      case "Ano": {
+        const dividends = filterDividendsFromDate({
+          dividends: filteredData,
+          filterDateFn: (date) =>
+            date.getFullYear() === parseInt(filters.intervalValue as string),
+        });
+        return dividends;
+      }
+      case "Dias": {
+        const parsedDaysValue = parseInt(filters.intervalValue as string);
+        const dividends = filterDividendsFromDate({
+          dividends: filteredData,
+          filterDateFn: (date) => {
+            const diffInDays = differenceInDays(new Date(), date);
+            return diffInDays <= parsedDaysValue;
+          },
+        });
+        return dividends;
+      }
+    }
+  }
+
+  getOperationsStatements(filters: StatementsFiltersData): FiisOperations[] {
+    const filteredData = filters.fiiName
+      ? this.operations.filter((fii) => fii.fiiName === filters.fiiName)
+      : this.operations;
+
+    const flatOperations = (filteredData as FiiGroupedOperations[])
+      .map((fii) => fii.operations)
+      .flat();
+
+    switch (filters.intervalType) {
+      case "Mês": {
         const filteredOperations = flatOperations.filter(
           (operation) =>
             format(operation.date, "MM/yyyy") ===
@@ -268,24 +309,6 @@ export class FiisController {
         const from = new Date(filter.from as Date);
         const to = new Date(filter.to as Date);
 
-        if (filters.tableDataType === "dividends") {
-          const dividends = (filteredData as FiiDividends[]).flatMap((fii) => {
-            return Object.entries(fii.monthlyDividends)
-              .filter(([_, dividendData]) => {
-                const date = new Date(dividendData?.date);
-                return date >= from && date <= to;
-              })
-              .map(([_, dividendData]) => ({
-                ...dividendData,
-              }));
-          });
-          return dividends;
-        }
-
-        const flatOperations = (filteredData as FiiGroupedOperations[])
-          .map((fii) => fii.operations)
-          .flat();
-
         const filteredOperations = flatOperations.filter((operation) => {
           const operationDate = new Date(operation.date);
           return operationDate >= from && operationDate <= to;
@@ -294,41 +317,9 @@ export class FiisController {
         return filteredOperations;
       }
       case "Todos": {
-        if (filters.tableDataType === "dividends") {
-          const dividends = (filteredData as FiiDividends[]).flatMap((fii) => {
-            return Object.entries(fii.monthlyDividends).map(
-              ([_, dividendData]) => ({
-                ...dividendData,
-              }),
-            );
-          });
-          return dividends;
-        }
-        const flatOperations = (filteredData as FiiGroupedOperations[])
-          .map((fii) => fii.operations)
-          .flat();
         return flatOperations;
       }
       case "Ano": {
-        if (filters.tableDataType === "dividends") {
-          const dividends = (filteredData as FiiDividends[]).flatMap((fii) => {
-            return Object.entries(fii.monthlyDividends)
-              .filter(([_, dividendData]) => {
-                const date = new Date(dividendData?.date);
-                return (
-                  date.getFullYear() ===
-                  parseInt(filters.intervalValue as string)
-                );
-              })
-              .map(([_, dividendData]) => ({
-                ...dividendData,
-              }));
-          });
-          return dividends;
-        }
-        const flatOperations = (filteredData as FiiGroupedOperations[])
-          .map((fii) => fii.operations)
-          .flat();
         const filteredOperations = flatOperations.filter((operation) => {
           const operationDate = new Date(operation.date);
           return (
@@ -341,23 +332,7 @@ export class FiisController {
       }
       case "Dias": {
         const parsedDaysValue = parseInt(filters.intervalValue as string);
-        if (filters.tableDataType === "dividends") {
-          const dividends = (filteredData as FiiDividends[]).flatMap((fii) => {
-            return Object.entries(fii.monthlyDividends)
-              .filter(([_, dividendData]) => {
-                const date = new Date(dividendData?.date);
-                const diffInDays = differenceInDays(new Date(), date);
-                return diffInDays <= parsedDaysValue;
-              })
-              .map(([_, dividendData]) => ({
-                ...dividendData,
-              }));
-          });
-          return dividends;
-        }
-        const flatOperations = (filteredData as FiiGroupedOperations[])
-          .map((fii) => fii.operations)
-          .flat();
+
         const filteredOperations = flatOperations.filter((operation) => {
           const operationDate = new Date(operation.date);
           const diffInDays = differenceInDays(new Date(), operationDate);

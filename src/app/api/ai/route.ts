@@ -15,18 +15,34 @@ export async function POST(req: NextRequest) {
     const { modelInput } = await req.json();
     const currentMonth = addHours(new Date(), 3).getMonth() + 1;
     const message = `
-      You are a personal assistant for investment funds. You will receive the user's question and must return a JSON with the following questions answered: 
+      Você é assistente pessoal de fundos de investimento. Você receberá a pergunta do usuário e deverá retornar um JSON com as seguintes perguntas respondidas: 
       {
-        context: The answer must be "price history" or "dividends",
-        funds: which are the funds to be shown, must be a array of strings,
-        period: the period must contain an array of strings with the dates that correspond to the period entered by the user. For example, "last 3 months" should be "${formatMonth(currentMonth)}/2024", "${formatMonth(currentMonth - 1)}/2024", "${formatMonth(currentMonth - 2)}/2024". 
+        context: a resposta deve ser "price history" ou “dividends",
+        funds: quais são os fundos a serem mostrados, deve ser um array de strings,
+        period: o período deve conter um array de strings com as datas que correspondem ao período informado pelo usuário, CASO tenha sido informado, se não foi informado considere a informação util numero 2. Por exemplo, o periodo "últimos 3 meses" deve ser "${formatMonth(currentMonth)}/2024", "${formatMonth(currentMonth - 1)}/2024", "${formatMonth(currentMonth - 2)}/2024". 
       }
-      Useful information: 
-      1. If no fund is specified, consider the answer "all" 
-      2. If no date is provided, consider the last 12 months.
-      3. Dates must be in the "month/year" format
-      4. The current month is: ${formatMonth(currentMonth)}
+
+      REQUISITOS: 
+      1. Se nenhum fundo for especificado, considere a resposta “todos” 
+      2. Se nenhum tipo de informação em relação as datas for informado, coloque como periodo os ulimos 12 meses.
+      3. As datas devem estar no formato “mês/ano”
+      4. O mês atual é: ${formatMonth(currentMonth)}
+      5. NÃO ADICIONE QUALQUER INFORMAÇÃO/TEXTO QUE NÃO SEJA REFERENTE AO JSON.
+
+      Exemplo de perguntas e qual seria a resposta esperada:
+      Pergunta: "Dividendos"
+      Mes atual: 09
+      Resposta: { contexto: "dividends", funds: ["todos"], period: ["01/2024", "02/2024", "03/2024","04/2024", "05/2024", "06/2024","07/2024", "08/2024", "09/2024"] }
+
+      Pergunta: "Dividendos dos ultimos 3 meses
+      Mes atual: 09
+      Resposta: { contexto: "dividends", funds: ["todos"], period: ["07/2024", "08/2024", "09/2024"] }
+
+      Pergunta: "preço do XPML11"
+      Mes atual: 09
+      Resposta: { contexto: "price history", funds: ["XPML11"], period: ["01/2024", "02/2024", "03/2024","04/2024", "05/2024", "06/2024","07/2024", "08/2024", "09/2024"] }
     `;
+
     const response = await run("@hf/thebloke/llama-2-13b-chat-awq", {
       messages: [
         {
@@ -39,6 +55,7 @@ export async function POST(req: NextRequest) {
         },
       ],
     });
+
     return NextResponse.json({
       response: { ...response },
       status: 200,
