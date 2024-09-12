@@ -16,6 +16,7 @@ const intervalsFilterOptions = ["Dias", "Mês", "Ano", "Todos", "Personalizado"]
 interface Props {
   fiis: string[];
 }
+
 export function StatementsFilters({ fiis }: Props) {
   const {
     setFiiName,

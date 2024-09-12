@@ -1,8 +1,7 @@
 "use client";
 
 import { DataTableColumnHeader } from "@/components/table";
-import { Dividend } from "@/queries/use-fiis-dividends";
-import { FiiSummary } from "@/types/fiis";
+import { Dividend, FiiSummary } from "@/types/fiis";
 import { currencyFormatter } from "@/utils/currency-formatter";
 import { FiisOperations } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";

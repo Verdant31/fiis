@@ -75,9 +75,17 @@ export default function SelectInterval({ interval, setIntervalValue }: Props) {
     setMonthDate(newDate);
   };
 
-  const years = Array.from({ length: 4 }, (_, i) =>
-    (new Date().getFullYear() - i).toString(),
-  );
+  const handleDecreaseMonthDateYear = () => {
+    const newDate = new Date(monthDate);
+    newDate.setFullYear(newDate.getFullYear() - 1);
+    setMonthDate(newDate);
+  };
+
+  const handleIncreaseMonthDateYear = () => {
+    const newDate = new Date(monthDate);
+    newDate.setFullYear(newDate.getFullYear() + 1);
+    setMonthDate(newDate);
+  };
 
   React.useEffect(() => {
     if (
@@ -90,6 +98,10 @@ export default function SelectInterval({ interval, setIntervalValue }: Props) {
     else if (interval === "Ano") setIntervalValue(yearInterval);
     else if (interval === "Mês") setIntervalValue(monthDate);
   }, [customInterval, daysInterval, yearInterval, monthDate, interval]);
+
+  const years = Array.from({ length: 4 }, (_, i) =>
+    (new Date().getFullYear() - i).toString(),
+  );
 
   switch (interval) {
     case "Personalizado": {
@@ -200,14 +212,20 @@ export default function SelectInterval({ interval, setIntervalValue }: Props) {
           <PopoverContent className="w-[210px] p-0">
             <div className="p-4">
               <div className="flex items-center justify-between ">
-                <Button className="h-7 w-7 p-0 bg-background group border-input group border-2 hover:bg-muted">
+                <Button
+                  onClick={handleDecreaseMonthDateYear}
+                  className="h-7 w-7 p-0 bg-background group border-input group border-[1px] hover:bg-muted"
+                >
                   <ChevronLeft
                     className="shrink-0 text-input group-hover:text-white"
                     size={16}
                   />
                 </Button>
-                <h1>2024</h1>
-                <Button className="h-7 w-7 p-0 bg-background group border-muted group border-2 hover:bg-muted">
+                <h1>{monthDate.getFullYear()}</h1>
+                <Button
+                  onClick={handleIncreaseMonthDateYear}
+                  className="h-7 w-7 p-0 bg-background group border-muted group border-[1px] hover:bg-muted"
+                >
                   <ChevronRight
                     className="shrink-0 text-input group-hover:text-white"
                     size={16}
