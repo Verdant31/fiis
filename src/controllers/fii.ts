@@ -233,9 +233,10 @@ export class FiisController {
   }
 
   getDividendsStatements(filters: StatementsFiltersData): Dividend[] {
-    const filteredData = filters.fiiName
-      ? this.dividends.filter((fii) => fii.fiiName === filters.fiiName)
-      : this.dividends;
+    const filteredData =
+      filters.fiiName && filters.fiiName !== "Nenhum"
+        ? this.dividends.filter((fii) => fii.fiiName === filters.fiiName)
+        : this.dividends;
 
     switch (filters.intervalType) {
       case "Mês": {
@@ -287,10 +288,10 @@ export class FiisController {
   }
 
   getOperationsStatements(filters: StatementsFiltersData): FiisOperations[] {
-    const filteredData = filters.fiiName
-      ? this.operations.filter((fii) => fii.fiiName === filters.fiiName)
-      : this.operations;
-
+    const filteredData =
+      filters.fiiName && filters.fiiName !== "Nenhum"
+        ? this.operations.filter((fii) => fii.fiiName === filters.fiiName)
+        : this.operations;
     const flatOperations = (filteredData as FiiGroupedOperations[])
       .map((fii) => fii.operations)
       .flat();

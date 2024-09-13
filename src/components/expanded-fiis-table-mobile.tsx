@@ -5,7 +5,7 @@ import { ExpandIcon } from "lucide-react";
 import { DataTable } from "./table";
 import { TableOptions, useReactTable } from "@tanstack/react-table";
 import { FiiSummary } from "@/types/fiis";
-import { fiisSummaryColumnsMobile } from "@/app/fiis/general/columns";
+import { fiisSummaryColumnsMobile } from "@/app/dashboard/fiis/general/columns";
 
 interface Props {
   summarryTableProps: TableOptions<FiiSummary>;

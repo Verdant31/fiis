@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { FiisController } from "@/controllers/fii";
 import { useFiisPriceHistory } from "@/queries/use-fiis-price-history";
-import { FiiSummary } from "@/types/fiis";
+import { Dividend, FiiSummary } from "@/types/fiis";
 import { currencyFormatter } from "@/utils/currency-formatter";
 import React, { useMemo, useState } from "react";
 import {
@@ -21,10 +21,7 @@ import {
 } from "./ui/chart";
 import { format, parse } from "date-fns";
 import { Skeleton as ShadSkeleton } from "./ui/skeleton";
-import {
-  dividendsColumns,
-  operationsSummaryColumns,
-} from "@/app/fiis/general/columns";
+
 import {
   useReactTable,
   getCoreRowModel,
@@ -37,7 +34,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUniqueFiiDividends } from "@/queries/use-unique-fii-dividends";
 import CalendarArrowDown from "./icons/calendar-arrow-down";
 import { FiisOperations } from "@prisma/client";
-import { Dividend } from "@/queries/use-fiis-dividends";
+import {
+  operationsSummaryColumns,
+  dividendsColumns,
+} from "@/app/dashboard/fiis/general/columns";
 
 interface Props {
   fii: FiiSummary;

@@ -111,7 +111,7 @@ export default function SelectInterval({ interval, setIntervalValue }: Props) {
             <Button
               variant={"outline"}
               className={cn(
-                "justify-start w-full  text-left font-normal",
+                "justify-start w-full lg:w-[180px] max-w-[300px] text-left font-normal",
                 !customInterval && "text-muted-foreground",
               )}
             >
@@ -152,7 +152,7 @@ export default function SelectInterval({ interval, setIntervalValue }: Props) {
           value={yearInterval}
         >
           <SelectTrigger
-            className="w-full  rounded-lg focus:ring-0 focus:ring-offset-0"
+            className="w-full max-w-[300px] lg:w-[180px] rounded-lg focus:ring-0 focus:ring-offset-0"
             aria-label="Select a value"
           >
             <SelectValue />
@@ -175,7 +175,7 @@ export default function SelectInterval({ interval, setIntervalValue }: Props) {
           value={daysInterval}
         >
           <SelectTrigger
-            className="w-full rounded-lg focus:ring-0 focus:ring-offset-0"
+            className="w-full lg:w-[180px] max-w-[300px] rounded-lg focus:ring-0 focus:ring-offset-0"
             aria-label="Select a value"
           >
             <SelectValue />
@@ -197,7 +197,7 @@ export default function SelectInterval({ interval, setIntervalValue }: Props) {
             <Button
               variant={"outline"}
               className={cn(
-                "justify-start text-left font-normal w-full capitalize",
+                "justify-start max-w-[300px] lg:w-[180px] text-left font-normal w-full capitalize",
                 !monthDate && "text-muted-foreground",
               )}
             >
@@ -209,7 +209,7 @@ export default function SelectInterval({ interval, setIntervalValue }: Props) {
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[210px] p-0">
+          <PopoverContent className="w-[210px] max-w-[300px] lg:w-[180px] p-0">
             <div className="p-4">
               <div className="flex items-center justify-between ">
                 <Button

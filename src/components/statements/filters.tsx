@@ -6,7 +6,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Fragment } from "react";
 import { IntervalsFilterType, TableDataType } from "@/types/statements";
 import SelectInterval from "@/components/select-interval";
 import { useStatementsFilterContext } from "@/contexts/StatementsFilters";
@@ -27,8 +26,8 @@ export function StatementsFilters({ fiis }: Props) {
   } = useStatementsFilterContext();
 
   return (
-    <Fragment>
-      <div className="flex items-center gap-6 mt-6 ">
+    <div className="lg:flex lg:items-center lg:mt-8 gap-6">
+      <div className="flex items-center gap-6 mt-6 lg:m-0">
         <div>
           <p className="mb-2 font-medium">Período</p>
           <div>
@@ -69,7 +68,7 @@ export function StatementsFilters({ fiis }: Props) {
           />
         </div>
       </div>
-      <div className="flex items-center gap-6 mt-4 ">
+      <div className="flex items-center gap-6 mt-4 lg:m-0">
         <div>
           <p className="mb-2 font-medium">Ativo</p>
           <div>
@@ -105,7 +104,7 @@ export function StatementsFilters({ fiis }: Props) {
               }
               value={tableDataType}
             >
-              <SelectTrigger className="w-full rounded-lg focus:ring-0 focus:ring-offset-0">
+              <SelectTrigger className="w-full lg:w-[150px] max-w-[300px] rounded-lg focus:ring-0 focus:ring-offset-0">
                 <SelectValue placeholder="Nenhum" />
               </SelectTrigger>
               <SelectContent className="rounded-xl">
@@ -120,6 +119,6 @@ export function StatementsFilters({ fiis }: Props) {
           </div>
         </div>
       </div>
-    </Fragment>
+    </div>
   );
 }

@@ -57,7 +57,7 @@ export function Header() {
                 <div className="px-3 mt-8">
                   <Link
                     className="flex items-center pl-4 bg-zinc-800 py-[10px] hover:bg-zinc-900 transition-colors duration-200 rounded-md"
-                    href="/dashboard/home"
+                    href={`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/home`}
                   >
                     <LayoutDashboard size={18} />
                     <span className="ml-4 text-sm font-semibold">
@@ -78,21 +78,21 @@ export function Header() {
                         </AccordionTrigger>
                         <AccordionContent className="pl-4 flex flex-col">
                           <a
-                            href="fiis/general"
+                            href={`${process.env.NEXT_PUBLIC_APP_URL}/fiis/general`}
                             className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1"
                           >
                             <Dot size={18} />
                             <p>Visão geral</p>
                           </a>
                           <a
-                            href="fiis/register-operations"
+                            href={`${process.env.NEXT_PUBLIC_APP_URL}/fiis/register-operations`}
                             className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1"
                           >
                             <Dot size={18} />
                             <p>Cadastrar operação</p>
                           </a>
                           <a
-                            href="fiis/statements"
+                            href={`${process.env.NEXT_PUBLIC_APP_URL}/fiis/statements`}
                             className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1"
                           >
                             <Dot size={18} />

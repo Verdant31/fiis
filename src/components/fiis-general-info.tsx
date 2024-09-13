@@ -1,7 +1,10 @@
-import { DividendPeriods, FiisOperation, FiiSummary } from "@/types/fiis";
+import {
+  DividendPeriods,
+  FiiGroupedOperations,
+  FiiSummary,
+} from "@/types/fiis";
 import React, { useEffect, useState } from "react";
 import { DataTable } from "./table";
-import { fiisSummaryColumns } from "@/app/fiis/general/columns";
 import { Skeleton as ShadSkeleton } from "./ui/skeleton";
 import {
   getCoreRowModel,
@@ -24,10 +27,11 @@ import {
 } from "@/components/ui/select";
 import { useWindowSize } from "@/hooks/use-window-size";
 import { ExpandedFiisTableMobile } from "./expanded-fiis-table-mobile";
+import { fiisSummaryColumns } from "@/app/dashboard/fiis/general/columns";
 
 interface Props {
   summary: FiiSummary[];
-  operations: FiisOperation[];
+  operations: FiiGroupedOperations[];
   isLoading: boolean;
   onClickTableRow: (fiiName: string) => void;
 }
