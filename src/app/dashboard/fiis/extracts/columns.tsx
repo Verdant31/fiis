@@ -18,7 +18,7 @@ export const dividendsStatementColumns: ColumnDef<Dividend>[] = [
   },
   {
     accessorKey: "paymentPerQuote",
-    header: "Por cota",
+    header: "P/ cota",
     cell: ({ row }) => {
       return (
         <div className=" font-medium">
@@ -56,7 +56,7 @@ export const dividendsStatementColumns: ColumnDef<Dividend>[] = [
     cell: ({ row }) => {
       return (
         <div className="font-medium">
-          {format(new Date(row.getValue("date")), "dd/MM/yyyy")}
+          {format(new Date(row.getValue("date")), "dd/MM/yy")}
         </div>
       );
     },

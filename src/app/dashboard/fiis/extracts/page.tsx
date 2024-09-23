@@ -2,12 +2,12 @@
 import { useFiisDividends } from "@/queries/use-fiis-dividends";
 import { useFiisOperations } from "@/queries/use-fiis-operations";
 import { StatementsFilterContextProvider } from "@/contexts/StatementsFilters";
-import { StatementsFilters } from "@/components/statements/filters";
-import { StatementsMain } from "@/components/statements/main";
 import { FiiDividends, FiiGroupedOperations } from "@/types/fiis";
+import { StatementsFilters } from "@/components/extracts/filters";
+import { StatementsMain } from "@/components/extracts/main";
 import { StatementsSkeleton } from "@/components/skeletons/statements-skeleton";
 
-export default function Statements() {
+export default function Extracts() {
   const { data: dividends, isLoading: isLoadingDividends } = useFiisDividends();
   const { data: operations, isLoading: isLoadingOperations } =
     useFiisOperations();
@@ -22,7 +22,7 @@ export default function Statements() {
 
   return (
     <StatementsFilterContextProvider>
-      <main className="mt-6 max-w-[1024px] mx-auto px-6 lg:mt-2">
+      <main className="mt-6 max-w-[1124px] mx-auto px-6 lg:mt-2 relative">
         <h1 className="text-3xl font-semibold text-center lg:text-left">
           Extratos
         </h1>

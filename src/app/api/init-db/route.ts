@@ -1,6 +1,6 @@
 "use server";
 import { NextResponse } from "next/server";
-import data from "../../../OPERATIONS.json";
+import data from "../../../OPERATIONS_MOCK.json";
 import { prisma } from "@/lib/prisma";
 import { Operation } from "@prisma/client";
 import { dateToEnFormat } from "@/utils/date-to-en-format";

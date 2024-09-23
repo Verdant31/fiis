@@ -7,6 +7,8 @@ const nextConfig = {
       'yahoo-finance2',
       'jszip',
       'papaparse',
+      '@react-pdf/renderer',
+      'html-to-image',
     ],
   },
 }

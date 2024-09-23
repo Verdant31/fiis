@@ -1,7 +1,7 @@
 "use server";
 import { prisma } from "@/lib/prisma";
 import { validateRequest } from "@/lib/validate-request";
-import { FiisOperation } from "@/types/fiis";
+import { FiiGroupedOperations } from "@/types/fiis";
 import _ from "lodash";
 import { NextResponse } from "next/server";
 
@@ -17,13 +17,13 @@ export async function GET() {
         userId: user.id,
       },
     });
-    const operations: FiisOperation[] = [];
+    const operations: FiiGroupedOperations[] = [];
 
     const groupedOperations = _.groupBy(fiisOperations, "fiiName");
 
     Object.keys(groupedOperations).forEach((fiiName) => {
       operations.push({
-        fiiName: fiiName + ".SA",
+        fiiName,
         operations: groupedOperations[fiiName],
       });
     });

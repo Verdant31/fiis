@@ -11,7 +11,7 @@ import {
   FiiDividends,
   Dividend,
 } from "@/types/fiis";
-import { StatementsFiltersData } from "@/types/statements";
+import { StatementsFiltersData } from "@/types/extracts";
 import { FiisOperations } from "@prisma/client";
 import {
   differenceInDays,

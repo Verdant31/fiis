@@ -78,21 +78,21 @@ export function Header() {
                         </AccordionTrigger>
                         <AccordionContent className="pl-4 flex flex-col">
                           <a
-                            href={`${process.env.NEXT_PUBLIC_APP_URL}/fiis/general`}
+                            href={`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/fiis/general`}
                             className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1"
                           >
                             <Dot size={18} />
                             <p>Visão geral</p>
                           </a>
                           <a
-                            href={`${process.env.NEXT_PUBLIC_APP_URL}/fiis/register-operations`}
+                            href={`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/fiis/register-operations`}
                             className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1"
                           >
                             <Dot size={18} />
                             <p>Cadastrar operação</p>
                           </a>
                           <a
-                            href={`${process.env.NEXT_PUBLIC_APP_URL}/fiis/statements`}
+                            href={`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/fiis/extracts`}
                             className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1"
                           >
                             <Dot size={18} />

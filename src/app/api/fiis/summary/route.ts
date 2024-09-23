@@ -21,7 +21,7 @@ export async function GET() {
     const fiisAsKeys = _.groupBy(fiisOperations, "fiiName");
 
     const fiis = Object.keys(fiisAsKeys).map((fiiName) => ({
-      fiiName: fiiName + ".SA",
+      fiiName,
       fiiCnpj: fiisAsKeys[fiiName]?.[0]?.fiiCnpj,
       operations: fiisAsKeys[fiiName],
     }));

@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+const tailwindConfig = {
   darkMode: ["class"],
   content: [
     "./pages/**/*.{ts,tsx}",
@@ -9,7 +9,7 @@ module.exports = {
   ],
   theme: {
     screens: {
-      mini: "400px",
+      mini: "440px",
       "mini-sm": "600px",
       sm: "640px",
       md: "768px",
@@ -102,3 +102,5 @@ module.exports = {
   },
   plugins: [require("tailwindcss-animate")],
 };
+
+export default tailwindConfig;

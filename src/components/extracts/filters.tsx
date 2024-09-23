@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { IntervalsFilterType, TableDataType } from "@/types/statements";
+import { IntervalsFilterType, TableDataType } from "@/types/extracts";
 import SelectInterval from "@/components/select-interval";
 import { useStatementsFilterContext } from "@/contexts/StatementsFilters";
 
@@ -26,7 +26,7 @@ export function StatementsFilters({ fiis }: Props) {
   } = useStatementsFilterContext();
 
   return (
-    <div className="lg:flex lg:items-center lg:mt-8 gap-6">
+    <div className="lg:flex lg:items-center lg:mt-8 gap-6 items-baseline">
       <div className="flex items-center gap-6 mt-6 lg:m-0">
         <div>
           <p className="mb-2 font-medium">Período</p>
@@ -75,7 +75,7 @@ export function StatementsFilters({ fiis }: Props) {
             <Select
               defaultValue={fiis[0]}
               onValueChange={(value) => setFiiName(value)}
-              value={fiiName}
+              value={fiiName ?? fiis[0]}
             >
               <SelectTrigger className="w-[150px] rounded-lg focus:ring-0 focus:ring-offset-0">
                 <SelectValue placeholder="Nenhum" />

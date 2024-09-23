@@ -51,7 +51,7 @@ export async function POST(req: Request) {
       data: {
         date: body.date,
         fiiCnpj: body.cnpj,
-        fiiName: body.name.split(".SA")[0],
+        fiiName: body.name,
         qty: body.quotes,
         type: body.operationType,
         quotationValue: body.price,

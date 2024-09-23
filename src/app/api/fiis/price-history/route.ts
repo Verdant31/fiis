@@ -18,7 +18,7 @@ export async function GET() {
       },
     });
     const fiis = _.uniqBy(fiisOperations, "fiiName").map(
-      (purchase) => purchase.fiiName + ".SA",
+      (purchase) => purchase.fiiName,
     );
 
     const now = new Date();

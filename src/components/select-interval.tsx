@@ -6,8 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
-import * as React from "react";
+import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import {
   Calendar as CalendarIcon,
@@ -24,7 +23,8 @@ import {
 } from "@/components/ui/popover";
 import { ptBR } from "date-fns/locale";
 import { Calendar } from "./ui/calendar";
-import { IntervalsValueType } from "@/types/statements";
+import { useStatementsFilterContext } from "@/contexts/StatementsFilters";
+import { IntervalsValueType } from "@/types/extracts";
 
 const months = [
   "Jan",
@@ -69,6 +69,8 @@ export default function SelectInterval({ interval, setIntervalValue }: Props) {
   const [yearInterval, setYearInterval] = useState<string>(currenyYear);
   const [monthDate, setMonthDate] = useState(new Date());
 
+  const { resetedFilters, setResetedFilters } = useStatementsFilterContext();
+
   const handleSelectMonth = (month: number) => {
     const newDate = new Date(monthDate);
     newDate.setMonth(month);
@@ -87,7 +89,7 @@ export default function SelectInterval({ interval, setIntervalValue }: Props) {
     setMonthDate(newDate);
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (
       interval === "Personalizado" &&
       customInterval?.from &&
@@ -98,6 +100,16 @@ export default function SelectInterval({ interval, setIntervalValue }: Props) {
     else if (interval === "Ano") setIntervalValue(yearInterval);
     else if (interval === "Mês") setIntervalValue(monthDate);
   }, [customInterval, daysInterval, yearInterval, monthDate, interval]);
+
+  useEffect(() => {
+    if (resetedFilters) {
+      setCustomInterval(undefined);
+      setDaysInterval("15 dias");
+      setYearInterval(currenyYear);
+      setMonthDate(new Date());
+      setResetedFilters(false);
+    }
+  }, [resetedFilters]);
 
   const years = Array.from({ length: 4 }, (_, i) =>
     (new Date().getFullYear() - i).toString(),

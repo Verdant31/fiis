@@ -2,7 +2,7 @@ import {
   IntervalsFilterType,
   IntervalsValueType,
   TableDataType,
-} from "@/types/statements";
+} from "@/types/extracts";
 import {
   createContext,
   Dispatch,
@@ -12,13 +12,14 @@ import {
   useState,
 } from "react";
 
-type StatementsFilterState = {
+export type StatementsFilterState = {
   filters: {
     intervalType: IntervalsFilterType;
     intervalValue: IntervalsValueType | undefined;
     fiiName: string | undefined;
     tableDataType: TableDataType;
   };
+  resetedFilters: boolean;
 };
 
 type StatementsFilterActions = {
@@ -26,6 +27,8 @@ type StatementsFilterActions = {
   setFiiName: Dispatch<SetStateAction<string | undefined>>;
   setIntervalTupe: Dispatch<SetStateAction<IntervalsFilterType>>;
   setTableDataType: Dispatch<SetStateAction<TableDataType>>;
+  setResetedFilters: Dispatch<SetStateAction<boolean>>;
+  clearFilters: () => void;
 };
 
 export const StatementsFilterContext = createContext(
@@ -35,6 +38,7 @@ export const StatementsFilterContext = createContext(
 export const StatementsFilterContextProvider = (props: {
   children: ReactNode;
 }) => {
+  const [resetedFilters, setResetedFilters] = useState(false);
   const [intervalType, setIntervalTupe] = useState<IntervalsFilterType>("Mês");
   const [intervalValue, setIntervalValue] = useState<
     IntervalsValueType | undefined
@@ -42,6 +46,14 @@ export const StatementsFilterContextProvider = (props: {
   const [fiiName, setFiiName] = useState<string>();
   const [tableDataType, setTableDataType] =
     useState<TableDataType>("dividends");
+
+  const clearFilters = () => {
+    setIntervalTupe("Mês");
+    setIntervalValue(new Date());
+    setFiiName(undefined);
+    setTableDataType("dividends");
+    setResetedFilters((p) => !p);
+  };
 
   return (
     <StatementsFilterContext.Provider
@@ -52,7 +64,10 @@ export const StatementsFilterContextProvider = (props: {
           fiiName,
           tableDataType,
         },
+        resetedFilters,
         setIntervalTupe,
+        setResetedFilters,
+        clearFilters,
         setIntervalValue,
         setFiiName,
         setTableDataType,
