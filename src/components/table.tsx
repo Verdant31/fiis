@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { flexRender, Table as TableType, Column } from "@tanstack/react-table";
@@ -192,13 +193,15 @@ export function DataTablePagination<TData>({
         <div className="flex items-center space-x-2">
           <p className="text-sm font-medium">Linhas por página</p>
           <Select
-            value={`${table.getState().pagination.pageSize}`}
+            value={`${(table.getState() as any).pagination.pageSize}`}
             onValueChange={(value) => {
               table.setPageSize(Number(value));
             }}
           >
             <SelectTrigger className="h-8 w-[70px] rounded-[6px] border-zinc-800">
-              <SelectValue placeholder={table.getState().pagination.pageSize} />
+              <SelectValue
+                placeholder={(table.getState() as any).pagination.pageSize}
+              />
             </SelectTrigger>
             <SelectContent
               side="top"
@@ -217,7 +220,7 @@ export function DataTablePagination<TData>({
           </Select>
         </div>
         <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-          Pagína {table.getState().pagination.pageIndex + 1} de{" "}
+          Pagína {(table.getState() as any).pagination.pageIndex + 1} de{" "}
           {table.getPageCount()}
         </div>
         <div className="flex items-center space-x-2">

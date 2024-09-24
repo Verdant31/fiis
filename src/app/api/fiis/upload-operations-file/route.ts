@@ -63,8 +63,8 @@ export async function POST(req: Request) {
     if (hasError) {
       const objectErrors = parses
         .filter((parse) => !parse.success)
-        .map((parse) => parse.error.formErrors.fieldErrors);
-      const errors = objectErrors.map((obj) => Object.values(obj)).flat();
+        .map((parse) => parse?.error?.formErrors?.fieldErrors);
+      const errors = objectErrors.map((obj) => Object.values(obj ?? {})).flat();
       const withoutDuplicates = uniqBy(errors, JSON.stringify).flat();
 
       return NextResponse.json({ status: 422, error: withoutDuplicates });

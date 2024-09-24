@@ -4,7 +4,7 @@ import { api } from "@/lib/axios";
 import { YahooApiInternalError } from "@/lib/exceptions";
 import { FiisOperations } from "@prisma/client";
 import { differenceInMonths, format } from "date-fns";
-import { Dividend, FiiDividends } from "./use-fiis-dividends";
+import { Dividend, FiiDividends } from "@/types/fiis";
 
 export const useUniqueFiiDividends = ({
   operations,
