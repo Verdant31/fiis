@@ -10,7 +10,8 @@ const tailwindConfig = {
   theme: {
     screens: {
       mini: "440px",
-      "mini-sm": "600px",
+      "mini-sm": "525px",
+      "mini-md": "600px",
       sm: "640px",
       md: "768px",
       lg: "1024px",

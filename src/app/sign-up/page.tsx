@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { SignInFormData, SignInSchema } from "@/types/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
@@ -8,7 +9,6 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { ClipLoader } from "react-spinners";
 import { toast } from "sonner";
-import { SignInFormData, SignInSchema } from "../types/auth";
 
 export default function Home() {
   const router = useRouter();
@@ -23,16 +23,16 @@ export default function Home() {
     reValidateMode: "onSubmit",
   });
 
-  const { mutateAsync: signInMutation, isLoading: isSigningIn } = useMutation({
+  const { mutateAsync: signUpMutation, isLoading: isSigningUp } = useMutation({
     mutationFn: async (data: SignInFormData) =>
-      await fetch("api/sign-in", {
+      await fetch("api/sign-up", {
         method: "POST",
         body: JSON.stringify(data),
       }).then((res) => res.json()),
   });
 
   const onSubmit = async (data: SignInFormData) => {
-    const response = await signInMutation(data);
+    const response = await signUpMutation(data);
     if (response?.status !== 200) {
       return toast.error(response?.message);
     }
@@ -41,22 +41,15 @@ export default function Home() {
 
   return (
     <main className="fixed left-[50%] top-[50%] w-full max-w-lg translate-x-[-50%] translate-y-[-50%]">
-      <h1 className="text-center text-2xl font-semibold">Entrar</h1>
+      <h1 className="text-center text-2xl font-semibold">Crie sua conta</h1>
       <p className="text-center text-muted-foreground mt-1">
-        Preencha os campos abaixo para se autenticar
+        Preencha os campos abaixo para criar sua conta
       </p>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-4 max-w-[80%] mx-auto mt-6">
           <div>
-            <div>
-              <label>Email</label>
-              <Input
-                className="mt-2"
-                placeholder="name@example.com"
-                {...register("email")}
-              />
-            </div>
+            <Input placeholder="name@example.com" {...register("email")} />
             <AnimatePresence>
               {errors.email && (
                 <motion.p
@@ -72,15 +65,11 @@ export default function Home() {
             </AnimatePresence>
           </div>
           <div>
-            <div>
-              <label>Senha</label>
-              <Input
-                placeholder="your_password@123"
-                {...register("password")}
-                type="password"
-                className="mt-2"
-              />
-            </div>
+            <Input
+              placeholder="your_password@123"
+              {...register("password")}
+              type="password"
+            />
             <AnimatePresence>
               {errors.password && (
                 <motion.p
@@ -96,13 +85,11 @@ export default function Home() {
             </AnimatePresence>
           </div>
           <Button className="w-full">
-            {isSigningIn ? <ClipLoader size={20} /> : "Entrar"}
+            {isSigningUp ? <ClipLoader size={20} /> : "Criar conta"}
           </Button>
           <p className="text-muted-foreground text-center text-sm pt-4 w-[80%] mx-auto">
-            Não tem uma conta?{" "}
-            <a href="/sign-up" className="underline">
-              Crie agora
-            </a>
+            Ao continuar você concorda com nossos Termos de Serviço e Politica
+            de Privacidade.
           </p>
         </div>
       </form>

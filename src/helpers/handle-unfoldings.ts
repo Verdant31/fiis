@@ -79,7 +79,7 @@ export const handleUnfoldings = ({
 
     for (const operation of fiiOperations) {
       const purchaseWasBeforeOrSameDayAsPayment =
-        new Date(operation.date) <= dividend.date;
+        new Date(operation.date) < dividend.date;
 
       if (purchaseWasBeforeOrSameDayAsPayment) {
         if (operation.type === "purchase") {

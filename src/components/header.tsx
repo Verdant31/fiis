@@ -13,6 +13,7 @@ import {
   Linkedin,
   MenuIcon,
   Dot,
+  LogOut,
 } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "./logo";
@@ -24,9 +25,30 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { apiUrl } from "@/lib/axios";
+import { api, apiUrl } from "@/lib/axios";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { ClipLoader } from "react-spinners";
 
 export function Header() {
+  const { push } = useRouter();
+  const { mutateAsync, isLoading } = useMutation({
+    mutationFn: async () => await api.get("/logout"),
+  });
+
+  const handleLogout = async () => {
+    const { data } = await mutateAsync();
+
+    console.log(data);
+    if (data?.status !== 200) {
+      return toast.error(
+        data?.message ?? "Houve um erro ao tentar deslogar seu usuário.",
+      );
+    }
+    push("/");
+  };
+
   return (
     <header className="sticky top-0 z-10 w-full bg-background/95 shadow lg:shadow-none backdrop-blur supports-[backdrop-filter]:bg-background/60 dark:shadow-secondary">
       <div className="mx-4 sm:mx-8 flex h-14 items-center lg:max-w-[1500px] lg:mx-auto">
@@ -39,7 +61,7 @@ export function Header() {
                 </Button>
               </SheetTrigger>
               <SheetContent
-                className="sm:w-72 px-3 h-full flex flex-col"
+                className="sm:w-72 px-3 h-full flex flex-col "
                 side="left"
               >
                 <SheetHeader>
@@ -107,6 +129,19 @@ export function Header() {
                       <p className="text-sm">Renda fixa</p>
                     </a>
                   </div>
+                </div>
+                <div className="left-0 absolute bottom-12 w-[100%] px-6">
+                  <Button
+                    onClick={handleLogout}
+                    className="w-[100%] flex items-center gap-4"
+                  >
+                    {isLoading ? (
+                      <ClipLoader size={20} />
+                    ) : (
+                      <LogOut size={20} />
+                    )}
+                    Sair
+                  </Button>
                 </div>
               </SheetContent>
             </Sheet>

@@ -20,6 +20,8 @@ import { FiisOperations } from "@prisma/client";
 import { useTablePagination } from "@/hooks/use-table-pagination.ts";
 import { Button } from "../ui/button";
 import ExtractOptionModal from "./extract-method-modal";
+import { format } from "date-fns";
+import { currencyFormatter } from "@/utils/currency-formatter";
 
 interface Props {
   dividends: FiiDividends[];
@@ -39,6 +41,8 @@ export function StatementsMain({ dividends, operations }: Props) {
       ? fiis.getDividendsStatements(filters)
       : fiis.getOperationsStatements(filters);
 
+  console.log(data);
+
   return (
     <div>
       <div className="flex items-center pr-6 gap-6 mt-4 lg:absolute lg:right-0 lg:top-[82.5px]">
@@ -51,7 +55,7 @@ export function StatementsMain({ dividends, operations }: Props) {
           Limpar
         </Button>
       </div>
-      <div className="mt-6  lg:h-[600px]">
+      <div className="mt-4 lg:h-[600px]">
         {filters.tableDataType === "dividends" ? (
           <DividendsTable data={data as Dividend[]} />
         ) : (
@@ -80,7 +84,100 @@ const DividendsTable = ({ data }: { data: Dividend[] }) => {
     } as Partial<TableState>,
   });
 
-  return <DataTable className="lg:h-full" table={table} />;
+  const { pageIndex, pageSize } = pagination;
+
+  const partialData = data.slice(
+    pageIndex * pageSize,
+    pageIndex * pageSize + pageSize,
+  );
+
+  const handleNextPage = () => {
+    if (pageIndex * pageSize + pageSize >= data.length) return;
+    setPagination({
+      pageIndex: pageIndex + 1,
+      pageSize,
+    });
+  };
+
+  const handlePreviousPage = () => {
+    if (pageIndex === 0) return;
+    setPagination({
+      pageIndex: pageIndex - 1,
+      pageSize,
+    });
+  };
+
+  return (
+    <div className="h-full">
+      {partialData.length > 0 && (
+        <p className="mb-2">
+          <strong>Total:</strong>{" "}
+          {currencyFormatter(
+            data.reduce((acc, fii) => {
+              return acc + fii.total;
+            }, 0),
+          )}
+        </p>
+      )}
+      <div className="mini-sm:hidden block">
+        {partialData.length > 0 ? (
+          <div>
+            <div className="space-y-4 ">
+              {partialData.map((dividend) => {
+                return (
+                  <div
+                    key={dividend.fiiName}
+                    className="border-[1px] rounded-md py-3 px-4 border-zinc-800 pb-2"
+                  >
+                    <div className="flex justify-between items-center">
+                      <p>
+                        <strong>Fundo:</strong> {dividend.fiiName}
+                      </p>
+                      <p>
+                        <strong>Total:</strong>{" "}
+                        {currencyFormatter(dividend.total)}
+                      </p>
+                    </div>
+                    <div className="text-sm flex justify-between items-center">
+                      <p>
+                        Por cota: {currencyFormatter(dividend.paymentPerQuote)}
+                      </p>
+                      <p>{format(dividend.date, "dd/MM/yyyy")}</p>
+                    </div>
+                    <div className="text-sm flex justify-between items-center">
+                      <p>Cotas: {dividend.quotesAtPayment}</p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="my-4 flex items-center justify-end gap-4">
+              <Button
+                variant="outline"
+                className="w-36"
+                onClick={handlePreviousPage}
+              >
+                Anterior
+              </Button>
+              <Button
+                variant="outline"
+                className="w-36"
+                onClick={handleNextPage}
+              >
+                Próxima
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="text-center my-8 text-zinc-300">
+            Não foi possível encontrar resultados com os filtros selecionados.
+          </div>
+        )}
+      </div>
+
+      <DataTable className="mini-sm:block hidden lg:h-full" table={table} />
+    </div>
+  );
 };
 
 const OperationsTable = ({ data }: { data: FiisOperations[] }) => {

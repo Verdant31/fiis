@@ -27,7 +27,7 @@ export function ExpandedFiisTableMobile({ summarryTableProps }: Props) {
       open={modal.isOpen}
       onOpenChange={(isOpen) => setModal({ isOpen, isLoading: false })}
     >
-      <DialogTrigger asChild className="mini-sm:hidden">
+      <DialogTrigger asChild className="mini-md:hidden">
         <Button className="p-2">
           <ExpandIcon />
         </Button>

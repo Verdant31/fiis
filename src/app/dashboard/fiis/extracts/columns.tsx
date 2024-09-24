@@ -8,6 +8,13 @@ import { ArrowDownCircle, ArrowUpCircle, Info } from "lucide-react";
 
 export const dividendsStatementColumns: ColumnDef<Dividend>[] = [
   {
+    accessorKey: "fiiName",
+    header: "Fundo",
+    cell: ({ row }) => {
+      return <div className=" font-medium">{row.getValue("fiiName")}</div>;
+    },
+  },
+  {
     accessorKey: "quotesAtPayment",
     header: "Cotas",
     cell: ({ row }) => {
