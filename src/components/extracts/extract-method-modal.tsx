@@ -31,6 +31,7 @@ export default function ExtractOptionModal({ data, operations }: Props) {
       />,
     ).toBlob();
     saveAs(blob, fileName);
+    setModal(false);
   };
 
   return (

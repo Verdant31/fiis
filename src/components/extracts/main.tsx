@@ -41,8 +41,6 @@ export function StatementsMain({ dividends, operations }: Props) {
       ? fiis.getDividendsStatements(filters)
       : fiis.getOperationsStatements(filters);
 
-  console.log(data);
-
   return (
     <div>
       <div className="flex items-center pr-6 gap-6 mt-4 lg:absolute lg:right-0 lg:top-[82.5px]">
