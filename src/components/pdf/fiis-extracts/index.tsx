@@ -18,6 +18,7 @@ import { ptBR } from "date-fns/locale";
 interface Props {
   operations: FiiGroupedOperations[];
   extractedData: Dividend[] | FiisOperations[];
+  userEmail: string;
   filters: {
     intervalType: IntervalsFilterType;
     intervalValue: IntervalsValueType | undefined;
@@ -26,7 +27,12 @@ interface Props {
   };
 }
 
-export function FiisExtractsPdf({ operations, filters, extractedData }: Props) {
+export function FiisExtractsPdf({
+  operations,
+  userEmail,
+  filters,
+  extractedData,
+}: Props) {
   const dataType = filters?.tableDataType;
   const title = `Meu Extrato de ${
     dataType === "dividends" ? "Dividendos" : "Operações"
@@ -73,8 +79,8 @@ export function FiisExtractsPdf({ operations, filters, extractedData }: Props) {
         </View>
         <View style={tw("mt-5 px-2.5")}>
           <Text>
-            Emissão feita em {format(new Date(), "dd/MM/yyyy hh:mm")} por
-            verdantxd@gmail.com
+            Emissão feita em {format(new Date(), "dd/MM/yyyy hh:mm")} por{" "}
+            {userEmail}
           </Text>
           <View style={tw("mt-2")}>
             <Text style={tw("pt-1 font-semibold text-customPurple ")}>

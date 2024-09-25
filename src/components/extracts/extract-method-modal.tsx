@@ -9,6 +9,8 @@ import { pdf } from "@react-pdf/renderer";
 import { FiisExtractsPdf } from "../pdf/fiis-extracts";
 import { useStatementsFilterContext } from "@/contexts/StatementsFilters";
 import { FiisOperations } from "@prisma/client";
+import { api } from "@/lib/axios";
+import { toast } from "sonner";
 
 interface Props {
   data: Dividend[] | FiisOperations[];
@@ -23,13 +25,22 @@ export default function ExtractOptionModal({ data, operations }: Props) {
 
   const handleStartExtract = async () => {
     const fileName = "test.pdf";
+    const { data: session } = await api.get("/me");
+
+    if (!session?.user?.email) {
+      toast.info("Você precisa estar logado para baixar o extrato");
+      return;
+    }
+
     const blob = await pdf(
       <FiisExtractsPdf
+        userEmail={session.user.email as string}
         operations={operations}
         extractedData={data}
         filters={filters}
       />,
     ).toBlob();
+
     saveAs(blob, fileName);
     setModal(false);
   };
