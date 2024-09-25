@@ -15,5 +15,10 @@ export default async function DashboardLayout({
 }) {
   const { user } = await validateRequest();
   if (!user) redirect("/");
-  return <Pathname>{children}</Pathname>;
+
+  const operations =
+    (await prisma?.fiisOperations.findMany({
+      where: { userId: user.id },
+    })) ?? [];
+  return <Pathname hasOperations={operations?.length > 0}>{children}</Pathname>;
 }
