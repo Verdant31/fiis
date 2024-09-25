@@ -4,7 +4,6 @@ import { usePathname } from "next/navigation";
 import { Header } from "./header";
 
 export function Pathname({
-  hasOperations,
   children,
 }: {
   hasOperations: boolean;
