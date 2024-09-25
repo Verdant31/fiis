@@ -2,6 +2,7 @@ import { Pathname } from "@/components/pathname";
 import { validateRequest } from "@/lib/validate-request";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Stocks.tr",
@@ -17,7 +18,7 @@ export default async function DashboardLayout({
   if (!user) redirect("/");
 
   const operations =
-    (await prisma?.fiisOperations.findMany({
+    (await prisma.fiisOperations.findMany({
       where: { userId: user.id },
     })) ?? [];
   return <Pathname hasOperations={operations?.length > 0}>{children}</Pathname>;

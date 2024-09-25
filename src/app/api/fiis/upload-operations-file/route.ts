@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import { FormOutputData } from "../../../../lib/forms/create-fii-operation";
 import { uniqBy } from "lodash";
 import { validateRequest } from "@/lib/validate-request";
+import { prisma } from "@/lib/prisma";
 
 const columns = [
   "data_compra",
@@ -70,7 +71,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ status: 422, error: withoutDuplicates });
     }
 
-    const createdOperations = await prisma?.fiisOperations.createMany({
+    const createdOperations = await prisma.fiisOperations.createMany({
       data: operations.map((op) => {
         const { cnpj, name, operationType, quotes, price, ...rest } = op;
         return {

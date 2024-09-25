@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { outputFormSchema } from "../../../../lib/forms/create-fii-operation";
 import yahooFinance from "yahoo-finance2";
 import { validateRequest } from "@/lib/validate-request";
+import { prisma } from "@/lib/prisma";
 
 interface Payload {
   name: string;
@@ -47,7 +48,7 @@ export async function POST(req: Request) {
         });
       }
     }
-    const operation = await prisma?.fiisOperations.create({
+    const operation = await prisma.fiisOperations.create({
       data: {
         date: body.date,
         fiiCnpj: body.cnpj,
