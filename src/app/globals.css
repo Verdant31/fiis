@@ -97,7 +97,7 @@
 
 @layer base {
   * {
-    @apply border-border;
+    box-sizing: border-box;
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none;
   }

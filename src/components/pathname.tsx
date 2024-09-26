@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { Header } from "./header";
+import Onboard from "./onboard";
 
 export function Pathname({
   children,
@@ -10,10 +11,11 @@ export function Pathname({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const hasOperations = true;
   return (
     <div>
-      {pathname !== "/" && <Header />}
-      {children}
+      {pathname !== "/" && hasOperations && <Header />}
+      {hasOperations ? children : <Onboard />}
     </div>
   );
 }

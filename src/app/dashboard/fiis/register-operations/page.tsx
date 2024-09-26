@@ -3,8 +3,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormInputData, formSchema } from "@/lib/forms/create-fii-operation";
-import { RegisterFiiOperationForm } from "@/components/register-fii-operation-form";
-import UploadFiisModelForm from "@/components/upload-fiis-model-form";
+import { UploadOperationsModelForm } from "@/components/upload-fiis-model-form";
+import { RegisterFiiOperationForm } from "@/components/register-fii-form";
 
 export default function RegisterOperations() {
   const methods = useForm<FormInputData>({
@@ -25,7 +25,7 @@ export default function RegisterOperations() {
         <h1 className="text-2xl font-semibold ">Cadastrar nova operação</h1>
         <p className="text-sm text-muted-foreground ">
           Aqui você pode cadastrar suas operações uma por uma ou utilizar um{" "}
-          <a className="underline" href="./modelo.csv">
+          <a className="underline" href="./modelo_fiis.csv">
             modelo CSV
           </a>{" "}
           para cadastrar multiplas operações de uma vez.
@@ -53,7 +53,7 @@ export default function RegisterOperations() {
                   <RegisterFiiOperationForm />
                 </TabsContent>
                 <TabsContent value="multiple">
-                  <UploadFiisModelForm />
+                  <UploadOperationsModelForm stockType="fiis" />
                 </TabsContent>
               </Tabs>
             );

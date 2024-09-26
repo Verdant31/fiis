@@ -9,7 +9,11 @@ import { api } from "@/lib/axios";
 import { toast } from "sonner";
 import { ClipLoader } from "react-spinners";
 
-export default function UploadFiisModelForm() {
+export function UploadOperationsModelForm({
+  stockType,
+}: {
+  stockType: "fixed-income" | "fiis";
+}) {
   const [errors, setErrors] = useState<string[]>();
   const [isLoading, setIsLoading] = useState(false);
   const [file, setFile] = useState<File>();
@@ -25,9 +29,11 @@ export default function UploadFiisModelForm() {
       return;
     }
     setIsLoading(true);
+
+    const path = stockType + "/upload-operations-file";
     Papa.parse(file, {
       complete: async function (results) {
-        const { data } = await api.post("/fiis/upload-operations-file", {
+        const { data } = await api.post(path, {
           parsingResults: results.data,
         });
         setIsLoading(false);
@@ -36,6 +42,7 @@ export default function UploadFiisModelForm() {
             ? setErrors(data?.error)
             : toast.error(data?.error);
         }
+        setErrors(undefined);
         toast.success(data?.message);
       },
     });

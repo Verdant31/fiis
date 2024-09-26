@@ -123,11 +123,39 @@ export function Header() {
                         </AccordionContent>
                       </AccordionItem>
                     </Accordion>
-
-                    <a className="pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 ">
-                      <Landmark size={18} />
-                      <p className="text-sm">Renda fixa</p>
-                    </a>
+                    <Accordion type="single" collapsible className="w-full ">
+                      <AccordionItem value="item-1" className="border-0">
+                        <AccordionTrigger className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 ">
+                          <div className="flex items-center gap-4">
+                            <Landmark size={18} />{" "}
+                            <p className="text-sm">Renda fixa</p>
+                          </div>
+                        </AccordionTrigger>
+                        <AccordionContent className="pl-4 flex flex-col">
+                          <a
+                            href={`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/fixed-income/general`}
+                            className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1"
+                          >
+                            <Dot size={18} />
+                            <p>Visão geral</p>
+                          </a>
+                          <a
+                            href={`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/fixed-income/register-operations`}
+                            className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1"
+                          >
+                            <Dot size={18} />
+                            <p>Cadastrar operação</p>
+                          </a>
+                          <a
+                            href={`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/fixed-income/extracts`}
+                            className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1"
+                          >
+                            <Dot size={18} />
+                            <p>Extratos</p>
+                          </a>
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
                   </div>
                 </div>
                 <div className="left-0 absolute bottom-12 w-[100%] px-6">
