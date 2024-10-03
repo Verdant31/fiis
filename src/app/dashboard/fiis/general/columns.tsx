@@ -17,9 +17,7 @@ export const fiisSummaryColumns: ColumnDef<FiiSummary>[] = [
   },
   {
     accessorKey: "quotes",
-    header: ({ column }) => {
-      return <DataTableColumnHeader column={column} title="Cotas" />;
-    },
+    header: "Cotas",
     cell: ({ row }) => {
       return <div className=" font-medium">{row.getValue("quotes")}</div>;
     },
