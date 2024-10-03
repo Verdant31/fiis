@@ -4,8 +4,8 @@ import {
   FiiSummary,
 } from "@/types/fiis";
 import React, { useEffect, useState } from "react";
-import { DataTable } from "./table";
-import { Skeleton as ShadSkeleton } from "./ui/skeleton";
+import { DataTable } from "../table";
+import { Skeleton as ShadSkeleton } from "../ui/skeleton";
 import {
   getCoreRowModel,
   getPaginationRowModel,
@@ -16,7 +16,7 @@ import {
 import { useFiisDividends } from "@/queries/use-fiis-dividends";
 import { FiisController } from "@/controllers/fii";
 import { CartesianGrid, XAxis, Bar, BarChart, YAxis } from "recharts";
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "./ui/chart";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../ui/chart";
 import { currencyFormatter } from "@/utils/currency-formatter";
 import {
   Select,

@@ -3,9 +3,9 @@ import { useFiisDividends } from "@/queries/use-fiis-dividends";
 import { useFiisOperations } from "@/queries/use-fiis-operations";
 import { StatementsFilterContextProvider } from "@/contexts/StatementsFilters";
 import { FiiDividends, FiiGroupedOperations } from "@/types/fiis";
-import { StatementsFilters } from "@/components/extracts/filters";
-import { StatementsMain } from "@/components/extracts/main";
 import { StatementsSkeleton } from "@/components/skeletons/statements-skeleton";
+import { StatementsFilters } from "@/components/fiis/extract-filters";
+import { StatementsMain } from "@/components/fiis/extract-main";
 
 export default function Extracts() {
   const { data: dividends, isLoading: isLoadingDividends } = useFiisDividends();

@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/chart";
 import { BRL } from "@/utils/intlBr";
 import { useWindowSize } from "@/hooks/use-window-size";
-import { Skeleton as ShadSkeleton } from "./ui/skeleton";
+import { Skeleton as ShadSkeleton } from "../ui/skeleton";
 import { useFiisDividends } from "@/queries/use-fiis-dividends";
 
 const chartConfig = {

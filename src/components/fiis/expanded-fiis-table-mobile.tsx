@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useState } from "react";
 import { ExpandIcon } from "lucide-react";
-import { DataTable } from "./table";
+import { DataTable } from "../table";
 import { TableOptions, useReactTable } from "@tanstack/react-table";
 import { FiiSummary } from "@/types/fiis";
 import { fiisSummaryColumnsMobile } from "@/app/dashboard/fiis/general/columns";

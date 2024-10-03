@@ -26,10 +26,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Skeleton as ShadSkeleton } from "./ui/skeleton";
+import { Skeleton as ShadSkeleton } from "../ui/skeleton";
 import { useFiisPriceHistory } from "@/queries/use-fiis-price-history";
 import { FiisController } from "@/controllers/fii";
-import { Input } from "./ui/input";
+import { Input } from "../ui/input";
 import { Sparkle } from "lucide-react";
 import { useFiisSummary } from "@/queries/use-fiis-summary";
 import { useCloudflareModel } from "@/queries/use-cloudflare-model";

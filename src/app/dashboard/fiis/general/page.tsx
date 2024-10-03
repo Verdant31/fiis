@@ -3,10 +3,10 @@ import { useFiisSummary } from "@/queries/use-fiis-summary";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Skeleton as ShadSkeleton } from "@/components/ui/skeleton";
 import { useState } from "react";
-import FiiDetails from "@/components/fii-details";
+import { FiiDetails } from "@/components/fiis/fii-details";
 import { useWindowSize } from "@/hooks/use-window-size";
 import { ChevronRight } from "lucide-react";
-import { FiisGeneralInfo } from "@/components/fiis-general-info";
+import { FiisGeneralInfo } from "@/components/fiis/fiis-general-info";
 
 export default function Fiis() {
   const [tab, setTab] = useState("general");

@@ -18,9 +18,9 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "./ui/chart";
+} from "../ui/chart";
 import { format, parse } from "date-fns";
-import { Skeleton as ShadSkeleton } from "./ui/skeleton";
+import { Skeleton as ShadSkeleton } from "../ui/skeleton";
 
 import {
   useReactTable,
@@ -29,10 +29,10 @@ import {
   SortingState,
   getSortedRowModel,
 } from "@tanstack/react-table";
-import { DataTable } from "./table";
+import { DataTable } from "../table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUniqueFiiDividends } from "@/queries/use-unique-fii-dividends";
-import CalendarArrowDown from "./icons/calendar-arrow-down";
+import CalendarArrowDown from "../icons/calendar-arrow-down";
 import { FiisOperations } from "@prisma/client";
 import {
   operationsSummaryColumns,
@@ -46,7 +46,7 @@ interface Props {
   operations: FiisOperations[];
 }
 
-export default function FiiDetails({
+export function FiiDetails({
   fii,
   fiisLength,
   windowWidth,
