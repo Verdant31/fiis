@@ -1,13 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
-import { useFiisSummary } from "@/queries/use-fiis-summary";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { Skeleton as ShadSkeleton } from "@/components/ui/skeleton";
 import { useState } from "react";
-import FiiDetails from "@/components/fii-details";
-import { useWindowSize } from "@/hooks/use-window-size";
 import { ChevronRight } from "lucide-react";
-import { FiisGeneralInfo } from "@/components/fiis-general-info";
 import { useFixedIncomeOperations } from "@/queries/use-fixed-income-operations";
 import {
   ChartConfig,
@@ -16,8 +10,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
-import { format, parse } from "date-fns";
-import _ from "lodash";
+import { format } from "date-fns";
 import { fixedIncomeToChartData } from "@/helpers/fixed-income-to-chartdata";
 import { BRL } from "@/utils/intlBr";
 import {
@@ -30,9 +23,9 @@ import {
 import { ptBR } from "date-fns/locale";
 import { incomesToString } from "@/helpers/incomes-to-string";
 import { currencyFormatter } from "@/utils/currency-formatter";
-import { usePagination } from "@/hooks/use-pagination";
 import { Button } from "@/components/ui/button";
 import { FixedIncomeWithEvolution } from "@/types/fixed-income";
+import { useTablePagination } from "@/hooks/use-table-pagination.ts";
 
 type ChartViewMode = "realValue" | "percent";
 enum ViewModeEnum {
@@ -48,10 +41,15 @@ export default function Fiis() {
 
   const { data } = useFixedIncomeOperations();
 
-  const { handleNextPage, handlePreviousPage, partialData, pageIndex } =
-    usePagination({
-      data,
-    });
+  const {
+    handleNextPage,
+    handlePreviousPage,
+    partialData,
+    pagination: { pageIndex },
+  } = useTablePagination({
+    data,
+    initialpageSize: 8,
+  });
 
   if (!data) return <h1>sem dados</h1>;
 

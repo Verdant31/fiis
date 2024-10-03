@@ -66,7 +66,10 @@ export function StatementsMain({ dividends, operations }: Props) {
 
 const DividendsTable = ({ data }: { data: Dividend[] }) => {
   const [operationsSorting, setOperationsSorting] = useState<SortingState>([]);
-  const { pagination, setPagination } = useTablePagination();
+  const { pagination, setPagination } = useTablePagination({
+    initialpageSize: 9,
+    mobilePageSize: 7,
+  });
 
   const table = useReactTable({
     data,
@@ -180,7 +183,10 @@ const DividendsTable = ({ data }: { data: Dividend[] }) => {
 
 const OperationsTable = ({ data }: { data: FiisOperations[] }) => {
   const [operationsSorting, setOperationsSorting] = useState<SortingState>([]);
-  const { pagination, setPagination } = useTablePagination();
+  const { pagination, setPagination } = useTablePagination({
+    initialpageSize: 9,
+    mobilePageSize: 7,
+  });
 
   const table = useReactTable({
     data,
