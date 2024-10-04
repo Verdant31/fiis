@@ -97,6 +97,7 @@ export async function GET() {
 
       return {
         ...operation,
+        latestValue: investmentEvolution[investmentEvolution.length - 1].value,
         investmentEvolution,
       };
     });

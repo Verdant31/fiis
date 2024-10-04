@@ -25,6 +25,11 @@ export type RawCdbData = {
   data: string;
   valor: string;
 }[];
+export type FixedIncomeEvolution = {
+  date: Date;
+  percentEvolution: number;
+  value: number;
+};
 
 export type FixedIncomeWithEvolution = {
   incomes: Income[];
@@ -33,10 +38,7 @@ export type FixedIncomeWithEvolution = {
   dueDate: string;
   purchaseDate: string;
   investedValue: number;
+  latestValue: number;
   userId: string;
-  investmentEvolution: {
-    date: Date;
-    percentEvolution: number;
-    value: number;
-  }[];
+  investmentEvolution: FixedIncomeEvolution[];
 };

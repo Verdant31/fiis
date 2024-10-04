@@ -1,8 +1,8 @@
 "use client";
 import { AnalyticsCarousel } from "@/components/analytics-carousel";
 import { Articles } from "@/components/articles";
-import { FiisDividendsChart } from "@/components/fiis-dividends-chart";
-import { FiisHomeChart } from "@/components/fiis-home-chart";
+import { FiisDividendsChart } from "@/components/fiis/fiis-dividends-chart";
+import { FiisHomeChart } from "@/components/fiis/fiis-home-chart";
 
 export default function Home() {
   return (

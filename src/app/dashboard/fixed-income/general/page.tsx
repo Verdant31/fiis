@@ -3,13 +3,7 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { useFixedIncomeOperations } from "@/queries/use-fixed-income-operations";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import { CartesianGrid, Line } from "recharts";
 import { format } from "date-fns";
 import { fixedIncomeToChartData } from "@/helpers/fixed-income-to-chartdata";
 import { BRL } from "@/utils/intlBr";
@@ -26,6 +20,9 @@ import { currencyFormatter } from "@/utils/currency-formatter";
 import { Button } from "@/components/ui/button";
 import { FixedIncomeWithEvolution } from "@/types/fixed-income";
 import { useTablePagination } from "@/hooks/use-table-pagination.ts";
+import { CustomChart } from "@/components/chart";
+import IncomeDetails from "@/components/fixed-income/income-details";
+import { FixedIncomeSkeleton } from "@/components/skeletons/fixed-income-skeleton";
 
 type ChartViewMode = "realValue" | "percent";
 enum ViewModeEnum {
@@ -33,13 +30,13 @@ enum ViewModeEnum {
   "Percentual" = "percent",
 }
 
-export default function Fiis() {
+export default function FixedIncomes() {
   const [tab, setTab] = useState("general");
   const [selectedIncome, setSelectedIncome] =
     useState<FixedIncomeWithEvolution>();
   const [chartViewMode, setChartViewMode] = useState<ChartViewMode>("percent");
 
-  const { data } = useFixedIncomeOperations();
+  const { data, isLoading } = useFixedIncomeOperations();
 
   const {
     handleNextPage,
@@ -51,12 +48,28 @@ export default function Fiis() {
     initialpageSize: 8,
   });
 
-  if (!data) return <h1>sem dados</h1>;
+  if (isLoading || !data) return <FixedIncomeSkeleton />;
 
   const { chartData, lines, biggestValue } = fixedIncomeToChartData(
     data,
     chartViewMode,
   );
+
+  const yAxisProps = {
+    type: "number" as const,
+    domain: chartViewMode === "percent" ? [-10, biggestValue + 10] : undefined,
+    hide: true,
+  };
+
+  const xAxisProps = {
+    dataKey: "date",
+    tickMargin: 8,
+    tickFormatter: (value: number) =>
+      new Date(value).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      }),
+  };
 
   return (
     <main className="w-[90%] mx-auto mt-6 overflow-hidden lg:w-[calc(100%-48px)] lg:max-w-[1400px] pb-12">
@@ -123,49 +136,23 @@ export default function Fiis() {
                 </SelectContent>
               </Select>
             </div>
-            <ChartContainer className="mt-6" config={{} satisfies ChartConfig}>
-              <LineChart accessibilityLayer data={chartData} margin={{}}>
-                <CartesianGrid vertical={false} />
-                <XAxis
-                  dataKey="date"
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  tickFormatter={(value) => {
-                    return new Date(value).toLocaleDateString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                    });
-                  }}
-                />
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  type="number"
-                  domain={
+            <div className="lg:flex lg:gap-16 lg:mt-2 lg:items-center">
+              <CustomChart
+                chartType="line"
+                className="mt-6 lg:basis-[60%] lg:mt-0"
+                data={chartData}
+                tooltip={{
+                  labelFormatter: (label) =>
+                    format(new Date(label), "PP", { locale: ptBR }),
+                  valueFormatter: (value) =>
                     chartViewMode === "percent"
-                      ? [-10, biggestValue + 10]
-                      : undefined
-                  }
-                  hide
-                  tickFormatter={() => ``}
-                />
-                <ChartTooltip
-                  labelFormatter={(label) => {
-                    return format(new Date(label), "PP", { locale: ptBR });
-                  }}
-                  content={
-                    <ChartTooltipContent
-                      itemValueFormatter={(item) =>
-                        chartViewMode === "percent"
-                          ? `${(item.value as number).toFixed(2)}%`
-                          : BRL.format(
-                              parseFloat((item.value as number)?.toFixed(2)),
-                            )
-                      }
-                    />
-                  }
-                />
+                      ? `${(value as number).toFixed(2)}%`
+                      : BRL.format(parseFloat((value as number)?.toFixed(2))),
+                }}
+                xAxisProps={xAxisProps}
+                yAxisProps={yAxisProps}
+              >
+                <CartesianGrid vertical={false} />
                 {lines?.map((line, index) => (
                   <Line
                     key={line}
@@ -177,74 +164,85 @@ export default function Fiis() {
                     dot={false}
                   />
                 ))}
-              </LineChart>
-            </ChartContainer>
-            <div className="space-y-4 mt-4">
-              {partialData.map((fixedIncome, index) => (
-                <div
-                  className="border-[1px] p-4 rounded-md space-y-1"
-                  key={fixedIncome.id}
-                  onClick={() => {
-                    setSelectedIncome(fixedIncome);
-                    setTab("details");
-                  }}
-                >
-                  <div className="flex items-start justify-between">
-                    <p>
-                      <span className="font-semibold">Empresa</span>:{" "}
-                      {fixedIncome.companyName}
-                    </p>
-
-                    <p>
-                      {currencyFormatter(
-                        fixedIncome.investmentEvolution.at(-1)?.value ?? 0,
-                      )}
-                    </p>
-                  </div>
-                  <div className="flex justify-between">
-                    <p>
-                      <span className="font-semibold">Vencimento</span>:{" "}
-                      {format(new Date(fixedIncome.dueDate), "dd/MM/yyyy")}
-                    </p>
-                    <p
-                      style={{
-                        backgroundColor: `hsl(var(--chart-${index + 1}))`,
+              </CustomChart>
+              <div className="lg:basis-[40%]">
+                <div className="space-y-4 mt-4">
+                  {partialData.map((fixedIncome, index) => (
+                    <div
+                      className="border-[1px] p-4 rounded-md space-y-1"
+                      key={fixedIncome.id}
+                      onClick={() => {
+                        setSelectedIncome(fixedIncome);
+                        setTab("details");
                       }}
-                      className="px-3 text-sm font-semibold rounded-xl text-center py-[1px]"
                     >
-                      {incomesToString(fixedIncome.incomes)}
-                    </p>
+                      <div className="flex items-start justify-between">
+                        <p>
+                          <span className="font-semibold">Empresa</span>:{" "}
+                          {fixedIncome.companyName}
+                        </p>
+
+                        <p>
+                          {currencyFormatter(
+                            fixedIncome.investmentEvolution.at(-1)?.value ?? 0,
+                          )}
+                        </p>
+                      </div>
+                      <div className="flex justify-between">
+                        <p>
+                          <span className="font-semibold">Vencimento</span>:{" "}
+                          {format(new Date(fixedIncome.dueDate), "dd/MM/yyyy")}
+                        </p>
+                        <p
+                          style={{
+                            backgroundColor: `hsl(var(--chart-${index + 1}))`,
+                          }}
+                          className="px-3 text-sm font-semibold rounded-xl text-center py-[1px]"
+                        >
+                          {incomesToString(fixedIncome.incomes)}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="lg:pt-4 flex items-center justify-between">
+                  <p className="pl-1">
+                    Pagina {pageIndex + 1} de {Math.ceil(data.length / 7)}
+                  </p>
+                  <div className="my-4 flex items-center justify-end gap-4">
+                    <Button
+                      variant="outline"
+                      className="w-28"
+                      onClick={handlePreviousPage}
+                      disabled={pageIndex === 0}
+                    >
+                      Anterior
+                    </Button>
+                    <Button
+                      variant="outline"
+                      className="w-32"
+                      onClick={handleNextPage}
+                      disabled={pageIndex === Math.ceil(data.length / 7) - 1}
+                    >
+                      Próxima
+                    </Button>
                   </div>
                 </div>
-              ))}
-            </div>
-            <div className="flex items-center justify-between">
-              <p className="pl-1">
-                Pagina {pageIndex + 1} de {Math.ceil(data.length / 7)}
-              </p>
-              <div className="my-4 flex items-center justify-end gap-4">
-                <Button
-                  variant="outline"
-                  className="w-28"
-                  onClick={handlePreviousPage}
-                  disabled={pageIndex === 0}
-                >
-                  Anterior
-                </Button>
-                <Button
-                  variant="outline"
-                  className="w-32"
-                  onClick={handleNextPage}
-                  disabled={pageIndex === Math.ceil(data.length / 7) - 1}
-                >
-                  Próxima
-                </Button>
               </div>
             </div>
           </div>
         </TabsContent>
         <TabsContent value="details">
-          {JSON.stringify(selectedIncome)}
+          {selectedIncome && (
+            <IncomeDetails
+              selectedIncome={selectedIncome}
+              chartViewMode={chartViewMode}
+              yAxisProps={yAxisProps}
+              xAxisProps={xAxisProps}
+              chartData={chartData}
+              color={`hsl(var(--chart-${partialData.indexOf(selectedIncome) + 1}))`}
+            />
+          )}
         </TabsContent>
       </Tabs>
     </main>

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { FiisPriceChartOptions } from "@/components/fiis-home-chart";
+import { FiisPriceChartOptions } from "@/components/fiis/fiis-home-chart";
 import { DateInRangeModeType } from "@/components/select-interval";
 import { filterDividendsFromDate } from "@/helpers/filter-dividends-from-date";
 import { ParsedCloduflareResponse } from "@/queries/use-cloudflare-model";
