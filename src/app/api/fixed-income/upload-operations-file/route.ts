@@ -43,7 +43,6 @@ export async function POST(req: Request) {
     const operations = rawOperations.map((op) => {
       const incomes = op?.rendimentos.split(";").map((income) => {
         const [type, value] = income.trim().split(" ");
-        console.log(type, value);
         return {
           type: IncomeEnum[type as keyof typeof IncomeEnum],
           value: Number(value.split("%")[0]),

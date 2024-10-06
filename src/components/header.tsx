@@ -40,7 +40,6 @@ export function Header() {
   const handleLogout = async () => {
     const { data } = await mutateAsync();
 
-    console.log(data);
     if (data?.status !== 200) {
       return toast.error(
         data?.message ?? "Houve um erro ao tentar deslogar seu usuário.",

@@ -96,7 +96,6 @@ export function FiisHomeChart() {
     ),
   );
 
-  console.log(chartData);
   return (
     <div className="mt-6 max-w-[760px] lg:w-full">
       <div className="flex items-end justify-between">

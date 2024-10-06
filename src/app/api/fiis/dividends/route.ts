@@ -82,9 +82,7 @@ export async function GET() {
     });
 
     const results = await Promise.all(promises);
-    // for (const a of results) {
-    //   console.log(a.monthlyDividends)
-    // }
+
     return NextResponse.json({
       results: results ?? [],
       status: 200,

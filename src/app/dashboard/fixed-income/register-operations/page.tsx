@@ -7,8 +7,8 @@ import {
   formSchema,
 } from "@/lib/forms/create-fixed-income-operation";
 import { RegisterFixedIncomeForm } from "@/components/register-fixed-income-form";
-import { UploadOperationsModelForm } from "@/components/upload-fiis-model-form";
 import { addYears } from "date-fns";
+import { UploadOperationsModelForm } from "@/components/fiis/upload-fiis-model-form";
 
 export default function RegisterOperations() {
   const methods = useForm<FormInputData>({
