@@ -3,8 +3,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormInputData, formSchema } from "@/lib/forms/create-fii-operation";
-import { UploadOperationsModelForm } from "@/components/upload-fiis-model-form";
-import { RegisterFiiOperationForm } from "@/components/register-fii-form";
+import { RegisterFiiOperationForm } from "@/components/fiis/register-fii-form";
+import { UploadOperationsModelForm } from "@/components/fiis/upload-fiis-model-form";
 
 export default function RegisterOperations() {
   const methods = useForm<FormInputData>({
