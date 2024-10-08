@@ -46,7 +46,7 @@ export default function FixedIncomes() {
     pagination: { pageIndex },
   } = useTablePagination({
     data,
-    initialpageSize: 8,
+    initialpageSize: 4,
   });
 
   useEffect(() => {
@@ -110,7 +110,7 @@ export default function FixedIncomes() {
             </p>
           </div>
           <div>
-            <div className="flex items-end justify-between mt-6">
+            <div className="flex items-end justify-between mt-6 lg:max-w-[784px] lg:gap-8">
               <div>
                 <h1 className="font-semibold text-lg lg:text-xl">
                   Evolução dos titulos
@@ -174,63 +174,54 @@ export default function FixedIncomes() {
                   />
                 ))}
               </CustomChart>
-              <div className="lg:basis-[40%]">
-                <div>
-                  <h1 className="font-semibold mt-6 mb-4 text-lg lg:text-xl">
-                    Listagem dos titulos
-                  </h1>
-                  <div className="space-y-4 mt-2">
-                    {partialData.map((fixedIncome, index) => (
-                      <div
-                        className="border-[1px] p-4 rounded-md "
-                        key={fixedIncome.id}
-                        onClick={() => {
-                          setSelectedIncome(fixedIncome);
-                          setTab("details");
-                        }}
-                      >
-                        <div className="flex items-start justify-between">
-                          <p>
-                            <span className="font-semibold">Empresa</span>:{" "}
-                            {fixedIncome.companyName}
-                          </p>
+              <div className="lg:basis-[40%] lg:h-[480px]">
+                <div className="space-y-4 mt-2">
+                  {partialData.map((fixedIncome, index) => (
+                    <div
+                      className="border-[1px] p-4 rounded-md "
+                      key={fixedIncome.id}
+                      onClick={() => {
+                        setSelectedIncome(fixedIncome);
+                        setTab("details");
+                      }}
+                    >
+                      <div className="flex items-start justify-between">
+                        <p>
+                          <span className="font-semibold">Empresa</span>:{" "}
+                          {fixedIncome.companyName}
+                        </p>
 
-                          <p>
-                            {currencyFormatter(
-                              fixedIncome.investmentEvolution.at(-1)?.value ??
-                                0,
-                            )}
-                          </p>
-                        </div>
-                        <div className="flex justify-between mt-1">
-                          <p className="text-sm">
-                            <span className="font-semibold">Vencimento</span>:{" "}
-                            {format(
-                              new Date(fixedIncome.dueDate),
-                              "dd/MM/yyyy",
-                            )}
-                          </p>
-                          <p
-                            style={{
-                              backgroundColor: `hsl(var(--chart-${index + 1}))`,
-                            }}
-                            className="px-3 text-sm font-semibold rounded-xl text-center py-[1px]"
-                          >
-                            {incomesToString(fixedIncome.incomes)}
-                          </p>
-                        </div>
-                        {new Date(fixedIncome.dueDate) < new Date() && (
-                          <p className="px-3 mt-2 bg-red-600 text-sm  w-24 font-semibold rounded-xl text-center py-[1px]">
-                            Vencido
-                          </p>
-                        )}
+                        <p>
+                          {currencyFormatter(
+                            fixedIncome.investmentEvolution.at(-1)?.value ?? 0,
+                          )}
+                        </p>
                       </div>
-                    ))}
-                  </div>
+                      <div className="flex justify-between mt-1">
+                        <p className="text-sm">
+                          <span className="font-semibold">Vencimento</span>:{" "}
+                          {format(new Date(fixedIncome.dueDate), "dd/MM/yyyy")}
+                        </p>
+                        <p
+                          style={{
+                            backgroundColor: `hsl(var(--chart-${index + 1}))`,
+                          }}
+                          className="px-3 text-sm font-semibold rounded-xl text-center py-[1px]"
+                        >
+                          {incomesToString(fixedIncome.incomes)}
+                        </p>
+                      </div>
+                      {new Date(fixedIncome.dueDate) < new Date() && (
+                        <p className="px-3 mt-2 bg-red-600 text-sm  w-24 font-semibold rounded-xl text-center py-[1px]">
+                          Vencido
+                        </p>
+                      )}
+                    </div>
+                  ))}
                 </div>
                 <div className="lg:pt-4 flex items-center justify-between">
                   <p className="pl-1">
-                    Pagina {pageIndex + 1} de {Math.ceil(data.length / 7)}
+                    Pagina {pageIndex + 1} de {Math.ceil(data.length / 4)}
                   </p>
                   <div className="my-4 flex items-center justify-end gap-4">
                     <Button
@@ -245,7 +236,7 @@ export default function FixedIncomes() {
                       variant="outline"
                       className="w-32"
                       onClick={handleNextPage}
-                      disabled={pageIndex === Math.ceil(data.length / 7) - 1}
+                      disabled={pageIndex === Math.ceil(data.length / 4) - 1}
                     >
                       Próxima
                     </Button>

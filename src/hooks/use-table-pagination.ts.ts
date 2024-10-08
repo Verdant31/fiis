@@ -38,7 +38,6 @@ export function useTablePagination({
   }, [windowWidth]);
 
   const { pageIndex, pageSize } = pagination;
-
   const partialData = data.slice(
     pageIndex * pageSize,
     pageIndex * pageSize + pageSize,

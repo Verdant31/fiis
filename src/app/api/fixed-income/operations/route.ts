@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
-import { formatRawCdbData } from "@/helpers/format-raw-cdb-data";
-import { formatRawInflationData } from "@/helpers/format-raw-inflation-data";
+import { requestToGetCdiAndInflation } from "@/helpers/request-to-get-cdi-and-inflation";
 import { prisma } from "@/lib/prisma";
 import { validateRequest } from "@/lib/validate-request";
 import { datesAreSameMonthAndYear } from "@/utils/dates-are-same-month-and-year";
@@ -23,17 +23,19 @@ export async function GET() {
         : oldest,
     );
 
-    const [inflation, cdb] = await Promise.all([
-      fetch(process.env.INFLATION_API_URL as string).then((res) =>
-        formatRawInflationData(res, oldestOperation),
-      ),
-      fetch(process.env.CDB_API_URL as string).then((res) =>
-        formatRawCdbData(res, oldestOperation),
-      ),
-    ]);
+    const data = await requestToGetCdiAndInflation(oldestOperation);
+    const cdi = data?.cdi;
+    const inflation = data?.inflation;
+
+    if (!cdi || !inflation) {
+      return NextResponse.json({
+        message: "Não foi possivel resgatar os dados da inflação e/ou CDI.",
+        status: 404,
+      });
+    }
 
     const withIncomes = fiisOperations.map((operation) => {
-      const cdbIncomes = cdb.filter((income) =>
+      const cdbIncomes = cdi.filter((income) =>
         datesAreSameMonthAndYear(income.date, new Date(operation.purchaseDate)),
       );
       const inflationIncomes = inflation.filter((income) =>
@@ -106,7 +108,7 @@ export async function GET() {
       status: 200,
     });
   } catch (err) {
-    console.log(err);
+    console.log((err as any).message);
     return NextResponse.json({ message: (err as Error)?.message, status: 500 });
   }
 }

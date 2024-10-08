@@ -7,6 +7,7 @@ export const formatRawInflationData = async (
   oldestOperation: FixedIncomeOperations,
 ) => {
   const data = (await response.json()) as RawInflationData;
+  console.log("data from inflation", data);
   const formattedData = data.value.map((item) => {
     return {
       date: new Date(item.VALDATA),
