@@ -16,20 +16,30 @@ import { useTablePagination } from "@/hooks/use-table-pagination.ts";
 import { Button } from "../ui/button";
 import ExtractOptionModal from "../fiis/extract-method-modal";
 import { FixedIncomeWithEvolution } from "@/types/fixed-income";
+import { getFixedIncomeStatementData } from "@/helpers/fixed-income-statements-data";
 
 interface Props {
   operations: FixedIncomeWithEvolution[];
 }
 
 export function StatementsMain({ operations }: Props) {
-  const { filters, clearFilters } = useStatementsFilterContext();
+  const {
+    filters: { tableDataType, intervalValue },
+    clearFilters,
+  } = useStatementsFilterContext();
+
+  const tableData = getFixedIncomeStatementData({
+    tableDataType,
+    intervalValue: intervalValue as Date,
+    operations,
+  });
 
   return (
     <div>
       <div className="flex items-center pr-6 gap-6 mt-4 lg:absolute lg:right-0 lg:top-[82.5px]">
         <ExtractOptionModal
-          operations={operations as any}
-          data={operations as any}
+          operations={operations}
+          data={tableData as FixedIncomeWithEvolution[]}
         />
         <Button
           onClick={clearFilters}
@@ -40,41 +50,13 @@ export function StatementsMain({ operations }: Props) {
         </Button>
       </div>
       <div className="mt-4 lg:h-[600px]">
-        {filters.tableDataType === "dividends" ? (
-          <IncomesTable data={operations as FixedIncomeWithEvolution[]} />
-        ) : (
-          <OperationsTable data={operations as FixedIncomeWithEvolution[]} />
-        )}
+        <IncomesTable data={tableData as FixedIncomeWithEvolution[]} />
       </div>
     </div>
   );
 }
 
 const IncomesTable = ({ data }: { data: FixedIncomeWithEvolution[] }) => {
-  const [operationsSorting, setOperationsSorting] = useState<SortingState>([]);
-  const { pagination, setPagination } = useTablePagination({
-    initialpageSize: 9,
-    mobilePageSize: 7,
-  });
-
-  const table = useReactTable({
-    data,
-    columns: operationsStatementColumns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setOperationsSorting,
-    getSortedRowModel: getSortedRowModel(),
-    onPaginationChange: setPagination,
-    state: {
-      sorting: operationsSorting,
-      pagination,
-    } as Partial<TableState>,
-  });
-
-  return <DataTable className="lg:h-full" table={table} />;
-};
-
-const OperationsTable = ({ data }: { data: FixedIncomeWithEvolution[] }) => {
   const [operationsSorting, setOperationsSorting] = useState<SortingState>([]);
   const { pagination, setPagination } = useTablePagination({
     initialpageSize: 9,

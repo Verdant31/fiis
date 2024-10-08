@@ -32,6 +32,10 @@ export async function GET() {
       ),
     ]);
 
+    const temp = fiisOperations.filter((op) =>
+      op.incomes.some((i) => i.type === "inflation"),
+    );
+
     const withIncomes = fiisOperations.map((operation) => {
       const cdbIncomes = cdb.filter((income) =>
         datesAreSameMonthAndYear(income.date, new Date(operation.purchaseDate)),
@@ -81,7 +85,6 @@ export async function GET() {
 
             updatedValue = lastValue + monthlyYield;
           }
-
           return [
             ...evolution,
             {
@@ -94,6 +97,7 @@ export async function GET() {
         },
         [initialInvestment],
       );
+      console.log(investmentEvolution);
 
       return {
         ...operation,

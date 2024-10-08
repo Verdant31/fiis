@@ -1,5 +1,6 @@
 import React from "react";
 import { Skeleton as ShadSkeleton } from "../ui/skeleton";
+
 export function StatementsSkeleton() {
   return (
     <main className=" mt-6 max-w-[1024px] mx-auto px-6">
