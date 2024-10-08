@@ -2,7 +2,7 @@ import { Pathname } from "@/components/pathname";
 import { validateRequest } from "@/lib/validate-request";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { prisma } from "@/lib/prisma";
+import { checkIfUserHasOperations } from "@/helpers/check-if-user-has-operations";
 
 export const metadata: Metadata = {
   title: "Stocks.tr",
@@ -17,9 +17,7 @@ export default async function DashboardLayout({
   const { user } = await validateRequest();
   if (!user) redirect("/");
 
-  const operations =
-    (await prisma.fiisOperations.findMany({
-      where: { userId: user.id },
-    })) ?? [];
-  return <Pathname hasOperations={operations?.length > 0}>{children}</Pathname>;
+  const hasOperations = await checkIfUserHasOperations(user.id);
+
+  return <Pathname hasOperations={hasOperations}>{children}</Pathname>;
 }

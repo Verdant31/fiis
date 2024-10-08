@@ -52,7 +52,7 @@ export async function POST(req: Request) {
       data: {
         date: body.date,
         fiiCnpj: body.cnpj,
-        fiiName: body.name,
+        fiiName: foundFii?.symbol,
         qty: body.quotes,
         type: body.operationType,
         quotationValue: body.price,

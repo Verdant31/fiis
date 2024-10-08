@@ -1,8 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import { useFiisSummary } from "@/queries/use-fiis-summary";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Skeleton as ShadSkeleton } from "@/components/ui/skeleton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiiDetails } from "@/components/fiis/fii-details";
 import { useWindowSize } from "@/hooks/use-window-size";
 import { ChevronRight } from "lucide-react";
@@ -16,6 +17,14 @@ export default function Fiis() {
   const window = useWindowSize();
 
   const selectedFii = summary?.find((fii) => fii.fiiName === selectedFiiName);
+
+  useEffect(() => {
+    const income = summary?.find((fii) => fii.fiiName === selectedFiiName);
+    if (!income) {
+      setTab("general");
+      setSelectedFiiName(undefined);
+    }
+  }, [summary]);
 
   return (
     <main className="w-[90%] mx-auto mt-6 overflow-hidden lg:w-[calc(100%-48px)] lg:max-w-[1400px] pb-12">

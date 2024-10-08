@@ -38,6 +38,7 @@ import {
   operationsSummaryColumns,
   dividendsColumns,
 } from "@/app/dashboard/fiis/general/columns";
+import DeleteOperationModal from "../delete-operation-modal";
 
 interface Props {
   fii: FiiSummary;
@@ -345,6 +346,7 @@ export function FiiDetails({
           </div>
         </div>
       </div>
+      <DeleteOperationModal stockType="fii" id={fii.fiiName} />
     </div>
   );
 }

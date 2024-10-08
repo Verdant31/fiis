@@ -1,6 +1,6 @@
 "use client";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { useFixedIncomeOperations } from "@/queries/use-fixed-income-operations";
 import { CartesianGrid, Line } from "recharts";
@@ -47,6 +47,14 @@ export default function FixedIncomes() {
     data,
     initialpageSize: 8,
   });
+
+  useEffect(() => {
+    const income = data?.find((income) => income.id === selectedIncome?.id);
+    if (!income) {
+      setTab("general");
+      setSelectedIncome(undefined);
+    }
+  }, [data]);
 
   if (isLoading || !data) return <FixedIncomeSkeleton />;
 
@@ -166,44 +174,58 @@ export default function FixedIncomes() {
                 ))}
               </CustomChart>
               <div className="lg:basis-[40%]">
-                <div className="space-y-4 mt-4">
-                  {partialData.map((fixedIncome, index) => (
-                    <div
-                      className="border-[1px] p-4 rounded-md space-y-1"
-                      key={fixedIncome.id}
-                      onClick={() => {
-                        setSelectedIncome(fixedIncome);
-                        setTab("details");
-                      }}
-                    >
-                      <div className="flex items-start justify-between">
-                        <p>
-                          <span className="font-semibold">Empresa</span>:{" "}
-                          {fixedIncome.companyName}
-                        </p>
+                <div>
+                  <h1 className="font-semibold mt-6 mb-4 text-lg lg:text-xl">
+                    Listagem dos titulos
+                  </h1>
+                  <div className="space-y-4 mt-2">
+                    {partialData.map((fixedIncome, index) => (
+                      <div
+                        className="border-[1px] p-4 rounded-md "
+                        key={fixedIncome.id}
+                        onClick={() => {
+                          setSelectedIncome(fixedIncome);
+                          setTab("details");
+                        }}
+                      >
+                        <div className="flex items-start justify-between">
+                          <p>
+                            <span className="font-semibold">Empresa</span>:{" "}
+                            {fixedIncome.companyName}
+                          </p>
 
-                        <p>
-                          {currencyFormatter(
-                            fixedIncome.investmentEvolution.at(-1)?.value ?? 0,
-                          )}
-                        </p>
+                          <p>
+                            {currencyFormatter(
+                              fixedIncome.investmentEvolution.at(-1)?.value ??
+                                0,
+                            )}
+                          </p>
+                        </div>
+                        <div className="flex justify-between mt-1">
+                          <p className="text-sm">
+                            <span className="font-semibold">Vencimento</span>:{" "}
+                            {format(
+                              new Date(fixedIncome.dueDate),
+                              "dd/MM/yyyy",
+                            )}
+                          </p>
+                          <p
+                            style={{
+                              backgroundColor: `hsl(var(--chart-${index + 1}))`,
+                            }}
+                            className="px-3 text-sm font-semibold rounded-xl text-center py-[1px]"
+                          >
+                            {incomesToString(fixedIncome.incomes)}
+                          </p>
+                        </div>
+                        {new Date(fixedIncome.dueDate) < new Date() && (
+                          <p className="px-3 mt-2 bg-red-600 text-sm  w-24 font-semibold rounded-xl text-center py-[1px]">
+                            Vencido
+                          </p>
+                        )}
                       </div>
-                      <div className="flex justify-between">
-                        <p>
-                          <span className="font-semibold">Vencimento</span>:{" "}
-                          {format(new Date(fixedIncome.dueDate), "dd/MM/yyyy")}
-                        </p>
-                        <p
-                          style={{
-                            backgroundColor: `hsl(var(--chart-${index + 1}))`,
-                          }}
-                          className="px-3 text-sm font-semibold rounded-xl text-center py-[1px]"
-                        >
-                          {incomesToString(fixedIncome.incomes)}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
                 <div className="lg:pt-4 flex items-center justify-between">
                   <p className="pl-1">

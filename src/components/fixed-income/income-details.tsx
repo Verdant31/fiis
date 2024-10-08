@@ -14,11 +14,14 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   SortingState,
+  TableState,
   useReactTable,
 } from "@tanstack/react-table";
 import _ from "lodash";
 import { incomeEvolutionColumns } from "@/app/dashboard/fixed-income/general/columns";
 import { useMemo, useState } from "react";
+import { useTablePagination } from "@/hooks/use-table-pagination.ts";
+import DeleteOperationModal from "../delete-operation-modal";
 
 interface Props {
   chartData: {
@@ -67,6 +70,11 @@ export default function IncomeDetails({
     [selectedIncome?.investmentEvolution],
   );
 
+  const { pagination, setPagination } = useTablePagination({
+    initialpageSize: 9,
+    mobilePageSize: 7,
+  });
+
   const table = useReactTable({
     data: tableWithPrevious,
     columns: incomeEvolutionColumns,
@@ -74,9 +82,11 @@ export default function IncomeDetails({
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setOperationsSorting,
     getSortedRowModel: getSortedRowModel(),
+    onPaginationChange: setPagination,
     state: {
       sorting: operationsSorting,
-    },
+      pagination,
+    } as Partial<TableState>,
   });
 
   return (
@@ -140,6 +150,7 @@ export default function IncomeDetails({
         />
       </CustomChart>
       <DataTable table={table} className="mt-6" />
+      <DeleteOperationModal stockType="fixed" id={selectedIncome.id} />
     </div>
   );
 }

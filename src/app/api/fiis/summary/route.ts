@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 import { prisma } from "@/lib/prisma";
 import _ from "lodash";
@@ -27,39 +28,43 @@ export async function GET() {
     }));
 
     const promises = fiis.map(async (fii) => {
-      const summary = await yahooFinance.quote(fii.fiiName);
-      const quotes = fii.operations.reduce((acc, operation) => {
-        if (operation.type === "purchase" || operation.type === "unfolding") {
-          acc += operation.qty;
-        } else if (operation.type === "sale") {
-          acc -= operation.qty;
-        }
-        return acc;
-      }, 0);
-      const operations = fii.operations.sort(
-        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
-      );
-      const hasMissingInfo = !summary.dividendRate || !summary.priceToBook;
-
-      return {
-        fiiName: fii.fiiName.split(".SA")[0],
-        quotes,
-        monthlyYield: summary.dividendRate,
-        annualYield: summary.dividendYield,
-        price: summary.regularMarketPrice,
-        pvp: summary.priceToBook?.toFixed(2),
-        type: summary.quoteType,
-        high: summary.regularMarketDayHigh,
-        low: summary.regularMarketDayLow,
-        operations,
-        valueAtFirstPurchase: operations[operations.length - 1].quotationValue,
-        ...(hasMissingInfo && {
-          extraInfo: await handleFiiMissingInfos({
-            ...fii,
-            currentQuotePrice: summary.regularMarketPrice as number,
+      try {
+        const summary = await yahooFinance.quote(fii.fiiName);
+        const quotes = fii.operations.reduce((acc, operation) => {
+          if (operation.type === "purchase" || operation.type === "unfolding") {
+            acc += operation.qty;
+          } else if (operation.type === "sale") {
+            acc -= operation.qty;
+          }
+          return acc;
+        }, 0);
+        const operations = fii.operations.sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+        );
+        const hasMissingInfo = !summary?.dividendRate || !summary?.priceToBook;
+        return {
+          fiiName: fii.fiiName.split(".SA")[0],
+          quotes,
+          monthlyYield: summary?.dividendRate,
+          annualYield: summary?.dividendYield,
+          price: summary?.regularMarketPrice,
+          pvp: summary?.priceToBook?.toFixed(2),
+          type: summary?.quoteType,
+          high: summary?.regularMarketDayHigh,
+          low: summary?.regularMarketDayLow,
+          operations,
+          valueAtFirstPurchase:
+            operations[operations.length - 1].quotationValue,
+          ...(hasMissingInfo && {
+            extraInfo: await handleFiiMissingInfos({
+              ...fii,
+              currentQuotePrice: summary?.regularMarketPrice as number,
+            }),
           }),
-        }),
-      };
+        };
+      } catch (err) {
+        throw new Error(err + " " + fii.fiiName);
+      }
     });
 
     const results = await Promise.all(promises);
@@ -67,8 +72,7 @@ export async function GET() {
       results: results ?? [],
       status: 200,
     });
-  } catch (err) {
-    console.log(err);
+  } catch (err: any) {
     return NextResponse.json({ message: (err as Error)?.message, status: 500 });
   }
 }

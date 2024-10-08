@@ -93,7 +93,6 @@ export async function GET() {
         },
         [initialInvestment],
       );
-      console.log(investmentEvolution);
 
       return {
         ...operation,

@@ -34,13 +34,6 @@ export default function ExtractOptionModal({ data, operations }: Props) {
       return;
     }
 
-    console.log({
-      userEmail: session.user.email as string,
-      operations,
-      extractedData: data,
-      filters,
-    });
-
     const component =
       "companyName" in operations[0] ? (
         <FixedIncomeExtractsPdf
