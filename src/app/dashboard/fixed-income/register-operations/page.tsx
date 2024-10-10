@@ -10,13 +10,11 @@ import { RegisterFixedIncomeForm } from "@/components/register-fixed-income-form
 import { addYears } from "date-fns";
 import { UploadOperationsModelForm } from "@/components/fiis/upload-fiis-model-form";
 
-interface PageProps {
-  redirectAfterRegister?: () => void;
-}
-
 export default function RegisterOperations({
   redirectAfterRegister,
-}: PageProps) {
+}: {
+  redirectAfterRegister?: () => void;
+}) {
   const methods = useForm<FormInputData>({
     resolver: zodResolver(formSchema),
     shouldFocusError: false,
