@@ -15,7 +15,6 @@ interface Props {
 
 export default function DeleteOperationModal({ id, stockType }: Props) {
   const [modal, setModal] = useState(false);
-
   const { mutateAsync, isLoading } = useMutation([`delete-stock-${id}`], {
     mutationFn: async () => {
       const route = stockType === "fii" ? "fiis" : "fixed-income";
@@ -36,10 +35,22 @@ export default function DeleteOperationModal({ id, stockType }: Props) {
       );
     }
     toast.success("Título excluido com sucesso.");
+
     setModal(false);
+
+    if (response?.userHasEmptyData) {
+      return (window.location.href = "/dashboard/home");
+    }
+
     if (stockType === "fixed") {
+      if (response?.operations?.length === 0) {
+        return (window.location.href = "/dashboard/home");
+      }
       client.refetchQueries(["get-fixed-income-operations"]);
     } else {
+      if (response?.operations?.length === 0) {
+        return (window.location.href = "/dashboard/fixed-income/general");
+      }
       client.refetchQueries(["get-fiis-summary"]);
     }
   };

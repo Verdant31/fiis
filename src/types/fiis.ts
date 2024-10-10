@@ -23,6 +23,7 @@ export type Dividend = {
 
 export type FiiDividends = {
   fiiName: string;
+  quotes: number;
   monthlyDividends: Record<string, Dividend>;
 };
 

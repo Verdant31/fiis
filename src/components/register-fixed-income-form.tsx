@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { DatePicker } from "./date-picker";
 import { CurrencyInput } from "./currency-input";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
@@ -20,7 +20,11 @@ import {
 } from "@/components/ui/select";
 import { TrashIcon } from "lucide-react";
 
-export function RegisterFixedIncomeForm() {
+interface Props {
+  redirectAfterRegister?: () => void;
+}
+
+export function RegisterFixedIncomeForm({ redirectAfterRegister }: Props) {
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -48,6 +52,7 @@ export function RegisterFixedIncomeForm() {
     }
 
     toast.success(data.message);
+    redirectAfterRegister && redirectAfterRegister();
   };
 
   return (
@@ -183,7 +188,10 @@ export function RegisterFixedIncomeForm() {
       })}
       <Button
         className="w-full mt-4"
-        onClick={handleSubmit(onSubmit)}
+        onClick={(e) => {
+          e.preventDefault();
+          handleSubmit(async (data) => await onSubmit(data))();
+        }}
         type={"submit"}
       >
         {isLoading ? <ClipLoader size={20} /> : "Salvar"}

@@ -6,16 +6,12 @@ import { FormInputData, formSchema } from "@/lib/forms/create-fii-operation";
 import { RegisterFiiOperationForm } from "@/components/fiis/register-fii-form";
 import { UploadOperationsModelForm } from "@/components/fiis/upload-fiis-model-form";
 
-export default function RegisterOperations() {
+export default function RegisterFixedOperations() {
   const methods = useForm<FormInputData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       creationType: "unique",
       operationType: "purchase",
-      name: "XPML11.SA",
-      price: (60.48).toString(),
-      quotes: "24",
-      cnpj: "28.757.546/0001-00",
     },
   });
 

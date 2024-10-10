@@ -29,7 +29,8 @@ const formSchema = z
       .transform((val) => {
         if (!val) return 0;
         const withComma = val?.replace(/[^\d.,-]/g, "");
-        return parseFloat(withComma?.replace(",", "."));
+
+        return parseFloat(withComma?.replace(".", "").replace(",", "."));
       }),
     file: z
       .object({

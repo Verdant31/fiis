@@ -25,8 +25,23 @@ export async function DELETE(req: Request) {
       },
     });
 
+    const operations = await prisma.fiisOperations.findMany({
+      where: {
+        userId: user.id,
+      },
+    });
+
+    const fixedIncomeOperations = await prisma.fixedIncomeOperations.findMany({
+      where: {
+        userId: user.id,
+      },
+    });
+
     return NextResponse.json({
       operation,
+      userHasEmptyData:
+        fixedIncomeOperations.length === 0 && operations.length === 0,
+      operations,
       message: "Operação deletada com sucesso.",
       status: 200,
     });

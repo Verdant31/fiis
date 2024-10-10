@@ -36,6 +36,7 @@ const Skeleton = () => {
     </div>
   );
 };
+
 export function FiisDividendsChart() {
   const { data: dividends, isLoading } = useFiisDividends();
   const window = useWindowSize();
@@ -45,22 +46,53 @@ export function FiisDividendsChart() {
 
   const topFiisIndex = (window.width ?? 0) > 700 ? 10 : 5;
 
-  const chartData = dividends
-    .map((fiiDividends) => {
-      const months = Object.keys(fiiDividends.monthlyDividends);
-      return {
-        fii: fiiDividends.fiiName.split("11.SA")[0],
-        dividends: months.reduce((acc, month) => {
-          acc += fiiDividends.monthlyDividends[month].total;
-          return acc;
-        }, 0),
-      };
-    })
+  const firstFiiDividends = dividends[0]?.monthlyDividends;
+  const hasNoDividends = Object.keys(firstFiiDividends).every(
+    (month) => firstFiiDividends[month].total === 0,
+  );
+
+  const transformDividendsToChart = () => {
+    if (hasNoDividends && dividends.length === 1) {
+      const fiiDividends = dividends[0]?.monthlyDividends;
+      const lastMonthPaid = Object.keys(fiiDividends).at(-1);
+
+      if (!lastMonthPaid) return [];
+
+      const data = dividends.map((fiiDividends) => {
+        const lastMonthPaid = Object.keys(fiiDividends.monthlyDividends).at(
+          -1,
+        ) as keyof typeof fiiDividends;
+        return {
+          fii: fiiDividends.fiiName.split("11.SA")[0],
+          dividends:
+            fiiDividends.monthlyDividends[lastMonthPaid].paymentPerQuote *
+            fiiDividends.quotes,
+        };
+      });
+
+      return data;
+    } else {
+      const data = dividends.map((fiiDividends) => {
+        const months = Object.keys(fiiDividends.monthlyDividends);
+        return {
+          fii: fiiDividends.fiiName.split("11.SA")[0],
+          dividends: months.reduce((acc, month) => {
+            acc += fiiDividends.monthlyDividends[month].total;
+            return acc;
+          }, 0),
+        };
+      });
+
+      return data;
+    }
+  };
+
+  const chartData = transformDividendsToChart()
     .sort((a, b) => b.dividends - a.dividends)
     .slice(0, topFiisIndex);
 
   return (
-    <div className="mt-8 max-w-[760px] lg:max-w-[500px] lg:w-full lg:mr-8">
+    <div className="mt-8 max-w-[760px] lg:max-w-[500px] lg:w-full lg:mr-8 lg:mt-6">
       <div>
         <h1 className="font-semibold text-lg lg:text-xl">
           Pagamento de dividendos
@@ -124,6 +156,12 @@ export function FiisDividendsChart() {
           </Bar>
         </BarChart>
       </ChartContainer>
+      {hasNoDividends && (
+        <p className="text-sm text-muted-foreground">
+          ⚠️ No momento seus Fundos ainda não pagaram nenhum dividendo, este
+          gráfico é uma simulação com base nos dividendos anteriores do fundo.
+        </p>
+      )}
     </div>
   );
 }

@@ -13,7 +13,11 @@ import { api } from "@/lib/axios";
 import { toast } from "sonner";
 import { ClipLoader } from "react-spinners";
 
-export function RegisterFiiOperationForm() {
+interface Props {
+  redirectAfterRegister?: () => void;
+}
+
+export function RegisterFiiOperationForm({ redirectAfterRegister }: Props) {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [isLoading, setIsLoading] = useState(false);
 
@@ -38,6 +42,7 @@ export function RegisterFiiOperationForm() {
       return toast.error(data?.message);
     }
     toast.success(data?.message);
+    redirectAfterRegister && redirectAfterRegister();
   };
 
   const operationTtype = watch("operationType");

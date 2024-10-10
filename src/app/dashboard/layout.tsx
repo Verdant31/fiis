@@ -18,6 +18,5 @@ export default async function DashboardLayout({
   if (!user) redirect("/");
 
   const hasOperations = await checkIfUserHasOperations(user.id);
-
   return <Pathname hasOperations={hasOperations}>{children}</Pathname>;
 }

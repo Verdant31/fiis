@@ -14,6 +14,7 @@ import {
   MenuIcon,
   Dot,
   LogOut,
+  Lock,
 } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "./logo";
@@ -30,8 +31,16 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { ClipLoader } from "react-spinners";
+import { Tooltip } from "./tooltip";
 
-export function Header() {
+export function Header({
+  hasOperations,
+}: {
+  hasOperations: {
+    fiis: boolean;
+    fixedIncomes: boolean;
+  };
+}) {
   const { push } = useRouter();
   const { mutateAsync, isLoading } = useMutation({
     mutationFn: async () => await api.get("/logout"),
@@ -76,15 +85,31 @@ export function Header() {
                   </Button>
                 </SheetHeader>
                 <div className="px-3 mt-8">
-                  <Link
-                    className="flex items-center pl-4 bg-zinc-800 py-[10px] hover:bg-zinc-900 transition-colors duration-200 rounded-md"
-                    href={`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/home`}
-                  >
-                    <LayoutDashboard size={18} />
-                    <span className="ml-4 text-sm font-semibold">
-                      Dashboard
-                    </span>
-                  </Link>
+                  {!hasOperations.fiis ? (
+                    <Tooltip
+                      className="w-full"
+                      label="Você precisa cadastrar fundos para acessar o dashboard."
+                    >
+                      <p className="flex items-center pl-4 bg-zinc-900 py-[10px] hover:bg-zinc-900 transition-colors duration-200 rounded-md">
+                        <LayoutDashboard size={18} />
+                        <span className="ml-4 text-sm font-semibold">
+                          Dashboard
+                        </span>
+                        <Lock className="ml-auto text-red-500 mr-4" size={20} />
+                      </p>
+                    </Tooltip>
+                  ) : (
+                    <Link
+                      className="flex items-center pl-4 bg-zinc-800 py-[10px] hover:bg-zinc-900 transition-colors duration-200 rounded-md"
+                      href={`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/home`}
+                    >
+                      <LayoutDashboard size={18} />
+                      <span className="ml-4 text-sm font-semibold">
+                        Dashboard
+                      </span>
+                    </Link>
+                  )}
+
                   <div>
                     <p className="mt-8 pl-4 text-sm font-semibold text-muted-foreground">
                       Investimentos
@@ -98,13 +123,29 @@ export function Header() {
                           </div>
                         </AccordionTrigger>
                         <AccordionContent className="pl-4 flex flex-col">
-                          <a
-                            href={`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/fiis/general`}
-                            className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1"
-                          >
-                            <Dot size={18} />
-                            <p>Visão geral</p>
-                          </a>
+                          {hasOperations.fiis ? (
+                            <a
+                              href={`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/fiis/general`}
+                              className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1"
+                            >
+                              <Dot size={18} />
+                              <p>Visão geral</p>
+                            </a>
+                          ) : (
+                            <Tooltip
+                              className="w-full mt-4 "
+                              label="Você precisa ter fundos cadastrados para acessar essa página."
+                            >
+                              <p className="bg-zinc-900 pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1">
+                                <Dot size={18} />
+                                <p>Visão geral</p>
+                                <Lock
+                                  className="ml-auto text-red-500 "
+                                  size={20}
+                                />
+                              </p>
+                            </Tooltip>
+                          )}
                           <a
                             href={`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/fiis/register-operations`}
                             className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1"
@@ -112,16 +153,33 @@ export function Header() {
                             <Dot size={18} />
                             <p>Cadastrar operação</p>
                           </a>
-                          <a
-                            href={`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/fiis/extracts`}
-                            className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1"
-                          >
-                            <Dot size={18} />
-                            <p>Extratos</p>
-                          </a>
+                          {hasOperations.fiis ? (
+                            <a
+                              href={`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/fiis/extracts`}
+                              className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1"
+                            >
+                              <Dot size={18} />
+                              <p>Extratos</p>
+                            </a>
+                          ) : (
+                            <Tooltip
+                              className="w-full"
+                              label="Você precisa ter fundos cadastrados para acessar essa página."
+                            >
+                              <p className="bg-zinc-900 pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1">
+                                <Dot size={18} />
+                                <p>Extratos</p>
+                                <Lock
+                                  className="ml-auto text-red-500 "
+                                  size={20}
+                                />
+                              </p>
+                            </Tooltip>
+                          )}
                         </AccordionContent>
                       </AccordionItem>
                     </Accordion>
+
                     <Accordion type="single" collapsible className="w-full ">
                       <AccordionItem value="item-1" className="border-0">
                         <AccordionTrigger className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 ">
@@ -131,13 +189,29 @@ export function Header() {
                           </div>
                         </AccordionTrigger>
                         <AccordionContent className="pl-4 flex flex-col">
-                          <a
-                            href={`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/fixed-income/general`}
-                            className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1"
-                          >
-                            <Dot size={18} />
-                            <p>Visão geral</p>
-                          </a>
+                          {hasOperations.fixedIncomes ? (
+                            <a
+                              href={`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/fixed-income/general`}
+                              className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1"
+                            >
+                              <Dot size={18} />
+                              <p>Visão geral</p>
+                            </a>
+                          ) : (
+                            <Tooltip
+                              className="w-full mt-4 "
+                              label="Você precisa ter títulos cadastrados para acessar essa página."
+                            >
+                              <p className="bg-zinc-900 pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1">
+                                <Dot size={18} />
+                                <p>Visão geral</p>
+                                <Lock
+                                  className="ml-auto text-red-500 "
+                                  size={20}
+                                />
+                              </p>
+                            </Tooltip>
+                          )}
                           <a
                             href={`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/fixed-income/register-operations`}
                             className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1"
@@ -145,13 +219,29 @@ export function Header() {
                             <Dot size={18} />
                             <p>Cadastrar operação</p>
                           </a>
-                          <a
-                            href={`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/fixed-income/extracts`}
-                            className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1"
-                          >
-                            <Dot size={18} />
-                            <p>Extratos</p>
-                          </a>
+                          {hasOperations.fixedIncomes ? (
+                            <a
+                              href={`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/fixed-income/extracts`}
+                              className="pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1"
+                            >
+                              <Dot size={18} />
+                              <p>Extratos</p>
+                            </a>
+                          ) : (
+                            <Tooltip
+                              className="w-full "
+                              label="Você precisa ter títulos cadastrados para acessar essa página."
+                            >
+                              <p className="bg-zinc-900 pr-4 hover:no-underline pl-4 cursor-pointer hover:bg-zinc-800 py-[10px] transition-colors duration-200 rounded-md flex items-center gap-4 mt-1">
+                                <Dot size={18} />
+                                <p>Extratos</p>
+                                <Lock
+                                  className="ml-auto text-red-500 "
+                                  size={20}
+                                />
+                              </p>
+                            </Tooltip>
+                          )}
                         </AccordionContent>
                       </AccordionItem>
                     </Accordion>
@@ -181,7 +271,7 @@ export function Header() {
             >
               INIT DB
             </Button> */}
-            <Navbar />
+            <Navbar hasOperations={hasOperations} />
           </div>
           <div className="flex gap-4 items-center mr-2">
             <a

@@ -1,7 +1,11 @@
 import { prisma } from "@/lib/prisma";
 
 export const checkIfUserHasOperations = async (userId?: string) => {
-  if (!userId) return false;
+  if (!userId)
+    return {
+      fiis: false,
+      fixedIncomes: false,
+    };
 
   const fiis = await prisma.fiisOperations.findMany({
     where: { userId },
@@ -10,5 +14,8 @@ export const checkIfUserHasOperations = async (userId?: string) => {
     where: { userId },
   });
 
-  return fiis.length > 0 || fixedIncomes.length > 0;
+  return {
+    fiis: fiis.length > 0,
+    fixedIncomes: fixedIncomes.length > 0,
+  };
 };

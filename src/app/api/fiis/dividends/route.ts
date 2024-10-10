@@ -77,6 +77,11 @@ export async function GET() {
 
       return {
         fiiName: fii.fiiName,
+        quotes: fii.operations.reduce((acc, op) => {
+          if (op.type === "purchase") acc += op.qty;
+          else if (op.type === "sale") acc -= op.qty;
+          return acc;
+        }, 0),
         monthlyDividends: calculateMonthlyDividends(fii.operations, dividends),
       };
     });

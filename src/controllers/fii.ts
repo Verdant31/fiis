@@ -197,6 +197,12 @@ export class FiisController {
       return { date, ...fiisPricingAtDateIndex };
     });
 
+    if (filteredFiis.length === 0)
+      return {
+        chartData: [],
+        yAxisDomain: [],
+      };
+
     const yAxisDomain = [
       (_.min(
         _.map(
