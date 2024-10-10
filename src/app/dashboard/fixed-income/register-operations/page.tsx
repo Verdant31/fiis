@@ -10,11 +10,7 @@ import { RegisterFixedIncomeForm } from "@/components/register-fixed-income-form
 import { addYears } from "date-fns";
 import { UploadOperationsModelForm } from "@/components/fiis/upload-fiis-model-form";
 
-export default function RegisterOperations({
-  redirectAfterRegister,
-}: {
-  redirectAfterRegister?: () => void;
-}) {
+export default function RegisterOperations() {
   const methods = useForm<FormInputData>({
     resolver: zodResolver(formSchema),
     shouldFocusError: false,
@@ -65,9 +61,7 @@ export default function RegisterOperations({
                     <TabsTrigger value="multiple">Mutiplos</TabsTrigger>
                   </TabsList>
                   <TabsContent value="unique">
-                    <RegisterFixedIncomeForm
-                      redirectAfterRegister={redirectAfterRegister}
-                    />
+                    <RegisterFixedIncomeForm />
                   </TabsContent>
                   <TabsContent value="multiple">
                     <UploadOperationsModelForm stockType="fixed-income" />
