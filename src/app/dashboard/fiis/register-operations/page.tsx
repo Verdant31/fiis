@@ -6,7 +6,7 @@ import { FormInputData, formSchema } from "@/lib/forms/create-fii-operation";
 import { RegisterFiiOperationForm } from "@/components/fiis/register-fii-form";
 import { UploadOperationsModelForm } from "@/components/fiis/upload-fiis-model-form";
 
-export default function RegisterFixedOperations() {
+export default function RegisterOperations() {
   const methods = useForm<FormInputData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
