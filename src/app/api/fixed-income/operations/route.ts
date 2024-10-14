@@ -29,6 +29,7 @@ export async function GET() {
 
     if (!cdi || !inflation) {
       return NextResponse.json({
+        data,
         message: "Não foi possivel resgatar os dados da inflação e/ou CDI.",
         status: 404,
       });
