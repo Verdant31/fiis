@@ -2,27 +2,31 @@
 import { NextResponse } from "next/server";
 import { validateRequest } from "@/lib/validate-request";
 import { prisma } from "@/lib/prisma";
-export async function GET() {
+
+interface Payload {
+  displayExpiredIncomes: boolean;
+  displayZeroedFunds: boolean;
+}
+
+export async function POST(req: Request) {
   try {
     const { user } = await validateRequest();
     if (!user) {
       return NextResponse.json({ message: "Unauthorized", status: 401 });
     }
-    const dbUser = await prisma.user.findUnique({
+    const body: Payload = await req.json();
+
+    const updatedUser = await prisma.user.update({
       where: { id: user.id },
-      select: {
-        email: true,
-        displayExpiredIncomes: true,
-        displayZeroedFunds: true,
+      data: {
+        displayExpiredIncomes: body.displayExpiredIncomes,
+        displayZeroedFunds: body.displayZeroedFunds,
       },
     });
 
     return NextResponse.json({
-      user: {
-        ...user,
-        ...dbUser,
-      },
-      message: "Operação cadastrada com sucesso.",
+      updatedUser,
+      message: "Alteração feita com sucesso.",
       status: 200,
     });
   } catch (err) {

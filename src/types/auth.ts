@@ -22,6 +22,13 @@ export type SignUpFormData = {
   password: string;
 };
 
+export type SessionUser = {
+  id: string;
+  email: string;
+  displayExpiredIncomes: boolean;
+  displayZeroedFunds: boolean;
+};
+
 export const SignUpSchema: z.ZodType<SignUpFormData> = z.object({
   email: z
     .string()

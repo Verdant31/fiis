@@ -11,7 +11,7 @@ export const useFiisSummary = () => {
       toast.error(response?.data?.message);
       throw new YahooApiInternalError();
     }
-    //  sort by quotes quantity
+
     const sortedResults = (response.data.results as FiiSummary[]).toSorted(
       (a, b) => b.quotes - a.quotes,
     );

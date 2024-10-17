@@ -6,7 +6,6 @@ import { NextResponse } from "next/server";
 import yahooFinance from "yahoo-finance2";
 import { format, addHours } from "date-fns";
 import { handleUnfoldings } from "@/helpers/handle-unfoldings";
-import { chartToDividendsMapper } from "@/helpers/chart-to-dividends-mapper";
 import { validateRequest } from "@/lib/validate-request";
 
 type FiiDividendObject = {
@@ -68,12 +67,11 @@ export async function GET() {
     };
 
     const promises = fiis.map(async (fii) => {
-      const chartData = await yahooFinance.chart(fii.fiiName, {
+      const dividends = await yahooFinance.historical(fii.fiiName, {
         period1: "2023-01-01",
         period2: new Date(),
         events: "dividends",
       });
-      const dividends = chartToDividendsMapper(chartData);
 
       return {
         fiiName: fii.fiiName,

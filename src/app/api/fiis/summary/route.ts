@@ -6,6 +6,12 @@ import { NextResponse } from "next/server";
 import yahooFinance from "yahoo-finance2";
 import { handleFiiMissingInfos } from "@/helpers/handle-fii-missing-info";
 import { validateRequest } from "@/lib/validate-request";
+import { type Quote } from "@/../yahoo-finance2/dist/esm/src/modules/quote";
+
+type SummaryQuote = Quote & {
+  dividendRate?: number;
+  dividendYield?: number;
+};
 
 export async function GET() {
   try {
@@ -13,6 +19,10 @@ export async function GET() {
     if (!user) {
       return NextResponse.json({ message: "Unauthorized", status: 401 });
     }
+
+    const userPrefs = await prisma.user.findFirst({
+      where: { id: user.id },
+    });
 
     const fiisOperations = await prisma.fiisOperations.findMany({
       where: {
@@ -29,7 +39,7 @@ export async function GET() {
 
     const promises = fiis.map(async (fii) => {
       try {
-        const summary = await yahooFinance.quote(fii.fiiName);
+        const summary: SummaryQuote = await yahooFinance.quote(fii.fiiName);
         const quotes = fii.operations.reduce((acc, operation) => {
           if (operation.type === "purchase" || operation.type === "unfolding") {
             acc += operation.qty;
@@ -38,9 +48,11 @@ export async function GET() {
           }
           return acc;
         }, 0);
+
         const operations = fii.operations.sort(
           (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
         );
+
         const hasMissingInfo = !summary?.dividendRate || !summary?.priceToBook;
         return {
           fiiName: fii.fiiName.split(".SA")[0],
@@ -67,9 +79,12 @@ export async function GET() {
       }
     });
 
-    const results = await Promise.all(promises);
+    const results = (await Promise.all(promises)) ?? [];
+
+    const filteredResults = results.filter((fii) => fii.quotes > 0);
+
     return NextResponse.json({
-      results: results ?? [],
+      results: !userPrefs?.displayZeroedFunds ? filteredResults : results,
       status: 200,
     });
   } catch (err: any) {

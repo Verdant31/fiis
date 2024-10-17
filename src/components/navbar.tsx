@@ -24,7 +24,14 @@ export function Navbar({
       <Menubar className="border-0">
         <MenubarMenu>
           {hasOperations.fiis ? (
-            <MenubarTrigger className="">Home</MenubarTrigger>
+            <MenubarTrigger
+              className="cursor-pointer"
+              onClick={() =>
+                push(`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/home`)
+              }
+            >
+              Home
+            </MenubarTrigger>
           ) : (
             <Tooltip label="Você precisa ter títulos cadastrados para acessar essa página.">
               <p className="cursor-not-allowed flex select-none items-center rounded-sm px-3 py-1.5 text-sm font-medium outline-none">
@@ -34,7 +41,7 @@ export function Navbar({
           )}
         </MenubarMenu>
         <MenubarMenu>
-          <MenubarTrigger className="">Fiis</MenubarTrigger>
+          <MenubarTrigger className="cursor-pointer">Fiis</MenubarTrigger>
           <MenubarContent>
             {hasOperations.fiis ? (
               <MenubarItem
@@ -94,7 +101,7 @@ export function Navbar({
           </MenubarContent>
         </MenubarMenu>
         <MenubarMenu>
-          <MenubarTrigger className="">Renda fixa</MenubarTrigger>
+          <MenubarTrigger className="cursor-pointer">Renda fixa</MenubarTrigger>
           <MenubarContent>
             {hasOperations.fixedIncomes ? (
               <MenubarPrimitive.Item
@@ -155,6 +162,16 @@ export function Navbar({
               </Tooltip>
             )}
           </MenubarContent>
+        </MenubarMenu>
+        <MenubarMenu>
+          <MenubarTrigger
+            onClick={() =>
+              push(`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/settings`)
+            }
+            className="cursor-pointer"
+          >
+            Configurações / Q&A
+          </MenubarTrigger>
         </MenubarMenu>
       </Menubar>
     </div>

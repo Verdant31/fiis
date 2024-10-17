@@ -13,6 +13,11 @@ export async function GET() {
     if (!user) {
       return NextResponse.json({ message: "Unauthorized", status: 401 });
     }
+
+    const userPrefs = await prisma.user.findFirst({
+      where: { id: user.id },
+    });
+
     const fiisOperations = await prisma.fixedIncomeOperations.findMany({
       where: { userId: user.id },
     });
@@ -35,77 +40,91 @@ export async function GET() {
       });
     }
 
-    const withIncomes = fiisOperations.map((operation) => {
-      const cdbIncomes = cdi.filter((income) =>
-        datesAreSameMonthAndYear(income.date, new Date(operation.purchaseDate)),
-      );
-      const inflationIncomes = inflation.filter((income) =>
-        datesAreSameMonthAndYear(income.date, new Date(operation.purchaseDate)),
-      );
-      const operationMainIncome = operation.incomes.find(
-        (op) => op.type === "cdi" || op.type === "inflation",
-      ) as Income;
+    const withIncomes =
+      fiisOperations.map((operation) => {
+        const cdbIncomes = cdi.filter((income) =>
+          datesAreSameMonthAndYear(
+            income.date,
+            new Date(operation.purchaseDate),
+          ),
+        );
+        const inflationIncomes = inflation.filter((income) =>
+          datesAreSameMonthAndYear(
+            income.date,
+            new Date(operation.purchaseDate),
+          ),
+        );
+        const operationMainIncome = operation.incomes.find(
+          (op) => op.type === "cdi" || op.type === "inflation",
+        ) as Income;
 
-      const incomes =
-        operationMainIncome?.type === "cdi" ? cdbIncomes : inflationIncomes;
+        const incomes =
+          operationMainIncome?.type === "cdi" ? cdbIncomes : inflationIncomes;
 
-      const initialInvestment = {
-        date: new Date(operation.purchaseDate),
-        value: operation.investedValue,
-      };
+        const initialInvestment = {
+          date: new Date(operation.purchaseDate),
+          value: operation.investedValue,
+        };
 
-      const investmentEvolution = incomes.reduce(
-        (evolution, income) => {
-          const lastValue = evolution[evolution.length - 1].value;
-          let updatedValue = 0;
-          const hasFixedIndex = operation.incomes.find(
-            (i) => i.type === "fixed",
-          );
+        const investmentEvolution = incomes.reduce(
+          (evolution, income) => {
+            const lastValue = evolution[evolution.length - 1].value;
+            let updatedValue = 0;
+            const hasFixedIndex = operation.incomes.find(
+              (i) => i.type === "fixed",
+            );
 
-          if (operationMainIncome.type === "cdi" || !hasFixedIndex) {
-            const monthlyYield =
-              1 + (income.value / 100) * (operationMainIncome?.value / 100);
+            if (operationMainIncome.type === "cdi" || !hasFixedIndex) {
+              const monthlyYield =
+                1 + (income.value / 100) * (operationMainIncome?.value / 100);
 
-            updatedValue = lastValue * monthlyYield;
-          } else {
-            const fixedIndexMonthValue =
-              Math.pow(1 + hasFixedIndex.value, 1 / 12) - 1;
+              updatedValue = lastValue * monthlyYield;
+            } else {
+              const fixedIndexMonthValue =
+                Math.pow(1 + hasFixedIndex.value, 1 / 12) - 1;
 
-            // console.log({
-            //   "100% da Inflação:": income.value,
-            //   "Taxa fixa mensal": fixedIndexMonthValue,
-            //   "100% da inflação + taxa fixa: ":
-            //     income.value + fixedIndexMonthValue,
-            //   lastValue,
-            // });
+              // console.log({
+              //   "100% da Inflação:": income.value,
+              //   "Taxa fixa mensal": fixedIndexMonthValue,
+              //   "100% da inflação + taxa fixa: ":
+              //     income.value + fixedIndexMonthValue,
+              //   lastValue,
+              // });
 
-            const monthlyYield =
-              ((income.value + fixedIndexMonthValue) * lastValue) / 100;
+              const monthlyYield =
+                ((income.value + fixedIndexMonthValue) * lastValue) / 100;
 
-            updatedValue = lastValue + monthlyYield;
-          }
-          return [
-            ...evolution,
-            {
-              date: new Date(income.date),
-              value: updatedValue,
-              percentEvolution:
-                (100 * updatedValue) / operation.investedValue - 100,
-            },
-          ];
-        },
-        [initialInvestment],
-      );
+              updatedValue = lastValue + monthlyYield;
+            }
+            return [
+              ...evolution,
+              {
+                date: new Date(income.date),
+                value: updatedValue,
+                percentEvolution:
+                  (100 * updatedValue) / operation.investedValue - 100,
+              },
+            ];
+          },
+          [initialInvestment],
+        );
 
-      return {
-        ...operation,
-        latestValue: investmentEvolution[investmentEvolution.length - 1].value,
-        investmentEvolution,
-      };
+        return {
+          ...operation,
+          latestValue:
+            investmentEvolution[investmentEvolution.length - 1].value,
+          investmentEvolution,
+        };
+      }) ?? [];
+
+    const filteredResults = withIncomes.filter((fixedIncome) => {
+      return !(new Date(fixedIncome.dueDate) < new Date());
     });
 
     return NextResponse.json({
-      operations: withIncomes ?? [],
+      operations: !userPrefs?.displayExpiredIncomes
+        ? filteredResults
+        : withIncomes,
       status: 200,
     });
   } catch (err) {

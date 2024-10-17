@@ -5,7 +5,6 @@ import csvToJson from "convert-csv-to-json";
 import { FiiCVMRawData } from "@/types/fiis";
 import yahooFinance from "yahoo-finance2";
 import { subMonths } from "date-fns";
-import { chartToDividendsMapper } from "./chart-to-dividends-mapper";
 
 type MIssingFiiInfo = {
   fiiName: string;
@@ -39,18 +38,19 @@ export const handleFiiMissingInfos = async (fii: MIssingFiiInfo) => {
   const oneYearAgo = new Date();
   oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
-  const chartData = await yahooFinance.chart(fii.fiiName, {
-    period1: subMonths(oneYearAgo, 1),
-    period2: new Date(),
-    events: "dividends",
-  });
-  const dividends = chartToDividendsMapper(chartData);
+  const dividends = await yahooFinance
+    .historical(fii.fiiName, {
+      period1: subMonths(oneYearAgo, 1),
+      period2: new Date(),
+      events: "dividends",
+    })
+    .then((res) => {
+      return res.reduce((acc, dividend) => {
+        return (acc += dividend.dividends);
+      }, 0);
+    });
 
-  const formatedDividends = dividends.reduce((acc, dividend) => {
-    return (acc += dividend.dividends);
-  }, 0);
-
-  const annualYield = (formatedDividends / fii.currentQuotePrice) * 100;
+  const annualYield = (dividends / fii.currentQuotePrice) * 100;
 
   const fileName = "inf_mensal_fii_complemento_2024.csv";
   const response = await fetch(

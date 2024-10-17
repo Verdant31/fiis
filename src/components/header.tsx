@@ -15,6 +15,7 @@ import {
   Dot,
   LogOut,
   Lock,
+  Settings,
 } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "./logo";
@@ -109,6 +110,16 @@ export function Header({
                       </span>
                     </Link>
                   )}
+
+                  <Link
+                    className="flex mt-2 items-center pl-4 bg-zinc-800 py-[10px] hover:bg-zinc-900 transition-colors duration-200 rounded-md"
+                    href={`${process.env.NEXT_PUBLIC_APP_URL}/dashboard/settings`}
+                  >
+                    <Settings size={18} />
+                    <span className="ml-4 text-sm font-semibold">
+                      Configurações
+                    </span>
+                  </Link>
 
                   <div>
                     <p className="mt-8 pl-4 text-sm font-semibold text-muted-foreground">
