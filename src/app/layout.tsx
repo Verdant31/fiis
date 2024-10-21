@@ -20,6 +20,7 @@ export default async function RootLayout({
       className={`${GeistSans.variable} ${GeistMono.variable} dark`}
       lang="en"
     >
+      <link rel="icon" href="/favicon.ico" sizes="any" />
       <Toaster richColors />
       <body className={GeistSans.className}>
         <Providers>{children}</Providers>

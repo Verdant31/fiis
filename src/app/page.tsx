@@ -1,4 +1,3 @@
-"../types/auth";
 import SignInForm from "@/components/sign-in-form";
 import { validateRequest } from "@/lib/validate-request";
 import { redirect } from "next/navigation";
