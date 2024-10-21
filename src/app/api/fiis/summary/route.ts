@@ -8,9 +8,7 @@ import { handleFiiMissingInfos } from "@/helpers/handle-fii-missing-info";
 import { validateRequest } from "@/lib/validate-request";
 import { type Quote } from "@/../yahoo-finance2/dist/esm/src/modules/quote";
 
-export const config = {
-  maxDuration: 60,
-};
+export const maxDuration = 60;
 
 type SummaryQuote = Quote & {
   dividendRate?: number;
