@@ -22,10 +22,7 @@ export const useUniqueFiiDividends = ({
         throw new YahooApiInternalError();
       }
       const results = response.data.results as FiiDividends[];
-      const fii = results.find(
-        (fii) => fii.fiiName === operations[0].fiiName + ".SA",
-      );
-
+      const fii = results.find((fii) => fii.fiiName === operations[0].fiiName);
       const sortedOperations = operations.toSorted(
         (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
       );
