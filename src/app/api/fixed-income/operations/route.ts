@@ -83,14 +83,6 @@ export async function GET() {
               const fixedIndexMonthValue =
                 Math.pow(1 + hasFixedIndex.value, 1 / 12) - 1;
 
-              // console.log({
-              //   "100% da Inflação:": income.value,
-              //   "Taxa fixa mensal": fixedIndexMonthValue,
-              //   "100% da inflação + taxa fixa: ":
-              //     income.value + fixedIndexMonthValue,
-              //   lastValue,
-              // });
-
               const monthlyYield =
                 ((income.value + fixedIndexMonthValue) * lastValue) / 100;
 
