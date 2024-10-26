@@ -67,25 +67,36 @@ export async function GET() {
     };
 
     const promises = fiis.map(async (fii) => {
-      const dividends = await yahooFinance.historical(fii.fiiName, {
-        period1: "2023-01-01",
-        period2: new Date(),
-        events: "dividends",
-      });
+      try {
+        const dividends = await yahooFinance.historical(fii.fiiName, {
+          period1: "2023-01-01",
+          period2: new Date(),
+          events: "dividends",
+        });
 
-      return {
-        fiiName: fii.fiiName,
-        quotes: fii.operations.reduce((acc, op) => {
-          if (op.type === "purchase") acc += op.qty;
-          else if (op.type === "sale") acc -= op.qty;
-          return acc;
-        }, 0),
-        monthlyDividends: calculateMonthlyDividends(fii.operations, dividends),
-      };
+        return {
+          fiiName: fii.fiiName,
+          quotes: fii.operations.reduce((acc, op) => {
+            if (op.type === "purchase") acc += op.qty;
+            else if (op.type === "sale") acc -= op.qty;
+            return acc;
+          }, 0),
+          monthlyDividends: calculateMonthlyDividends(
+            fii.operations,
+            dividends,
+          ),
+        };
+      } catch (err) {
+        return {
+          fiiName: fii.fiiName,
+          quotes: 0,
+          monthlyDividends: {},
+          error: true,
+        };
+      }
     });
 
     const results = await Promise.all(promises);
-
     return NextResponse.json({
       results: results ?? [],
       status: 200,

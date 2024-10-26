@@ -33,21 +33,39 @@ export class FiisController {
   }
 
   getTotalValueInvested() {
-    return this.operations.reduce((acc, fiiOperations) => {
-      const total = fiiOperations.operations.reduce(
-        (operationAcc, operation) => {
-          if (operation.type === "sale") {
-            operationAcc -= operation.qty * operation.quotationValue;
-          } else {
-            operationAcc += operation.qty * operation.quotationValue;
-          }
-          return operationAcc;
-        },
-        0,
-      );
-      acc += total;
-      return acc;
-    }, 0);
+    const totalInvested = this.operations.reduce(
+      (acc, fiiOperations) => {
+        const invested = fiiOperations.operations.reduce(
+          (operationAcc, operation) => {
+            const fiiPrice =
+              this.summary.find((fii) => fii.fiiName === operation.fiiName)
+                ?.price ?? 0;
+            if (operation.type === "sale") {
+              operationAcc.total -= operation.qty * operation.quotationValue;
+              operationAcc.currentTotal -= operation.qty * fiiPrice;
+            } else {
+              operationAcc.total += operation.qty * operation.quotationValue;
+              operationAcc.currentTotal += operation.qty * fiiPrice;
+            }
+            return operationAcc;
+          },
+          {
+            total: 0,
+            currentTotal: 0,
+          },
+        );
+
+        acc.total += invested.total;
+        acc.currentTotal += invested.currentTotal;
+        return acc;
+      },
+      {
+        total: 0,
+        currentTotal: 0,
+      },
+    );
+
+    return totalInvested;
   }
 
   getTotalDividendsPerMonth(period: DividendPeriods) {
@@ -99,6 +117,10 @@ export class FiisController {
     }, 0);
   }
 
+  getFiisInvestmentGrowth() {
+    console.log(this.history);
+  }
+
   formatHistoryToChartData(
     fiiFilter?: string,
     cloudflareData?: ParsedCloduflareResponse,
@@ -121,7 +143,7 @@ export class FiisController {
       filter as FiisPriceChartOptions,
     );
 
-    if (cloudflareData) {
+    if (cloudflareData && Object.keys(cloudflareData).length > 0) {
       filteredFiis =
         cloudflareData.funds[0] === "all"
           ? this.history

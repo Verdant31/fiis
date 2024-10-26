@@ -237,6 +237,7 @@ export function FiisHomeChart() {
               return (
                 <Bar
                   key={data}
+                  radius={5}
                   barSize={120}
                   dataKey={data}
                   label={data}

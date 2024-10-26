@@ -56,7 +56,7 @@ export async function GET() {
 
         const hasMissingInfo = !summary?.dividendRate || !summary?.priceToBook;
         return {
-          fiiName: fii.fiiName.split(".SA")[0],
+          fiiName: fii.fiiName,
           quotes,
           monthlyYield: summary?.dividendRate,
           annualYield: summary?.dividendYield,

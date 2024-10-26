@@ -4,7 +4,8 @@ import { api } from "@/lib/axios";
 import { YahooApiInternalError } from "@/lib/exceptions";
 import { FiisOperations } from "@prisma/client";
 import { differenceInMonths, format } from "date-fns";
-import { Dividend, FiiDividends } from "@/types/fiis";
+import { Dividend } from "@/types/fiis";
+import { getFiiDividends } from "./use-fiis-dividends";
 
 export const useUniqueFiiDividends = ({
   operations,
@@ -21,7 +22,7 @@ export const useUniqueFiiDividends = ({
         toast.error(response?.data?.message);
         throw new YahooApiInternalError();
       }
-      const results = response.data.results as FiiDividends[];
+      const results = await getFiiDividends();
       const fii = results.find((fii) => fii.fiiName === operations[0].fiiName);
       const sortedOperations = operations.toSorted(
         (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),

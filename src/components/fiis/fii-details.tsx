@@ -66,7 +66,7 @@ export function FiiDetails({
   const fiisController = new FiisController({ history: priceHistory ?? [] });
 
   const { chartData, yAxisDomain } = fiisController.formatHistoryToChartData(
-    fii.fiiName + ".SA",
+    fii.fiiName,
   );
 
   const randomChartColorIndex = useMemo(
@@ -234,7 +234,7 @@ export function FiiDetails({
                 </TabsList>
                 <TabsContent value="price">
                   <ChartContainer
-                    className="w-full h-full lg:max-h-[400px]"
+                    className="w-full h-full max-h-[330px] lg:max-h-[400px]"
                     config={{} satisfies ChartConfig}
                   >
                     <LineChart accessibilityLayer data={chartData} margin={{}}>
@@ -270,9 +270,9 @@ export function FiiDetails({
                         }
                       />
                       <Line
-                        key={fii.fiiName + ".SA"}
-                        dataKey={fii.fiiName + ".SA"}
-                        name={fii.fiiName.split(".SA")[0] + " "}
+                        key={fii.fiiName}
+                        dataKey={fii.fiiName}
+                        name={fii.fiiName}
                         type="monotone"
                         stroke={fiiColor}
                         strokeWidth={2}

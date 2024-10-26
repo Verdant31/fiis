@@ -27,7 +27,6 @@ interface Props {
 
 export function FiisPriceChart({ history, isLoading }: Props) {
   const [fiiFilter, setFiiFilter] = useState<string>();
-
   if (isLoading || !history) return <h1>Loading</h1>;
 
   const fiisController = new FiisController({

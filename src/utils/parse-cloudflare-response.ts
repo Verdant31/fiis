@@ -10,13 +10,11 @@ export const parseCloudflareResponse = ({
 }: {
   data: CloudflareModelResponse;
 }) => {
-  let hasError = false;
-
   if (data?.errors?.length > 0) {
     toast.error(
       "Houve um erro ao tentar converter sua query, tente reformula-lá ou contate o administrador",
     );
-    hasError = true;
+    return {} as ParsedCloduflareResponse;
   }
 
   const message = data?.result.response;
@@ -25,14 +23,21 @@ export const parseCloudflareResponse = ({
 
   const jsonString = message.substring(startIndex, endIndex);
 
-  const jsonObject = JSON.parse(jsonString) as ParsedCloduflareResponse;
-  if (!isCloudFlareParsedResponse(jsonObject)) {
-    hasError = true;
+  if (jsonString?.length === 0) {
     toast.error(
       "O modelo não foi capaz de formatar seu pedido nos dados do gráfico.",
     );
+    return {} as ParsedCloduflareResponse;
   }
-  if (hasError) return undefined;
+
+  const jsonObject = JSON.parse(jsonString) as ParsedCloduflareResponse;
+  if (!isCloudFlareParsedResponse(jsonObject)) {
+    toast.error(
+      "O modelo não foi capaz de formatar seu pedido nos dados do gráfico.",
+    );
+    return {} as ParsedCloduflareResponse;
+  }
+
   return jsonObject;
 };
 

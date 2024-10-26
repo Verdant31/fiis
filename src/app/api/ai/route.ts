@@ -38,9 +38,9 @@ export async function POST(req: NextRequest) {
       Mes atual: 09
       Resposta: { contexto: "dividends", funds: ["todos"], period: ["07/2024", "08/2024", "09/2024"] }
 
-      Pergunta: "preço do XPML11"
+      Pergunta: "preço do XPML11.SA"
       Mes atual: 09
-      Resposta: { contexto: "price history", funds: ["XPML11"], period: ["01/2024", "02/2024", "03/2024","04/2024", "05/2024", "06/2024","07/2024", "08/2024", "09/2024"] }
+      Resposta: { contexto: "price history", funds: ["XPML11.SA"], period: ["01/2024", "02/2024", "03/2024","04/2024", "05/2024", "06/2024","07/2024", "08/2024", "09/2024"] }
     `;
 
     const response = await run("@hf/thebloke/llama-2-13b-chat-awq", {
