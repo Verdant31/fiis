@@ -1,0 +1,3 @@
+data_compra,preco_cota,quantidade,cnpj_fundo,nome_fundo,tipo_operacao,proporcao_desdobramento
+01/12/2023,74.4,6, 11.026.627/0001-38, BCFF11, Compra, 
+25/09/2023,0.0, 0, 11.026.627/0001-38, BCFF11, Desdobramento, 8

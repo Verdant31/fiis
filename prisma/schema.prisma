@@ -1,0 +1,98 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mongodb"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model User {
+  id String @id @map("_id")
+
+  email                 String  @unique
+  password_hash         String
+  displayZeroedFunds    Boolean @default(true)
+  displayExpiredIncomes Boolean @default(true)
+
+  sessions              Session[]
+  operations            FiisOperations[]
+  FixedIncomeOperations FixedIncomeOperations[]
+}
+
+model Session {
+  id        String   @id @map("_id")
+  userId    String
+  expiresAt DateTime
+
+  user User @relation(references: [id], fields: [userId], onDelete: Cascade)
+}
+
+model FiisOperations {
+  id                  String    @id @default(auto()) @map("_id") @db.ObjectId
+  fiiName             String    @unique
+  fiiCnpj             String
+  date                String
+  type                Operation @default(sale)
+  qty                 Int
+  quotationValue      Float     @default(0)
+  pvp                 Float?    @default(0)
+  unfoldingProportion Int?
+  User                User?     @relation(fields: [userId], references: [id])
+  userId              String?
+}
+
+model FixedIncomeOperations {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  companyName   String
+  dueDate       String
+  purchaseDate  String
+  investedValue Float
+  incomes       Income[]
+
+  User   User   @relation(fields: [userId], references: [id])
+  userId String
+}
+
+enum Operation {
+  purchase
+  sale
+  unfolding
+}
+
+type Income {
+  value Float
+  type  IncomeTypes
+}
+
+enum IncomeTypes {
+  cdi
+  inflation
+  fixed
+}
+
+model ExtraFiisInfos {
+  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+  fiiCnpj             String   @unique
+  annualYield         Float
+  totalPatrimony      Float
+  sentQuotes          Int
+  patrimonyQuoteValue Float
+  pvp                 Float
+  updatedAt           DateTime @updatedAt
+}
+
+model Payment {
+  id                         String @id @default(auto()) @map("_id") @db.ObjectId
+  date                       String
+  fiiName                    String
+  quotationAtPayment         Float
+  monthlyYield               Float
+  paidPerQuote               Float
+  quotesQuantityAtThePayment Int
+  pvpAtPayment               Float?
+}
