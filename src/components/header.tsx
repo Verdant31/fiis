@@ -299,15 +299,11 @@ export function Header({
             >
               <Linkedin />
             </a>
-            <div onClick={handleLogout} className="flex ml-6 items-center">
-              <a
-                href="https://github.com/Verdant31"
-                target="_blank"
-                className="mr-2"
-                rel="noopener noreferrer"
-              >
-                {isLoading ? <ClipLoader size={20} /> : <LogOut />}
-              </a>
+            <div
+              onClick={handleLogout}
+              className="flex ml-6 items-center cursor-pointer"
+            >
+              {isLoading ? <ClipLoader size={20} /> : <LogOut />}
               <p>Sair</p>
             </div>
           </div>
