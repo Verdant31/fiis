@@ -19,7 +19,7 @@ interface Props {
   operations: FiiGroupedOperations[] | FixedIncomeWithEvolution[];
 }
 
-export default function ExtractOptionModal({ data, operations }: Props) {
+export function ExtractOptionModal({ data, operations }: Props) {
   const [modal, setModal] = useState(false);
   const [sendToEmail, setSendToEmail] = useState(false);
 

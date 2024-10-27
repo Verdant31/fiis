@@ -11,12 +11,16 @@ import {
 } from "@tanstack/react-table";
 import { useState } from "react";
 import { DataTable } from "../table";
-import { Eraser } from "lucide-react";
+import { Download, Eraser } from "lucide-react";
 import { useTablePagination } from "@/hooks/use-table-pagination.ts";
 import { Button } from "../ui/button";
-import ExtractOptionModal from "../fiis/extract-method-modal";
 import { FixedIncomeWithEvolution } from "@/types/fixed-income";
 import { getFixedIncomeStatementData } from "@/helpers/fixed-income-statements-data";
+import { FixedIncomeExtractsPdf } from "../pdf/fixed-income-extracts";
+import { api } from "@/lib/axios";
+import { toast } from "sonner";
+import { pdf } from "@react-pdf/renderer";
+import { saveAs } from "file-saver";
 
 interface Props {
   operations: FixedIncomeWithEvolution[];
@@ -34,13 +38,42 @@ export function StatementsMain({ operations }: Props) {
     operations,
   });
 
+  const { filters } = useStatementsFilterContext();
+
+  const handleStartExtract = async () => {
+    const fileName = "test.pdf";
+    const { data: session } = await api.get("/me");
+
+    if (!session?.user?.email) {
+      toast.info("Você precisa estar logado para baixar o extrato");
+      return;
+    }
+
+    const component = (
+      <FixedIncomeExtractsPdf
+        userEmail={session.user.email as string}
+        operations={operations as FixedIncomeWithEvolution[]}
+        extractedData={tableData as FixedIncomeWithEvolution[]}
+        filters={filters}
+      />
+    );
+
+    const blob = await pdf(component).toBlob();
+
+    saveAs(blob, fileName);
+  };
+
   return (
     <div>
       <div className="flex items-center pr-6 gap-6 mt-4 lg:absolute lg:right-0 lg:top-[82.5px]">
-        <ExtractOptionModal
-          operations={operations}
-          data={tableData as FixedIncomeWithEvolution[]}
-        />
+        <Button
+          onClick={handleStartExtract}
+          className="items-center w-[50%] shrink-0 flex gap-4 max-w-[225px] lg:w-auto"
+        >
+          <Download size={20} />
+          Extrair
+        </Button>
+
         <Button
           onClick={clearFilters}
           className="items-center w-[50%] shrink-0 flex gap-4 max-w-[225px] lg:w-auto"
