@@ -55,20 +55,25 @@ export function AnalyticsCarousel() {
   const fixedIncome = new FixedIncomeController({
     operations: fixedIncomeOperations,
   });
+
   const fiisInvested = fiis.getTotalValueInvested();
   const fixedIncomeInvested = fixedIncome.getTotalValueInvested();
 
   const fiisInvestedPercentage =
-    (100 * fiisInvested.currentTotal) / fiisInvested.total - 100;
+    fiisInvested.total !== 0
+      ? (100 * fiisInvested.currentTotal) / fiisInvested.total - 100
+      : 0;
 
   const fixedIncomeInvestedPercentage =
-    (100 * fixedIncomeInvested.currentTotal) / fixedIncomeInvested.total - 100;
+    fixedIncomeInvested.total !== 0
+      ? (100 * fixedIncomeInvested.currentTotal) / fixedIncomeInvested.total -
+        100
+      : 0;
 
   return (
     <Carousel
       opts={{
         loop: true,
-        active: window?.innerWidth < 1130,
       }}
       className="w-full "
     >
@@ -111,31 +116,33 @@ export function AnalyticsCarousel() {
             </CardContent>
           </Card>
         </CarouselItem>
-        <CarouselItem className="pl-4 basis-[270px]">
-          <Card className="bg-zinc-900 ">
-            <CardHeader>
-              <CardTitle className="text-md font-normal text-white">
-                Total em FIIs
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-white text-lg font-semibold tracking-wide">
-              <p>{currencyFormatter(fiisInvested.total)}</p>
-              <p
-                className="text-sm"
-                style={{
-                  color: fiisInvestedPercentage > 0 ? "#22c55e" : "#ed2846",
-                }}
-              >
-                Atual: {currencyFormatter(fiisInvested.currentTotal)} (
-                {fiisInvestedPercentage.toFixed(1)}
-                %)
-              </p>
-            </CardContent>
-            <CardContent className="text-white text-[12px] font-thin tracking-wide">
-              <p>Inclui compras e vendas no cálculo</p>
-            </CardContent>
-          </Card>
-        </CarouselItem>
+        {operations && operations.length > 0 && (
+          <CarouselItem className="pl-4 basis-[270px]">
+            <Card className="bg-zinc-900 ">
+              <CardHeader>
+                <CardTitle className="text-md font-normal text-white">
+                  Total em FIIs
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-white text-lg font-semibold tracking-wide">
+                <p>{currencyFormatter(fiisInvested.total)}</p>
+                <p
+                  className="text-sm"
+                  style={{
+                    color: fiisInvestedPercentage > 0 ? "#22c55e" : "#ed2846",
+                  }}
+                >
+                  Atual: {currencyFormatter(fiisInvested.currentTotal)} (
+                  {fiisInvestedPercentage.toFixed(1)}
+                  %)
+                </p>
+              </CardContent>
+              <CardContent className="text-white text-[12px] font-thin tracking-wide">
+                <p>Inclui compras e vendas no cálculo</p>
+              </CardContent>
+            </Card>
+          </CarouselItem>
+        )}
 
         <CarouselItem className="pl-4 basis-[270px]">
           <Card className="bg-zinc-900 h-[116px]">
@@ -188,32 +195,34 @@ export function AnalyticsCarousel() {
           </Card>
         </CarouselItem>
 
-        <CarouselItem className="pl-4 basis-[270px]">
-          <Card className="bg-zinc-900 ">
-            <CardHeader>
-              <CardTitle className="text-md font-normal text-white">
-                Total em Renda Fixa
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-white text-lg font-semibold tracking-wide">
-              <p>{currencyFormatter(fixedIncomeInvested.total)}</p>
-              <p
-                className="text-sm"
-                style={{
-                  color:
-                    fixedIncomeInvestedPercentage > 0 ? "#22c55e" : "#ed2846",
-                }}
-              >
-                Atual: {currencyFormatter(fixedIncomeInvested.currentTotal)} (
-                {fixedIncomeInvestedPercentage.toFixed(1)}
-                %)
-              </p>
-            </CardContent>
-            <CardContent className="text-white text-[12px] font-thin tracking-wide">
-              <p>Inclui compras e vendas no cálculo</p>
-            </CardContent>
-          </Card>
-        </CarouselItem>
+        {fixedIncomeOperations && fixedIncomeOperations?.length > 0 && (
+          <CarouselItem className="pl-4 basis-[270px]">
+            <Card className="bg-zinc-900 ">
+              <CardHeader>
+                <CardTitle className="text-md font-normal text-white">
+                  Total em Renda Fixa
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="text-white text-lg font-semibold tracking-wide">
+                <p>{currencyFormatter(fixedIncomeInvested.total)}</p>
+                <p
+                  className="text-sm"
+                  style={{
+                    color:
+                      fixedIncomeInvestedPercentage > 0 ? "#22c55e" : "#ed2846",
+                  }}
+                >
+                  Atual: {currencyFormatter(fixedIncomeInvested.currentTotal)} (
+                  {fixedIncomeInvestedPercentage.toFixed(1)}
+                  %)
+                </p>
+              </CardContent>
+              <CardContent className="text-white text-[12px] font-thin tracking-wide">
+                <p>Inclui compras e vendas no cálculo</p>
+              </CardContent>
+            </Card>
+          </CarouselItem>
+        )}
       </CarouselContent>
     </Carousel>
   );

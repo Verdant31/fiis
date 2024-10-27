@@ -22,6 +22,13 @@ export async function GET() {
       where: { userId: user.id },
     });
 
+    if (fiisOperations.length === 0) {
+      return NextResponse.json({
+        operations: [],
+        status: 200,
+      });
+    }
+
     const oldestOperation = fiisOperations.reduce((oldest, current) =>
       new Date(current.purchaseDate) < new Date(oldest.purchaseDate)
         ? current
