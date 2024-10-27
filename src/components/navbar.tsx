@@ -170,7 +170,7 @@ export function Navbar({
             }
             className="cursor-pointer"
           >
-            Configurações / Q&A
+            Configurações
           </MenubarTrigger>
         </MenubarMenu>
       </Menubar>
