@@ -32,7 +32,7 @@ export function useTablePagination({
     } else {
       setPagination({
         pageIndex: 0,
-        pageSize,
+        pageSize: initialpageSize,
       });
     }
   }, [windowWidth]);

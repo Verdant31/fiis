@@ -71,7 +71,7 @@ export default function IncomeDetails({
   );
 
   const { pagination, setPagination } = useTablePagination({
-    initialpageSize: 9,
+    initialpageSize: 6,
     mobilePageSize: 7,
   });
 
@@ -123,33 +123,46 @@ export default function IncomeDetails({
           />
         </div>
       </div>
-      <CustomChart
-        chartType="line"
-        className="mt-6"
-        data={chartData}
-        tooltip={{
-          labelFormatter: (label) =>
-            format(new Date(label), "PP", { locale: ptBR }),
-          valueFormatter: (value) =>
-            chartViewMode === "percent"
-              ? `${(value as number).toFixed(2)}%`
-              : BRL.format(parseFloat((value as number)?.toFixed(2))),
-        }}
-        xAxisProps={xAxisProps}
-        yAxisProps={yAxisProps}
-      >
-        <CartesianGrid vertical={false} />
-        <Line
-          key={selectedIncomeChartLine}
-          dataKey={selectedIncomeChartLine}
-          name={selectedIncomeChartLine}
-          type="monotone"
-          stroke={color}
-          strokeWidth={2}
-          dot={false}
-        />
-      </CustomChart>
-      <DataTable table={table} className="mt-6" />
+      <div className="mt-6 mb-2 rounded-md">
+        <p className="text-2xl font-semibold">Rendimentos</p>
+        <p className="mt-1 text-sm text-muted-foreground lg:text-base">
+          Aqui você pode verificar o rendimento do título em formato de gráfico
+          ou em formato de lista, indicando o rendimento de cada mês.
+        </p>
+      </div>
+      <div className="xl:flex xl:w-full xl:gap-12 ">
+        <div className="mt-4 max-h-[400px] lg:max-h-[500px] basis-[50%] grow-0">
+          <CustomChart
+            chartType="line"
+            className="mt-6"
+            data={chartData}
+            tooltip={{
+              labelFormatter: (label) =>
+                format(new Date(label), "PP", { locale: ptBR }),
+              valueFormatter: (value) =>
+                chartViewMode === "percent"
+                  ? `${(value as number).toFixed(2)}%`
+                  : BRL.format(parseFloat((value as number)?.toFixed(2))),
+            }}
+            xAxisProps={xAxisProps}
+            yAxisProps={yAxisProps}
+          >
+            <CartesianGrid vertical={false} />
+            <Line
+              key={selectedIncomeChartLine}
+              dataKey={selectedIncomeChartLine}
+              name={selectedIncomeChartLine}
+              type="monotone"
+              stroke={color}
+              strokeWidth={2}
+              dot={false}
+            />
+          </CustomChart>
+        </div>
+        <div className="xl:basis-[50%] mt-4">
+          <DataTable table={table} className="mt-6" />
+        </div>
+      </div>
       <DeleteOperationModal stockType="fixed" id={selectedIncome.id} />
     </div>
   );
