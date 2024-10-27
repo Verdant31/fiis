@@ -303,7 +303,7 @@ export function Header({
               onClick={handleLogout}
               className="flex ml-6 items-center cursor-pointer pt-1 gap-2"
             >
-              {isLoading ? <ClipLoader size={20} /> : <LogOut />}
+              {isLoading ? <ClipLoader color="#fff" size={20} /> : <LogOut />}
               <p>Sair</p>
             </div>
           </div>
