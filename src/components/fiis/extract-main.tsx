@@ -52,7 +52,7 @@ export function StatementsMain({ dividends, operations }: Props) {
       : fiis.getOperationsStatements(filters);
 
   const handleStartExtract = async () => {
-    const fileName = "test.pdf";
+    const fileName = "extrato.pdf";
     const { data: session } = await api.get("/me");
 
     if (!session?.user?.email) {

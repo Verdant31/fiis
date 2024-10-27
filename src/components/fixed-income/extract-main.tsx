@@ -41,7 +41,7 @@ export function StatementsMain({ operations }: Props) {
   const { filters } = useStatementsFilterContext();
 
   const handleStartExtract = async () => {
-    const fileName = "test.pdf";
+    const fileName = "extrato.pdf";
     const { data: session } = await api.get("/me");
 
     if (!session?.user?.email) {
