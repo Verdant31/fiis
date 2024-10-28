@@ -275,13 +275,6 @@ export function Header({
             </Sheet>
             <Logo className="hidden lg:block h-7 w-7" />
             <h1 className="font-bold">stocks.tr</h1>
-            {/* <Button
-              onClick={async () => {
-                await fetch(`${apiUrl}/init-db`);
-              }}
-            >
-              INIT DB
-            </Button> */}
             <Navbar hasOperations={hasOperations} />
           </div>
           <div className="flex gap-4 items-center mr-2">
