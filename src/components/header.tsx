@@ -301,7 +301,7 @@ export function Header({
             </a>
             <div
               onClick={handleLogout}
-              className="flex ml-6 items-center cursor-pointer pt-1 gap-2"
+              className=" ml-6 items-center cursor-pointer pt-1 gap-2 hidden lg:flex"
             >
               {isLoading ? <ClipLoader color="#fff" size={20} /> : <LogOut />}
               <p>Sair</p>
