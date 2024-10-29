@@ -39,6 +39,7 @@ import {
   dividendsColumns,
 } from "@/app/dashboard/fiis/general/columns";
 import DeleteOperationModal from "../delete-operation-modal";
+import { ClipLoader } from "react-spinners";
 
 interface Props {
   fii: FiiSummary;
@@ -328,7 +329,12 @@ export function FiiDetails({
             <Tabs defaultValue="operations">
               <TabsList className="lg:mb-8 grid grid-cols-2 w-[250px] lg:w-[400px] mb-4">
                 <TabsTrigger value="operations">Operações</TabsTrigger>
-                <TabsTrigger value="dividends">Dividendos</TabsTrigger>
+                <TabsTrigger disabled={isLoadingDividends} value="dividends">
+                  {isLoadingDividends && (
+                    <ClipLoader size={18} className="mr-3" color="#fff" />
+                  )}
+                  <p className="select-none">Dividendos</p>
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="operations">
                 <DataTable
