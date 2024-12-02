@@ -79,6 +79,9 @@ export async function GET() {
           quotes: fii.operations.reduce((acc, op) => {
             if (op.type === "purchase") acc += op.qty;
             else if (op.type === "sale") acc -= op.qty;
+            else if (op.type === "unfolding") {
+              acc += op.qty;
+            }
             return acc;
           }, 0),
           monthlyDividends: calculateMonthlyDividends(

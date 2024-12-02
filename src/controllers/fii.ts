@@ -252,12 +252,19 @@ export class FiisController {
   }
 
   nextMonthDividends() {
-    return this.dividends.reduce((acc, fiiDividends) => {
-      const monthKey = format(subMonths(new Date(), 1), "MM", { locale: ptBR });
-      const lastMonth = `${monthKey}/${new Date().getFullYear()}`;
-      acc += fiiDividends.monthlyDividends[lastMonth].total;
-      return acc;
-    }, 0);
+    return this.dividends
+      .filter((fii) => fii.quotes > 0)
+      .reduce((acc, fiiDividends) => {
+        const monthKey = format(subMonths(new Date(), 1), "MM", {
+          locale: ptBR,
+        });
+        const lastMonth = `${monthKey}/${new Date().getFullYear()}`;
+        if (fiiDividends.fiiName === "BCFF11.SA") {
+          console.log(fiiDividends, lastMonth);
+        }
+        acc += fiiDividends.monthlyDividends[lastMonth].total;
+        return acc;
+      }, 0);
   }
 
   getDividendsStatements(filters: StatementsFiltersData): Dividend[] {
